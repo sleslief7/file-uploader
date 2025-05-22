@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output = "../generated/prisma"
+  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -14,44 +14,50 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
-  id Int @id @default(autoincrement())
-  name String
-  username String?
-  email String?
-  password String?
-  googleId String?
+  id            Int      @id @default(autoincrement())
+  name          String
+  username      String?
+  email         String?
+  password      String?
+  googleId      String?
   profileImgUrl String?
-  folders Folder[]
-  files File[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  files         File[]   @relation("OwnedFile")
+  folders       Folder[] @relation("OwnedFolder")
+  sharedFolders Folder[] @relation("SharedFolder")
+  sharedFiles   File[]   @relation("SharedFile")
 }
 
 model Folder {
-  id Int @id @default(autoincrement())
-  name String
-  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  ownerId Int 
-  parentFolder Folder? @relation("ParentFolderToChildFolder", fields: [parentFolderId], references: [id], onDelete: Cascade)
+  id             Int      @id @default(autoincrement())
+  name           String
+  ownerId        Int
   parentFolderId Int?
-  folders Folder[] @relation("ParentFolderToChildFolder")
-  files File[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  owner        User     @relation("OwnedFolder", fields: [ownerId], references: [id], onDelete: Cascade)
+  folders      Folder[] @relation("FolderToFolder")
+  files        File[]   @relation("FolderToFile")
+  editors      User[]   @relation("SharedFolder")
+  parentFolder Folder?  @relation("FolderToFolder", fields: [parentFolderId], references: [id], onDelete: Cascade)
 }
 
 model File {
-  id Int @id @default(autoincrement())
-  name String
-  folder Folder? @relation(fields: [folderId], references: [id], onDelete: Cascade)
-  folderId Int?
-  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  ownerId Int
-  url String
-  size String
-  isFavorite Boolean @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         Int      @id @default(autoincrement())
+  name       String
+  folderId   Int?
+  ownerId    Int
+  url        String
+  size       String
+  isFavorite Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  owner   User    @relation("OwnedFile", fields: [ownerId], references: [id], onDelete: Cascade)
+  folder  Folder? @relation("FolderToFile", fields: [folderId], references: [id], onDelete: Cascade)
+  editors User[]  @relation("SharedFile")
 }

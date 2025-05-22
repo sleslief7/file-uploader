@@ -1,9 +1,9 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const expressSession = require('express-session');
-const { PrismaSessionStore } = require('@quixo3/prisma-session-store');
-const { PrismaClient } = require('@prisma/client');
+import 'dotenv/config';
+import express from 'express';
+import cors from 'cors';
+import expressSession from 'express-session';
+import { PrismaSessionStore } from '@quixo3/prisma-session-store';
+import { PrismaClient } from './generated/prisma';
 
 const app = express();
 const PORT = process.env.PORT || 3000;

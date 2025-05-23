@@ -1,9 +1,12 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import expressSession from 'express-session';
-import { PrismaSessionStore } from '@quixo3/prisma-session-store';
-import { PrismaClient } from './generated/prisma';
+import { sessionMiddleware } from './auth/session';
+import passport from './auth';
+import folderRouter from './routes/folderRouter';
+import userRouter from './routes/userRouter';
+import fileRouter from './routes/fileRouter';
+import authRouter from './routes/authRouter';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -14,21 +17,16 @@ app.use(cors({ origin: CORS_ORIGIN, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(
-  expressSession({
-    cookie: {
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
-    },
-    secret: process.env.SECRET_KEY,
-    resave: true,
-    saveUninitialized: true,
-    store: new PrismaSessionStore(new PrismaClient(), {
-      checkPeriod: 2 * 60 * 1000, //ms
-      dbRecordIdIsSessionId: true,
-      dbRecordIdFunction: undefined,
-    }),
-  })
-);
+app.set('trust proxy', process.env.NODE_ENV === 'production' ? 1 : 0);
+app.use(sessionMiddleware);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use('/api/folders', folderRouter);
+app.use('/api/users', userRouter);
+app.use('/api/files', fileRouter);
+app.use('/api', authRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running

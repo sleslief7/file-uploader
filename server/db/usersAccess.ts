@@ -8,9 +8,7 @@ export const createUser = async (
 ): Promise<User | UserWithoutPassword> => {
   const user = await prisma.user.create({
     data: {
-      name: newUser.name,
-      username: newUser.username,
-      password: newUser.password,
+      ...newUser,
     },
     omit: {
       password: omitPassword,

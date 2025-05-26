@@ -4,15 +4,24 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npx tsc",
+    "start": "node ./dist/app.js",
+    "start:dev": "ts-node-dev --loader ts-node/esm --respawn --transpile-only app.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cors": "^2.8.18",
+    "@types/express": "^5.0.2",
+    "@types/express-session": "^1.18.1",
     "@types/node": "^22.15.20",
+    "@types/passport": "^1.0.17",
+    "@types/passport-local": "^1.0.38",
     "prisma": "^6.8.2",
+    "ts-node-dev": "^2.0.0",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"
   },

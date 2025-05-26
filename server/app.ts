@@ -2,11 +2,8 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import { sessionMiddleware } from './auth/session';
-import passport from './auth';
-import folderRouter from './routes/folderRouter';
-import userRouter from './routes/userRouter';
-import fileRouter from './routes/fileRouter';
-import authRouter from './routes/authRouter';
+import passport from './auth/index';
+import apiRouter from './routes/index';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,10 +20,9 @@ app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/api/folders', folderRouter);
-app.use('/api/users', userRouter);
-app.use('/api/files', fileRouter);
-app.use('/api', authRouter);
+app.get('dv', (req, res, next) => {});
+
+app.use(apiRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running

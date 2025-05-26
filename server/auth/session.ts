@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import expressSession from 'express-session';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
-import { PrismaClient } from './generated/prisma';
+import { PrismaClient } from '../generated/prisma/index.js';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -11,7 +11,7 @@ export const sessionMiddleware = expressSession({
     sameSite: isProduction ? 'none' : 'lax',
     maxAge: 1000 * 60 * 60 * 24, // 1 day
   },
-  secret: process.env.SECRET_KEY,
+  secret: process.env.SECRET_KEY!,
   resave: false,
   saveUninitialized: false,
   store: new PrismaSessionStore(new PrismaClient(), {

@@ -1,7 +1,7 @@
-const passport = require('passport');
-import db from '../../db';
-const bcrypt = require('bcrypt');
-const LocalStrategy = require('passport-local').Strategy;
+import passport from 'passport';
+import db from '../../db/index.js';
+import bcrypt from 'bcrypt';
+import { Strategy as LocalStrategy } from 'passport-local';
 
 passport.use(
   new LocalStrategy(async (username, password, done) => {
@@ -11,14 +11,14 @@ passport.use(
         return done(null, false, { message: 'No user with that username' });
       }
 
-      const match = await bcrypt.compare(password, user.password);
+      const match = await bcrypt.compare(password, user.password!);
       if (!match) {
         return done(null, false, { message: 'Password incorrect' });
       }
 
-      user.password = undefined;
+      user.password = null;
 
-      return done(null, user);
+      return done(null, user.id);
     } catch (err) {
       console.log(err);
       return done(err);

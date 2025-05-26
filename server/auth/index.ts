@@ -2,11 +2,11 @@ import passport from 'passport';
 import './strategies/local';
 import db from '../db';
 
-passport.serializeUser((user, done) => done(null, user.id));
+passport.serializeUser((userId, done) => done(null, userId));
 
-passport.deserializeUser(async (id, done) => {
+passport.deserializeUser(async (userId: number, done) => {
   try {
-    const user = await db.getUserById(id);
+    const user = await db.getUserById(userId);
     return done(null, user);
   } catch (err) {
     return done(err);

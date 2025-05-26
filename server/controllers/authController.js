@@ -7,7 +7,7 @@ export const signUp = asyncHandler(async (req, res) => {
   const { name, username, password } = req.body;
   if (!name || !username || !password) {
     return res
-      .status('400')
+      .status(400)
       .json({ status: 'fail', message: 'All fields are required.' });
   }
 

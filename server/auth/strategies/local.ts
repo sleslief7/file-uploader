@@ -1,7 +1,7 @@
 import passport from 'passport';
-import db from '../../db/index.js';
 import bcrypt from 'bcrypt';
 import { Strategy as LocalStrategy } from 'passport-local';
+import db from '../../db/index';
 
 passport.use(
   new LocalStrategy(async (username, password, done) => {

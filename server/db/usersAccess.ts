@@ -1,4 +1,4 @@
-import prisma from './prisma';
+const prisma = require('./prisma');
 import { Prisma, User } from '../generated/prisma';
 import type { UserWithoutPassword } from '../interfaces';
 

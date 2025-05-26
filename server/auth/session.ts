@@ -5,7 +5,7 @@ import { PrismaClient } from '../generated/prisma/index.js';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-export const sessionMiddleware = expressSession({
+exports.sessionMiddleware = expressSession({
   cookie: {
     secure: isProduction,
     sameSite: isProduction ? 'none' : 'lax',

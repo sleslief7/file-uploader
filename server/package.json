@@ -1,12 +1,11 @@
 {
   "name": "server",
-  "type": "module",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "build": "npx tsc",
     "start": "node ./dist/app.js",
-    "start:dev": "ts-node-dev --loader ts-node/esm --respawn --transpile-only app.ts"
+    "start:dev": "ts-node-dev --respawn --transpile-only app.ts"
   },
   "keywords": [],
   "author": "",

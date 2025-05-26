@@ -1,4 +1,4 @@
-import prisma from './prisma';
+const prisma = require('./prisma');
 import { Prisma, File } from '../generated/prisma';
 
 export const createFile = async (

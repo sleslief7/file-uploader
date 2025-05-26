@@ -13,4 +13,4 @@ passport.deserializeUser(async (userId: number, done) => {
   }
 });
 
-export default passport;
+module.exports = passport;

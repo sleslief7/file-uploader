@@ -1,9 +1,9 @@
-import db from '../db';
-import bcrypt from 'bcrypt';
-import asyncHandler from 'express-async-handler';
-import passport from 'passport';
+const db = require('../db');
+const bcrypt = require('bcrypt');
+const asyncHandler = require('express-async-handler');
+const passport = require('passport');
 
-export const signUp = asyncHandler(async (req, res) => {
+exports.signUp = asyncHandler(async (req, res) => {
   const { name, username, password } = req.body;
   if (!name || !username || !password) {
     return res
@@ -17,7 +17,7 @@ export const signUp = asyncHandler(async (req, res) => {
   res.status(201).json({ message: 'Successfully signed up' });
 });
 
-export const logIn = (req, res, next) => {
+exports.logIn = (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
     if (err) return next(err);
 
@@ -32,12 +32,12 @@ export const logIn = (req, res, next) => {
   })(req, res, next);
 };
 
-export const ensureAuthenticated = (req, res, next) => {
+exports.ensureAuthenticated = (req, res, next) => {
   if (req.isAuthenticated()) return next();
   res.status(401).json({ status: 'fail', message: 'Unauthorized' });
 };
 
-export const logOut = (req, res, next) => {
+exports.logOut = (req, res, next) => {
   req.logout((err) => {
     if (err) return next(err);
 

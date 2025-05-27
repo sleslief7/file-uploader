@@ -13,6 +13,8 @@ export const signUp = asyncHandler(async (req, res) => {
     return;
   }
 
+  // TODO: if user exists throw error 400
+
   const hashedPassword = await bcrypt.hash(password, 10);
   await db.createUser({ name, username, password: hashedPassword });
 
@@ -50,3 +52,13 @@ export const logOut: RequestHandler = (req, res, next) => {
     });
   });
 };
+
+export const checkAuthStatus: RequestHandler = asyncHandler(
+  async (req, res) => {
+    if (req.isAuthenticated()) {
+      res.status(200).json({ status: 'success', message: 'Authorized' });
+      return;
+    }
+    res.status(401).json({ status: 'fail', message: 'Unauthorized' });
+  }
+);

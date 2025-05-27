@@ -1,9 +1,9 @@
-require('dotenv/config');
-const express = require('express');
-const cors = require('cors');
-const { sessionMiddleware } = require('./auth/session');
-const customPassport = require('./auth/index');
-const apiRouter = require('./routes/index');
+import 'dotenv/config';
+import express from 'express';
+import cors from 'cors';
+import sessionMiddleware from './auth/session';
+import passport from './auth';
+import apiRouter from './routes';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,8 +17,8 @@ app.use(express.urlencoded({ extended: true }));
 app.set('trust proxy', process.env.NODE_ENV === 'production' ? 1 : 0);
 app.use(sessionMiddleware);
 
-app.use(customPassport.initialize());
-app.use(customPassport.session());
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(apiRouter);
 

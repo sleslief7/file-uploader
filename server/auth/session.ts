@@ -1,11 +1,11 @@
 import 'dotenv/config';
 import expressSession from 'express-session';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
-import { PrismaClient } from '../generated/prisma/index.js';
+import { PrismaClient } from '../generated/prisma';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-exports.sessionMiddleware = expressSession({
+const sessionMiddleware = expressSession({
   cookie: {
     secure: isProduction,
     sameSite: isProduction ? 'none' : 'lax',
@@ -20,3 +20,5 @@ exports.sessionMiddleware = expressSession({
     dbRecordIdFunction: undefined,
   }),
 });
+
+export default sessionMiddleware;

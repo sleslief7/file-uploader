@@ -1,5 +1,5 @@
 const prisma = require('./prisma');
-import { Prisma, User } from '../generated/prisma';
+import { Prisma, User } from '../../generated/prisma';
 import type { UserWithoutPassword } from '../interfaces';
 
 export const createUser = async (

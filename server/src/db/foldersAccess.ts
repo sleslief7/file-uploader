@@ -1,5 +1,5 @@
 const prisma = require('./prisma');
-import { Prisma, Folder } from '../generated/prisma';
+import { Prisma, Folder } from '../../generated/prisma';
 
 exports.createFolder = async (
   name: string,

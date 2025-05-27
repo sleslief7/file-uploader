@@ -1,11 +1,11 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "build": "npx prisma generate && npx tsc",
+    "build": "npx tsc",
     "start": "node ./dist/app.js",
-    "start:dev": "ts-node-dev --respawn --transpile-only app.ts"
+    "start:dev": "ts-node-dev --respawn --transpile-only src/app.ts"
   },
   "keywords": [],
   "author": "",

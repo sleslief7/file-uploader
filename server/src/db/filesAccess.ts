@@ -1,5 +1,5 @@
 const prisma = require('./prisma');
-import { Prisma, File } from '../generated/prisma';
+import { Prisma, File } from '../../generated/prisma';
 
 export const createFile = async (
   data: Prisma.FileCreateInput

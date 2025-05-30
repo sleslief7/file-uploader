@@ -4,9 +4,7 @@ import { Prisma, File } from '../../generated/prisma';
 export const createFile = async (
   data: Prisma.FileCreateInput
 ): Promise<File> => {
-  const file = await prisma.file.create({
-    data,
-  });
+  const file = await prisma.file.create({ data });
   return file;
 };
 

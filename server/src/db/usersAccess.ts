@@ -53,3 +53,12 @@ export const updateUser = async (
   });
   return user;
 };
+
+export const userExists = async (username: string) => {
+  const user = await prisma.user.findFirst({
+    where: {
+      username,
+    },
+  });
+  return user;
+};

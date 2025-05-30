@@ -1,7 +1,7 @@
 const prisma = require('./prisma');
 import { Prisma, Folder } from '../../generated/prisma';
 
-exports.createFolder = async (
+export const createFolder = async (
   name: string,
   ownerId: number
 ): Promise<Folder> => {
@@ -14,7 +14,7 @@ exports.createFolder = async (
   return folder;
 };
 
-exports.updateFolder = async (
+export const updateFolder = async (
   folderId: number,
   data: Prisma.FolderUpdateInput
 ): Promise<Folder> => {
@@ -27,7 +27,7 @@ exports.updateFolder = async (
   return folder;
 };
 
-exports.deleteFolder = async (folderId: number): Promise<Folder> => {
+export const deleteFolder = async (folderId: number): Promise<Folder> => {
   const folder = await prisma.folder.delete({
     where: {
       id: folderId,
@@ -36,7 +36,9 @@ exports.deleteFolder = async (folderId: number): Promise<Folder> => {
   return folder;
 };
 
-exports.getFolderById = async (folderId: number): Promise<Folder | null> => {
+export const getFolderById = async (
+  folderId: number
+): Promise<Folder | null> => {
   const folder = await prisma.folder.findUnique({
     where: {
       id: folderId,
@@ -45,7 +47,7 @@ exports.getFolderById = async (folderId: number): Promise<Folder | null> => {
   return folder;
 };
 
-exports.getAllFolders = async (
+export const getAllFolders = async (
   parentFolderId: number | null = null
 ): Promise<Folder[]> => {
   const folders = await prisma.folder.findMany({
@@ -56,7 +58,7 @@ exports.getAllFolders = async (
   return folders;
 };
 
-exports.folderExists = async (folderId: number): Promise<boolean> => {
+export const folderExists = async (folderId: number): Promise<boolean> => {
   const folder = await prisma.folder.findUnique({
     where: {
       id: folderId,

@@ -13,7 +13,10 @@ export const signUp = asyncHandler(async (req, res) => {
     return;
   }
 
-  // TODO: if user exists throw error 400
+  if (await db.userExists(username)) {
+    res.status(400).json({ status: 'fail', message: 'User already exists' });
+    return;
+  }
 
   const hashedPassword = await bcrypt.hash(password, 10);
   await db.createUser({ name, username, password: hashedPassword });

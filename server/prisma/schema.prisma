@@ -51,8 +51,10 @@ model File {
   name       String
   folderId   Int?
   ownerId    Int
-  url        String
-  size       String
+  mimeType   String
+  path       String
+  bucket     String
+  size       Int
   isFavorite Boolean  @default(false)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt

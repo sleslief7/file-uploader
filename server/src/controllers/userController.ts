@@ -24,5 +24,5 @@ export const updateUser = asyncHandler(async (req, res) => {
     return;
   }
   const updatedUser = await db.updateUser(Number(id), data, true);
-  res.status(201).json({ updatedUser });
+  res.status(201).json(updatedUser);
 });

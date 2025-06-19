@@ -3,7 +3,7 @@ import apiClient from './apiClient';
 
 export const checkAuth = async () => {
   try {
-    const res = await apiClient.get(`/check-auth`);
+    const res = await apiClient.get(`/auth`);
     return res.data;
   } catch (err) {
     console.error('Error checking auth', err);

@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 import type { User } from '../interfaces/UserInterface';
-import { checkAuth } from '../api/queries';
+import { checkAuth } from '../api/authApi';
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);

@@ -1,5 +1,13 @@
+import { Box, Flex, Text } from '@chakra-ui/react';
+
 const Footer = () => {
-  return <div>Footer</div>;
+  return (
+    <Box as="footer" bg="teal.subtle" p={4}>
+      <Flex justifyContent={'center'}>
+        <Text>By Leslie</Text>
+      </Flex>
+    </Box>
+  );
 };
 
 export default Footer;

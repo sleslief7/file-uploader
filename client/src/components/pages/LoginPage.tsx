@@ -1,6 +1,6 @@
 import { Box, Heading } from '@chakra-ui/react';
 import { useColorModeValue } from '../ui/color-mode';
-import LoginForm from '../LoginForm';
+import LoginForm from '../forms/LoginForm';
 import { Link } from 'react-router-dom';
 
 const LoginPage = () => {

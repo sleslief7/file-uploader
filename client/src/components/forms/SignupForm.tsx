@@ -74,6 +74,7 @@ const SignupForm = () => {
           <Input
             placeholder="Enter your password"
             value={password}
+            type="password"
             onChange={(e) => setPassword(e.target.value)}
           />
         </Field.Root>

@@ -1,11 +1,11 @@
 import { FcGoogle } from 'react-icons/fc';
-import { Button, Field, Fieldset, Input } from '@chakra-ui/react';
+import { Box, Button, Field, Fieldset, Input } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { signup } from '@/api/authApi';
 import type { UserSignUpRequest } from '@/interfaces/UserInterface';
 import { useNavigate } from 'react-router-dom';
-import { toaster } from './ui/toaster';
+import { toaster } from '../ui/toaster';
 
 const useSignup = () => {
   const { mutate } = useMutation({
@@ -38,8 +38,19 @@ const SignupForm = () => {
     navigate('/');
   };
   return (
-    <form>
+    <Box
+      as="form"
+      maxW="md"
+      minW="sm"
+      mx="auto"
+      p={8}
+      borderWidth={1}
+      borderRadius="lg"
+      bg="gray.subtle"
+      boxShadow="md"
+    >
       <Fieldset.Root>
+        <Fieldset.Legend fontSize="xl">Create an account</Fieldset.Legend>
         <Field.Root>
           <Field.Label id="name">Name: </Field.Label>
           <Input
@@ -72,7 +83,7 @@ const SignupForm = () => {
           Sign up with <FcGoogle />
         </Button>
       </Fieldset.Root>
-    </form>
+    </Box>
   );
 };
 

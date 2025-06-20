@@ -3,13 +3,13 @@ import { Box, Button, Field, Fieldset, Input } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { signup } from '@/api/authApi';
-import type { UserSignUpRequest } from '@/interfaces/UserInterface';
+import type { UserSignupRequest } from '@/interfaces/UserInterface';
 import { useNavigate } from 'react-router-dom';
 import { toaster } from '../ui/toaster';
 
 const useSignup = () => {
   const { mutate } = useMutation({
-    mutationFn: (user: UserSignUpRequest) => signup(user),
+    mutationFn: (user: UserSignupRequest) => signup(user),
     onSuccess: () => {
       toaster.create({
         title: 'You have signup successfully!',

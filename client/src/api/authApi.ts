@@ -1,4 +1,4 @@
-import type { User, UserSignUpRequest } from '@/interfaces/UserInterface';
+import type { User, UserSignupRequest } from '@/interfaces/UserInterface';
 import apiClient from './apiClient';
 
 export const checkAuth = async () => {
@@ -36,7 +36,7 @@ export const logout = async () => {
   }
 };
 
-export const signup = async (user: UserSignUpRequest) => {
+export const signup = async (user: UserSignupRequest) => {
   try {
     await apiClient.post(`/sign-up`, {
       name: user.name,

@@ -4,7 +4,7 @@ import EnsureAuth from './util/EnsureAuth';
 import RedirectIfAuth from './util/RedirectIfAuth';
 import Homepage from './components/pages/Homepage';
 import LoginPage from './components/pages/LoginPage';
-import SignUpPage from './components/pages/SignUpPage';
+import SignupPage from './components/pages/SignupPage';
 
 const router = createBrowserRouter([
   {
@@ -31,7 +31,7 @@ const router = createBrowserRouter([
         path: '/sign-up',
         element: (
           <RedirectIfAuth>
-            <SignUpPage />
+            <SignupPage />
           </RedirectIfAuth>
         ),
       },

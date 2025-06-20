@@ -10,7 +10,7 @@ export interface User {
   updatedAt: Date;
 }
 
-export interface UserSignUpRequest {
+export interface UserSignupRequest {
   id?: number;
   name: string;
   username: string;

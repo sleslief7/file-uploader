@@ -5,7 +5,12 @@
   "scripts": {
     "build": "prisma migrate deploy && prisma generate && tsc",
     "start": "node ./dist/app.js",
-    "start:dev": "ts-node-dev --respawn --transpile-only src/app.ts"
+    "start:dev": "ts-node-dev --respawn --transpile-only src/app.ts",
+    "db:reset": "npx prisma migrate reset",
+    "db:seed": "npx prisma db seed"
+  },
+  "prisma": {
+    "seed": "ts-node src/scripts/seed.ts"
   },
   "keywords": [],
   "author": "",

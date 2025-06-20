@@ -1,5 +1,5 @@
 import { FcGoogle } from 'react-icons/fc';
-import { Box, Button, Field, Fieldset, Input } from '@chakra-ui/react';
+import { Button, Field, Fieldset, Input } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { signup } from '@/api/authApi';
@@ -38,17 +38,7 @@ const SignupForm = () => {
     navigate('/');
   };
   return (
-    <Box
-      as="form"
-      maxW="md"
-      minW="sm"
-      mx="auto"
-      p={8}
-      borderWidth={1}
-      borderRadius="lg"
-      bg="gray.subtle"
-      boxShadow="md"
-    >
+    <form>
       <Fieldset.Root>
         <Fieldset.Legend fontSize="xl">Create an account</Fieldset.Legend>
         <Field.Root>
@@ -84,7 +74,7 @@ const SignupForm = () => {
           Sign up with <FcGoogle />
         </Button>
       </Fieldset.Root>
-    </Box>
+    </form>
   );
 };
 

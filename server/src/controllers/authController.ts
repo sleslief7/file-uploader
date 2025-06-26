@@ -59,7 +59,9 @@ export const logOut: RequestHandler = (req, res, next) => {
 export const checkAuthStatus: RequestHandler = asyncHandler(
   async (req, res) => {
     if (req.isAuthenticated()) {
-      res.status(200).json({ status: 'success', message: 'Authorized' });
+      res
+        .status(200)
+        .json({ status: 'success', message: 'Authorized', user: req.user });
       return;
     }
     res.status(401).json({ status: 'fail', message: 'Unauthorized' });

@@ -18,7 +18,7 @@ passport.use(
 
       user.password = null;
 
-      return done(null, user.id);
+      return done(null, user);
     } catch (err) {
       console.log(err);
       return done(err);

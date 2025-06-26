@@ -17,10 +17,16 @@ export const createUser = async (
   return user;
 };
 
-export const getUserById = async (userId: number): Promise<User | null> => {
+export const getUserById = async (
+  userId: number,
+  omitPassword: boolean = false
+): Promise<User | null> => {
   const user = await prisma.user.findUnique({
     where: {
       id: userId,
+    },
+    omit: {
+      password: omitPassword,
     },
   });
   return user;

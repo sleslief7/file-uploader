@@ -2,18 +2,16 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
 import { Button, Field, Fieldset, Input } from '@chakra-ui/react';
-import { useAuth } from '@/hooks/useAuth';
-import { login } from '@/api/authApi';
+import useLogin from '@/hooks/useLogin';
 
 const LoginForm = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { login: contextLogin } = useAuth();
+  const { mutate: login } = useLogin();
 
   const handleSignin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const user = await login(username, password);
-    contextLogin(user);
+    login({ username, password });
   };
 
   return (

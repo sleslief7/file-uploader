@@ -5,7 +5,6 @@ const prisma = new PrismaClient();
 async function main() {
   await prisma.user.create({
     data: {
-      id: 1,
       name: 'Leslie S Fernandez',
       username: 'leslieshanell',
       password: '$2b$10$61/MvArRA5HhYSXvU1jL6O5Kt3/i8yGRNKiC2oEAItapzK7obTbmm',
@@ -14,7 +13,6 @@ async function main() {
 
   await prisma.user.create({
     data: {
-      id: 2,
       name: 'Liomard J Mesa',
       username: 'Ljaquel01',
       password: '$2b$10$bRX0Zj0FoJffnncDwPFc6eUfTtvn33tC7SgbEcdd6m1Jb4z/toM/G',
@@ -23,7 +21,6 @@ async function main() {
 
   await prisma.folder.create({
     data: {
-      id: 1,
       ownerId: 1,
       name: "Leslie's First Folder",
     },
@@ -31,7 +28,6 @@ async function main() {
 
   await prisma.folder.create({
     data: {
-      id: 2,
       ownerId: 2,
       name: `LJ's First Folder`,
     },

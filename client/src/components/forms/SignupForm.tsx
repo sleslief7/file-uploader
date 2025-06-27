@@ -1,31 +1,14 @@
 import { FcGoogle } from 'react-icons/fc';
 import { Button, Field, Fieldset, Input } from '@chakra-ui/react';
 import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { signup } from '@/api/authApi';
-import type { UserSignupRequest } from '@/interfaces/UserInterface';
 import { useNavigate } from 'react-router-dom';
-import { toaster } from '../ui/toaster';
-
-const useSignup = () => {
-  const { mutate } = useMutation({
-    mutationFn: (user: UserSignupRequest) => signup(user),
-    onSuccess: () => {
-      toaster.create({
-        title: 'You have signup successfully!',
-        type: 'success',
-      });
-    },
-  });
-
-  return mutate;
-};
+import useSignup from '@/hooks/useSignup';
 
 const SignupForm = () => {
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const signup = useSignup();
+  const { mutate: signup } = useSignup();
   const navigate = useNavigate();
 
   const handleSignup = () => {

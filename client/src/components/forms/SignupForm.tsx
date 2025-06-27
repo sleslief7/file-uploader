@@ -1,7 +1,7 @@
 import { FcGoogle } from 'react-icons/fc';
 import { Button, Field, Fieldset, Input, Text } from '@chakra-ui/react';
 
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import useSignup from '@/hooks/useSignup';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type SubmitHandler, useForm } from 'react-hook-form';
@@ -71,6 +71,7 @@ const SignupForm = () => {
         <Button>
           Sign up with <FcGoogle />
         </Button>
+        <Link to={'/login'}>Already have an account? Login instead</Link>
       </Fieldset.Root>
     </form>
   );

@@ -19,6 +19,7 @@ const LoginForm = () => {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<FormFields>({
     defaultValues: {
@@ -29,7 +30,13 @@ const LoginForm = () => {
   });
 
   const handleLogin: SubmitHandler<FormFields> = async (data) => {
-    await login(data);
+    await login(data, {
+      onError: () => {
+        setError('root', {
+          message: 'Wrong credentials please try again',
+        });
+      },
+    });
   };
 
   return (
@@ -54,6 +61,8 @@ const LoginForm = () => {
             <Text color={'fg.error'}>{errors.password.message}</Text>
           )}
         </Field.Root>
+
+        {errors.root && <Text color={'fg.error'}>{errors.root.message}</Text>}
 
         <Button type="submit">
           {isSubmitting ? 'Logging in...' : 'Login'}

@@ -1,15 +1,22 @@
 import db from '../db';
 import asyncHandler from 'express-async-handler';
+import { Breadcrumb } from '../interfaces';
 
 export const createFolder = asyncHandler(async (req, res) => {
-  const { name, ownerId } = req.body;
-  if (!name || !ownerId) {
+  const { name } = req.body;
+  if (!name) {
     res
       .status(400)
-      .json({ status: 'fail', message: 'All fields are required.' });
+      .json({ status: 'fail', message: 'Folder name is required.' });
     return;
   }
-  const folder = await db.createFolder(name, ownerId);
+  const folder = await db.createFolder({
+    name,
+    owner: { connect: { id: req.user?.id } },
+    ...(req.body.parentFolderId && {
+      parentFolder: { connect: { id: Number(req.body.parentFolderId) } },
+    }),
+  });
   res.status(201).json(folder);
 });
 
@@ -71,4 +78,32 @@ export const getAllFolders = asyncHandler(async (req, res) => {
     folders = await db.getAllFolders(parentFolderId);
   }
   res.status(200).json(folders);
+});
+
+export const getFoldersAndFilesByParentFolderId = asyncHandler(
+  async (req, res) => {
+    const folderId = Number(req.params.folderId);
+    const folders = await db.getAllFolders(folderId);
+    const files = await db.getAllFiles(folderId);
+
+    res.status(200).json({ folders, files });
+  }
+);
+
+export const getBreadCrumb = asyncHandler(async (req, res) => {
+  let folderId: number | undefined | null = Number(req.params.folderId);
+  const breadCrumb: Breadcrumb = [];
+  let position = breadCrumb.length;
+
+  while (folderId) {
+    const folder = await db.getFolderById(folderId);
+    breadCrumb.unshift({
+      folderName: folder?.name,
+      folderId: folder?.id,
+      position: position++,
+    });
+    folderId = folder?.parentFolderId;
+  }
+
+  res.status(200).json(breadCrumb);
 });

@@ -14,8 +14,8 @@ export const createFile = asyncHandler(async (req, res) => {
   const bucket = 'uploads';
   const extension = file.originalname.split('.')[1];
   const name = req.body.name
-    ? `${req.body.name}.${extension}`
-    : file.originalname;
+    ? `${req.body.name.replace(/[^\w.-]+/g, '')}.${extension}`
+    : file.originalname.replace(/[^\w.-]+/g, '');
   const path = `${user.id}/${req.body.folderId ?? 'home'}/${name}`;
 
   const { data, error } = await supabase.storage
@@ -36,7 +36,7 @@ export const createFile = asyncHandler(async (req, res) => {
       bucket,
       size: file.size,
       ...(req.body.folderId && {
-        folder: { connect: { id: req.body.folderId } },
+        folder: { connect: { id: Number(req.body.folderId) } },
       }),
     });
     res.status(200).json(prismaFile);

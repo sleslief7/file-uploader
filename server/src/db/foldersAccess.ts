@@ -2,15 +2,9 @@ const prisma = require('./prisma');
 import { Prisma, Folder } from '../../generated/prisma';
 
 export const createFolder = async (
-  name: string,
-  ownerId: number
+  data: Prisma.FolderCreateInput
 ): Promise<Folder> => {
-  const folder = await prisma.folder.create({
-    data: {
-      name,
-      owner: { connect: { id: ownerId } },
-    },
-  });
+  const folder = await prisma.folder.create({ data });
   return folder;
 };
 
@@ -66,5 +60,3 @@ export const folderExists = async (folderId: number): Promise<boolean> => {
   });
   return folder !== null;
 };
-
-export {};

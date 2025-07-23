@@ -93,7 +93,7 @@ export const getFileById = asyncHandler(async (req, res) => {
   res.status(200).json(file);
 });
 
-export const getAllFiles = asyncHandler(async (req, res) => {
+export const getFiles = asyncHandler(async (req, res) => {
   let folderId;
   if (!req.body?.folderId) {
     folderId = null;
@@ -103,9 +103,9 @@ export const getAllFiles = asyncHandler(async (req, res) => {
 
   let files;
   if (!folderId) {
-    files = await db.getAllFiles(folderId);
+    files = await db.getFiles(req.user!.id, folderId);
   } else {
-    files = await db.getAllFiles(folderId);
+    files = await db.getFiles(req.user!.id, folderId);
   }
   res.status(200).json(files);
 });

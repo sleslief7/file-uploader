@@ -39,11 +39,13 @@ export const getFileById = async (fileId: number): Promise<File | null> => {
   return file;
 };
 
-export const getAllFiles = async (
+export const getFiles = async (
+  ownerId: number,
   folderId: number | null = null
 ): Promise<File[]> => {
   const files = await prisma.file.findMany({
     where: {
+      ownerId,
       folderId,
     },
   });

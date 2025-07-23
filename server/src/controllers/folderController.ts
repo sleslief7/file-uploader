@@ -63,7 +63,7 @@ export const getFolderById = asyncHandler(async (req, res) => {
   res.status(200).json(folder);
 });
 
-export const getAllFolders = asyncHandler(async (req, res) => {
+export const getFolders = asyncHandler(async (req, res) => {
   let parentFolderId;
   if (!req.body?.parentFolderId) {
     parentFolderId = null;
@@ -73,36 +73,47 @@ export const getAllFolders = asyncHandler(async (req, res) => {
 
   let folders;
   if (!parentFolderId) {
-    folders = await db.getAllFolders(parentFolderId);
+    folders = await db.getFolders(req.user!.id, parentFolderId);
   } else {
-    folders = await db.getAllFolders(parentFolderId);
+    folders = await db.getFolders(req.user!.id, parentFolderId);
   }
   res.status(200).json(folders);
 });
 
-export const getFoldersAndFilesByParentFolderId = asyncHandler(
-  async (req, res) => {
-    const folderId = Number(req.params.folderId);
-    const folders = await db.getAllFolders(folderId);
-    const files = await db.getAllFiles(folderId);
+export const getItemsByParentFolderId = asyncHandler(async (req, res) => {
+  const folderId = Number(req.params.folderId);
+  const folders = await db.getFolders(req.user!.id, folderId);
+  const files = await db.getFiles(req.user!.id, folderId);
 
-    res.status(200).json({ folders, files });
-  }
-);
+  res.status(200).json({ folders, files });
+});
 
 export const getBreadCrumb = asyncHandler(async (req, res) => {
-  let folderId: number | undefined | null = Number(req.params.folderId);
+  let folderId: number | null | undefined = req.params.folderId
+    ? Number(req.params.folderId)
+    : null;
+
   const breadCrumb: Breadcrumb = [];
-  let position = breadCrumb.length;
 
   while (folderId) {
     const folder = await db.getFolderById(folderId);
     breadCrumb.unshift({
       folderName: folder?.name,
       folderId: folder?.id,
-      position: position++,
+      position: 0,
     });
     folderId = folder?.parentFolderId;
+  }
+
+  breadCrumb.unshift({
+    folderName: 'Home',
+    folderId: null,
+    position: 0,
+  });
+
+  for (let i = 0; i < breadCrumb.length; i++) {
+    let breadCrumbItem = breadCrumb[i];
+    breadCrumbItem.position = i + 1;
   }
 
   res.status(200).json(breadCrumb);

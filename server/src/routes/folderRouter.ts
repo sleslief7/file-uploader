@@ -2,11 +2,11 @@ import { Router } from 'express';
 import {
   createFolder,
   deleteFolder,
-  getAllFolders,
+  getFolders,
   getBreadCrumb,
   getFolderById,
   updateFolder,
-  getFoldersAndFilesByParentFolderId,
+  getItemsByParentFolderId,
 } from '../controllers/folderController';
 import { ensureAuthenticated } from '../controllers/authController';
 
@@ -16,12 +16,12 @@ folderRouter.post('/', ensureAuthenticated, createFolder);
 folderRouter.put('/:folderId', ensureAuthenticated, updateFolder);
 folderRouter.delete('/:folderId', ensureAuthenticated, deleteFolder);
 folderRouter.get('/:folderId', ensureAuthenticated, getFolderById);
-folderRouter.get('/', ensureAuthenticated, getAllFolders);
-folderRouter.get('/breadcrumb/:folderId', ensureAuthenticated, getBreadCrumb);
+folderRouter.get('/', ensureAuthenticated, getFolders);
+folderRouter.get('/:folderId/breadcrumb', ensureAuthenticated, getBreadCrumb);
 folderRouter.get(
-  '/folderAndFiles/:folderId',
+  '/:folderId/items',
   ensureAuthenticated,
-  getFoldersAndFilesByParentFolderId
+  getItemsByParentFolderId
 );
 
 export default folderRouter;

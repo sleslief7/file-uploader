@@ -41,11 +41,13 @@ export const getFolderById = async (
   return folder;
 };
 
-export const getAllFolders = async (
+export const getFolders = async (
+  ownerId: number,
   parentFolderId: number | null = null
 ): Promise<Folder[]> => {
   const folders = await prisma.folder.findMany({
     where: {
+      ownerId,
       parentFolderId,
     },
   });

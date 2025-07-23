@@ -3,7 +3,7 @@ import { upload } from '../middleware/upload';
 import {
   createFile,
   deleteFile,
-  getAllFiles,
+  getFiles,
   getFileById,
   updateFile,
 } from '../controllers/fileController';
@@ -20,6 +20,6 @@ fileRouter.post(
 fileRouter.delete('/:fileId', ensureAuthenticated, deleteFile);
 fileRouter.put('/:fileId', ensureAuthenticated, updateFile);
 fileRouter.get('/:fileId', ensureAuthenticated, getFileById);
-fileRouter.get('/', ensureAuthenticated, getAllFiles);
+fileRouter.get('/', ensureAuthenticated, getFiles);
 
 export default fileRouter;

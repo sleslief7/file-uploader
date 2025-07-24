@@ -1,4 +1,4 @@
-import { User } from '../../generated/prisma';
+import { File, Folder, User } from '../../generated/prisma';
 
 export type UserWithoutPassword = Omit<User, 'password'>;
 
@@ -9,3 +9,15 @@ type BreadcrumbItem = {
 };
 
 export type Breadcrumb = BreadcrumbItem[];
+
+type Item = {
+  id: number;
+  isFile: boolean;
+  name: string;
+  size?: number;
+  ownerId: number;
+  parentId: number | null;
+  updatedAt: Date;
+};
+
+export type Items = Item[];

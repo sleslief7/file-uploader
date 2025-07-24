@@ -1,6 +1,6 @@
 import db from '../db';
 import asyncHandler from 'express-async-handler';
-import { Breadcrumb } from '../interfaces';
+import { Breadcrumb, Items } from '../interfaces';
 
 export const createFolder = asyncHandler(async (req, res) => {
   const { name } = req.body;
@@ -85,7 +85,30 @@ export const getItemsByParentFolderId = asyncHandler(async (req, res) => {
   const folders = await db.getFolders(req.user!.id, folderId);
   const files = await db.getFiles(req.user!.id, folderId);
 
-  res.status(200).json({ folders, files });
+  const items: Items = [];
+  folders.map((folder) =>
+    items.push({
+      id: folder.id,
+      isFile: false,
+      name: folder.name,
+      ownerId: folder.ownerId,
+      parentId: folder.parentFolderId,
+      updatedAt: folder.updatedAt,
+    })
+  );
+  files.map((file) =>
+    items.push({
+      id: file.id,
+      isFile: true,
+      name: file.name,
+      size: file.size,
+      ownerId: file.ownerId,
+      parentId: file.folderId,
+      updatedAt: file.updatedAt,
+    })
+  );
+
+  res.status(200).json(items);
 });
 
 export const getBreadCrumb = asyncHandler(async (req, res) => {

@@ -10,9 +10,7 @@ const Header = () => {
   return (
     <Box as="header" bg="teal.subtle" px={4} py={2}>
       <Grid templateColumns="repeat(3, 1fr)" alignItems={'center'}>
-        <GridItem>
-          <AddMenu />
-        </GridItem>
+        <GridItem>{isAuth && <AddMenu />}</GridItem>
         <GridItem colSpan={1} justifySelf={'center'}>
           <Text fontSize="2xl" textAlign="center">
             File Uploader
@@ -21,7 +19,7 @@ const Header = () => {
         <GridItem colSpan={1} justifySelf={'end'}>
           <ColorModeButton />
           {isAuth && (
-            <Button rounded="2xl" onClick={() => logout()}>
+            <Button rounded="sm" onClick={() => logout()}>
               Logout
             </Button>
           )}

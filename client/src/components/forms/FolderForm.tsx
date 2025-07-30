@@ -53,29 +53,37 @@ const FolderForm = ({ isOpen, setIsOpen }: FolderFormProps) => {
   };
 
   return (
-    <Dialog.Root open={isOpen} onOpenChange={(e) => setIsOpen(e.open)}>
+    <Dialog.Root
+      size="xs"
+      placement="center"
+      open={isOpen}
+      onOpenChange={(e) => setIsOpen(e.open)}
+    >
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner>
           <Dialog.Content>
-            <form onSubmit={handleSubmit(handleCreateFolder)}>
-              <Fieldset.Root size="lg" maxW="md">
-                <Fieldset.Legend fontSize="xl">Folder name</Fieldset.Legend>
-                <Field.Root>
-                  <Field.Label id="name">name: </Field.Label>
-                  <Input
-                    placeholder="Enter folder name"
-                    {...register('name')}
-                  />
-                  {errors.name && (
-                    <Text color={'fg.error'}>{errors.name.message}</Text>
-                  )}
-                </Field.Root>
-                <Button type="submit">
-                  {isSubmitting ? 'Creating folder...' : 'Create folder'}
-                </Button>
-              </Fieldset.Root>
-            </form>
+            <Dialog.Header>
+              <Dialog.Title>Create Folder</Dialog.Title>
+            </Dialog.Header>
+            <Dialog.Body>
+              <form onSubmit={handleSubmit(handleCreateFolder)}>
+                <Fieldset.Root size="md" maxW="sm">
+                  <Field.Root>
+                    <Input
+                      placeholder="Enter folder name"
+                      {...register('name')}
+                    />
+                    {errors.name && (
+                      <Text color={'fg.error'}>{errors.name.message}</Text>
+                    )}
+                  </Field.Root>
+                  <Button type="submit">
+                    {isSubmitting ? 'Creating folder...' : 'Create folder'}
+                  </Button>
+                </Fieldset.Root>
+              </form>
+            </Dialog.Body>
             <Dialog.CloseTrigger asChild>
               <CloseButton size="sm" />
             </Dialog.CloseTrigger>

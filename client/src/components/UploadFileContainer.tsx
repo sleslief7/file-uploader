@@ -18,7 +18,7 @@ type FileFormProps = {
 const UploadFileContainer = ({ isOpen, setIsOpen }: FileFormProps) => {
   const { mutate: createFile } = useCreateFile();
   const handleUpload = () => {
-    createFile(fileUpload.acceptedFiles);
+    createFile({ files: fileUpload.acceptedFiles, folderId: null });
     setIsOpen(!isOpen);
   };
 

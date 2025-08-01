@@ -13,25 +13,22 @@ export const createFiles = asyncHandler(async (req, res) => {
   }
 
   const bucket = 'uploads';
-  const folderId = req.body.folderId ?? 'home';
+  const folderId =
+    req.params.folderId === 'home' ? null : Number(req.params.folderId);
   const uploadedFiles = [];
 
   for (const file of files) {
-    const extension = file.originalname.split('.').pop();
-    const rawName = req.body.name || file.originalname;
+    const rawName = file.originalname;
     const sanitizedName = rawName.replace(/[^\w.-]+/g, '');
-    const name = `${sanitizedName}.${extension}`;
-    const path = `${user.id}/${folderId}/${name}`;
+    const name = `${sanitizedName}`;
+    const path = `${user.id}/${folderId ?? 'home'}/${name}`;
 
     const { data, error } = await supabase.storage
       .from(bucket)
       .upload(path, file.buffer, { contentType: file.mimetype });
 
     if (error) {
-      console.error(
-        `Failed to upload file ${file.originalname}:`,
-        error.message
-      );
+      console.error(`Failed to upload file ${rawName}:`, error.message);
       continue; // skip to the next file
     }
 
@@ -43,8 +40,8 @@ export const createFiles = asyncHandler(async (req, res) => {
         path,
         bucket,
         size: file.size,
-        ...(req.body.folderId && {
-          folder: { connect: { id: Number(req.body.folderId) } },
+        ...(folderId && {
+          folder: { connect: { id: folderId } },
         }),
       });
       uploadedFiles.push(prismaFile);

@@ -5,10 +5,18 @@ export const createFile = async (
   folderId: number | null = null
 ) => {
   try {
-    const res = await apiClient.post(`/files`, {
-      files,
-      folderId,
-    });
+    const formData = new FormData();
+    files.forEach((f) => formData.append('files', f));
+
+    const res = await apiClient.post(
+      `folders/${folderId ?? 'home'}/files`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
     return res.data;
   } catch (err) {
     console.error('Error creating file', err);

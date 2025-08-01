@@ -3,47 +3,58 @@ import asyncHandler from 'express-async-handler';
 import { supabase } from '../lib/supabase';
 import { User } from '../../generated/prisma';
 
-export const createFile = asyncHandler(async (req, res) => {
+export const createFiles = asyncHandler(async (req, res) => {
   const user = req.user as User;
-  if (!req.file) {
-    res.status(400).json({ error: 'No file uploaded' });
+  const files = req.files as Express.Multer.File[];
+
+  if (!files || files.length === 0) {
+    res.status(400).json({ error: 'No files uploaded' });
     return;
   }
 
-  const file = req.file;
   const bucket = 'uploads';
-  const extension = file.originalname.split('.')[1];
-  const name = req.body.name
-    ? `${req.body.name.replace(/[^\w.-]+/g, '')}.${extension}`
-    : file.originalname.replace(/[^\w.-]+/g, '');
-  const path = `${user.id}/${req.body.folderId ?? 'home'}/${name}`;
+  const folderId = req.body.folderId ?? 'home';
+  const uploadedFiles = [];
 
-  const { data, error } = await supabase.storage
-    .from(bucket)
-    .upload(path, file.buffer, { contentType: file.mimetype });
+  for (const file of files) {
+    const extension = file.originalname.split('.').pop();
+    const rawName = req.body.name || file.originalname;
+    const sanitizedName = rawName.replace(/[^\w.-]+/g, '');
+    const name = `${sanitizedName}.${extension}`;
+    const path = `${user.id}/${folderId}/${name}`;
 
-  if (error) {
-    res.status(500).json({ error: error.message });
-    return;
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .upload(path, file.buffer, { contentType: file.mimetype });
+
+    if (error) {
+      console.error(
+        `Failed to upload file ${file.originalname}:`,
+        error.message
+      );
+      continue; // skip to the next file
+    }
+
+    try {
+      const prismaFile = await db.createFile({
+        name,
+        owner: { connect: { id: user.id } },
+        mimeType: file.mimetype,
+        path,
+        bucket,
+        size: file.size,
+        ...(req.body.folderId && {
+          folder: { connect: { id: Number(req.body.folderId) } },
+        }),
+      });
+      uploadedFiles.push(prismaFile);
+    } catch (err) {
+      console.error(`Failed to save file ${name} to DB:`, err);
+      await supabase.storage.from(bucket).remove([path]);
+    }
   }
 
-  try {
-    const prismaFile = await db.createFile({
-      name,
-      owner: { connect: { id: user.id } },
-      mimeType: file.mimetype,
-      path,
-      bucket,
-      size: file.size,
-      ...(req.body.folderId && {
-        folder: { connect: { id: Number(req.body.folderId) } },
-      }),
-    });
-    res.status(200).json(prismaFile);
-  } catch (err) {
-    console.error(err);
-    const { data, error } = await supabase.storage.from(bucket).remove([path]);
-  }
+  res.status(200).json({ uploaded: uploadedFiles });
 });
 
 export const deleteFile = asyncHandler(async (req, res) => {

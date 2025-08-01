@@ -1,3 +1,4 @@
+import useCreateFile from '@/hooks/useCreateFile';
 import {
   Card,
   FileUpload,
@@ -5,6 +6,7 @@ import {
   Portal,
   CloseButton,
   Button,
+  useFileUpload,
 } from '@chakra-ui/react';
 import { HiUpload } from 'react-icons/hi';
 
@@ -14,9 +16,16 @@ type FileFormProps = {
 };
 
 const UploadFileContainer = ({ isOpen, setIsOpen }: FileFormProps) => {
+  const { mutate: createFile } = useCreateFile();
   const handleUpload = () => {
+    createFile(fileUpload.acceptedFiles);
     setIsOpen(!isOpen);
   };
+
+  const fileUpload = useFileUpload({
+    maxFiles: 5,
+  });
+  console.log('accepted files: ', fileUpload.acceptedFiles);
 
   return (
     <Dialog.Root
@@ -33,7 +42,7 @@ const UploadFileContainer = ({ isOpen, setIsOpen }: FileFormProps) => {
               <Dialog.Title>Upload file</Dialog.Title>
             </Dialog.Header>
             <Dialog.Body>
-              <FileUpload.Root maxFiles={5}>
+              <FileUpload.RootProvider value={fileUpload}>
                 <FileUpload.HiddenInput />
                 <FileUpload.List showSize clearable />
                 <FileUpload.Trigger>
@@ -43,7 +52,7 @@ const UploadFileContainer = ({ isOpen, setIsOpen }: FileFormProps) => {
                     </Card.Body>
                   </Card.Root>
                 </FileUpload.Trigger>
-              </FileUpload.Root>
+              </FileUpload.RootProvider>
             </Dialog.Body>
             <Dialog.Footer>
               <Dialog.ActionTrigger asChild>
@@ -51,7 +60,7 @@ const UploadFileContainer = ({ isOpen, setIsOpen }: FileFormProps) => {
                   Cancel
                 </Button>
               </Dialog.ActionTrigger>
-              <Button disabled={true} size="xs" onClick={handleUpload}>
+              <Button size="xs" onClick={handleUpload}>
                 Upload
               </Button>
             </Dialog.Footer>

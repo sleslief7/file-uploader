@@ -4,16 +4,17 @@ import { toaster } from '@/components/ui/toaster';
 import { useMutation } from '@tanstack/react-query';
 
 type FileMutationType = {
-  file: File;
+  files: File[];
   folderId: number | null;
 };
+
 const useCreateFile = () =>
   useMutation({
-    mutationFn: ({ file, folderId }: FileMutationType) =>
-      createFile(file, folderId),
-    onSuccess: (file) => {
+    mutationFn: ({ files, folderId }: FileMutationType) =>
+      createFile(files, folderId),
+    onSuccess: (files) => {
       // TODO: invalidate query for the get items
-      console.log(file);
+      console.log(files);
       toaster.create({
         title: 'File created!',
         type: 'success',

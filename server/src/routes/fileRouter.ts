@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { upload } from '../middleware/upload';
 import {
-  createFile,
+  createFiles,
   deleteFile,
   getFiles,
   getFileById,
@@ -14,8 +14,8 @@ const fileRouter = Router();
 fileRouter.post(
   '/upload',
   ensureAuthenticated,
-  upload.single('file'),
-  createFile
+  upload.array('files'),
+  createFiles
 );
 fileRouter.delete('/:fileId', ensureAuthenticated, deleteFile);
 fileRouter.put('/:fileId', ensureAuthenticated, updateFile);

@@ -21,3 +21,13 @@ export const getItems = async (folderId: number | null = null) => {
     throw err;
   }
 };
+
+export const getBreadcrumb = async (folderId: number | null = null) => {
+  try {
+    const res = await apiClient.get(`folders/${folderId}/breadcrumb`);
+    return res.data;
+  } catch (err) {
+    console.error('Error getting breadcrumb', err);
+    throw err;
+  }
+};

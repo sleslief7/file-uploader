@@ -1,11 +1,15 @@
 import useGetItems from '@/hooks/useGetItems';
 import ItemsTable from '../ItemsTable';
+import BreadcrumbComp from '../BreadCrumb';
+import useGetBreadcrumb from '@/hooks/useGetBReadCrumb';
 
 const Homepage = () => {
-  const { data } = useGetItems();
+  const { data: items } = useGetItems();
+  const { data: breadcrumbs } = useGetBreadcrumb();
   return (
     <div>
-      <ItemsTable items={data} />
+      <BreadcrumbComp breadcrumbs={breadcrumbs} />
+      <ItemsTable items={items} />
     </div>
   );
 };

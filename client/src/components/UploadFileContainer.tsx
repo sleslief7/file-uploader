@@ -9,6 +9,7 @@ import {
   useFileUpload,
 } from '@chakra-ui/react';
 import { HiUpload } from 'react-icons/hi';
+import { toaster } from './ui/toaster';
 
 type FileFormProps = {
   isOpen: boolean;
@@ -16,16 +17,30 @@ type FileFormProps = {
 };
 
 const UploadFileContainer = ({ isOpen, setIsOpen }: FileFormProps) => {
-  const { mutate: createFile } = useCreateFile();
+  const { mutate: createFile, isPending } = useCreateFile();
   const handleUpload = () => {
-    createFile(fileUpload.acceptedFiles);
-    setIsOpen(!isOpen);
+    if (isPending) return;
+
+    createFile(
+      { files: fileUpload.acceptedFiles, folderId: null },
+      {
+        onSuccess: () => {
+          setIsOpen(!isOpen);
+          fileUpload.clearFiles();
+        },
+        onError: () => {
+          toaster.create({
+            title: 'Error while uploading file(s)',
+            type: 'error',
+          });
+        },
+      }
+    );
   };
 
   const fileUpload = useFileUpload({
     maxFiles: 5,
   });
-  console.log('accepted files: ', fileUpload.acceptedFiles);
 
   return (
     <Dialog.Root
@@ -61,7 +76,7 @@ const UploadFileContainer = ({ isOpen, setIsOpen }: FileFormProps) => {
                 </Button>
               </Dialog.ActionTrigger>
               <Button size="xs" onClick={handleUpload}>
-                Upload
+                {isPending ? 'Uploading...' : 'Upload'}
               </Button>
             </Dialog.Footer>
             <Dialog.CloseTrigger asChild>

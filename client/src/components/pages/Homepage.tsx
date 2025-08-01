@@ -1,5 +1,13 @@
+import useGetItems from '@/hooks/useGetItems';
+import ItemsTable from '../ItemsTable';
+
 const Homepage = () => {
-  return <div>Homepage</div>;
+  const { data } = useGetItems();
+  return (
+    <div>
+      <ItemsTable items={data} />
+    </div>
+  );
 };
 
 export default Homepage;

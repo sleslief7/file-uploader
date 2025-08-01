@@ -11,3 +11,13 @@ export const createFolder = async (name: string) => {
     throw err;
   }
 };
+
+export const getItems = async (folderId: number | null = null) => {
+  try {
+    const res = await apiClient.get(`/folders/${folderId}/items`);
+    return res.data;
+  } catch (err) {
+    console.error('Error getting items', err);
+    throw err;
+  }
+};

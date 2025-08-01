@@ -1,6 +1,6 @@
 import { createFile } from '@/api/fileApi';
 import { toaster } from '@/components/ui/toaster';
-// import { queryClient } from '@/tanstack/queryClient';
+import { queryClient } from '@/tanstack/queryClient';
 import { useMutation } from '@tanstack/react-query';
 
 type FileMutationType = {
@@ -13,8 +13,9 @@ const useCreateFile = () =>
     mutationFn: ({ files, folderId }: FileMutationType) =>
       createFile(files, folderId),
     onSuccess: (files) => {
-      // TODO: invalidate query for the get items
-      console.log(files);
+      queryClient.invalidateQueries({
+        queryKey: ['items', files.uploaded[0].folderId],
+      });
       toaster.create({
         title: 'File created!',
         type: 'success',

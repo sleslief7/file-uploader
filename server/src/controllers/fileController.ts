@@ -103,6 +103,72 @@ export const updateFile = asyncHandler(async (req, res) => {
   res.status(204).json(file);
 });
 
+export const renameFile = asyncHandler(async (req, res) => {
+  const { fileId } = req.params;
+
+  if (!fileId) {
+    res
+      .status(400)
+      .json({ status: 'fail', message: 'Provide fileId to delete file.' });
+    return;
+  }
+
+  let file = await db.getFileById(Number(fileId));
+
+  if (file === null) {
+    res.status(404).json({
+      status: 'fail',
+      message: `File with id '${fileId}' does not exists.`,
+    });
+    return;
+  }
+
+  const { name } = req.body;
+
+  if (!name) {
+    res.status(400).json({
+      status: 'fail',
+      message: `Invalid name provided`,
+    });
+    return;
+  }
+
+  const extension = name.split('.').at(-1);
+  const newNameWithExtension = `${name}.${extension}`;
+  const newPath = file.path.replace(file.name, newNameWithExtension);
+
+  const { error: copyError } = await supabase.storage
+    .from(file.bucket)
+    .copy(file.path, newPath);
+
+  if (copyError) {
+    res.status(500).json({
+      status: 'fail',
+      message: 'Error encountered while copying file',
+    });
+    return;
+  }
+
+  const { error } = await supabase.storage
+    .from(file.bucket)
+    .remove([file.path]);
+
+  if (error) {
+    res.status(500).json({
+      status: 'fail',
+      message: 'Error encountered while deleting file from storage',
+    });
+    return;
+  }
+
+  file.name = newNameWithExtension;
+  file.path = newPath;
+
+  file = await db.updateFile(file.id, file);
+
+  res.status(204).json(file);
+});
+
 export const getFileById = asyncHandler(async (req, res) => {
   const { fileId } = req.params;
   const file = await db.getFileById(Number(fileId));

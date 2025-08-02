@@ -92,7 +92,7 @@ export const renameFile = asyncHandler(async (req, res) => {
 
   if (!name) throw new BadRequestError('Invalid name provided');
 
-  const extension = name.split('.').at(-1);
+  const extension = file.name.split('.').at(-1);
   const newNameWithExtension = `${name}.${extension}`;
   const newPath = file.path.replace(file.name, newNameWithExtension);
 

@@ -1,11 +1,9 @@
-import type { BreadCrumb } from '@/interfaces/folderInterface';
+import useGetBreadcrumb from '@/hooks/useGetBreadCrumb';
 import { Breadcrumb } from '@chakra-ui/react';
-import { LuHouse } from 'react-icons/lu';
 
-type BreadcrumbProps = {
-  breadcrumbs: BreadCrumb[];
-};
-const BreadcrumbComp = ({ breadcrumbs }: BreadcrumbProps) => {
+const BreadcrumbComp = () => {
+  const { data: breadcrumbs } = useGetBreadcrumb();
+
   return (
     <Breadcrumb.Root size="lg">
       <Breadcrumb.List>
@@ -15,7 +13,6 @@ const BreadcrumbComp = ({ breadcrumbs }: BreadcrumbProps) => {
               key={`${breadcrumb.folderName}-${breadcrumb.position}`}
             >
               <Breadcrumb.Link href="#">
-                {breadcrumb.folderName === 'Home' ? <LuHouse /> : ''}{' '}
                 {breadcrumb.folderName}
               </Breadcrumb.Link>
             </Breadcrumb.Item>

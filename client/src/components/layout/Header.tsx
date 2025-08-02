@@ -1,7 +1,15 @@
 import { ColorModeButton } from '@/components/ui/color-mode';
 import { useAuth } from '@/hooks/useAuth';
 import useLogout from '@/hooks/useLogout';
-import { Box, Button, Grid, GridItem, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Grid,
+  GridItem,
+  Text,
+  Image,
+  HStack,
+} from '@chakra-ui/react';
 import AddMenu from '../AddMenu';
 
 const Header = () => {
@@ -12,9 +20,17 @@ const Header = () => {
       <Grid templateColumns="repeat(3, 1fr)" alignItems={'center'}>
         <GridItem>{isAuth && <AddMenu />}</GridItem>
         <GridItem colSpan={1} justifySelf={'center'}>
-          <Text fontSize="2xl" textAlign="center">
-            File Uploader
-          </Text>
+          <HStack>
+            <Image
+              src="../../../public/favicon.png"
+              alt="File Uploader"
+              aspectRatio={1 / 1}
+              w="40px"
+            />
+            <Text fontSize="2xl" textAlign="center">
+              File Uploader
+            </Text>
+          </HStack>
         </GridItem>
         <GridItem colSpan={1} justifySelf={'end'}>
           <ColorModeButton />

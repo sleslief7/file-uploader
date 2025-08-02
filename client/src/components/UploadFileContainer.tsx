@@ -40,6 +40,7 @@ const UploadFileContainer = ({ isOpen, setIsOpen }: FileFormProps) => {
 
   const fileUpload = useFileUpload({
     maxFiles: 5,
+    maxFileSize: 5 * 1024 * 1024, // 5MB
   });
 
   return (

@@ -23,7 +23,7 @@ export const createFiles = asyncHandler(async (req, res) => {
     const name = `${sanitizedName}`;
     const path = `${user.id}/${folderId ?? 'home'}/${name}`;
 
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from(bucket)
       .upload(path, file.buffer, { contentType: file.mimetype });
 
@@ -62,18 +62,30 @@ export const deleteFile = asyncHandler(async (req, res) => {
       .json({ status: 'fail', message: 'Provide fileId to delete file.' });
     return;
   }
-  if (!(await db.fileExists(Number(fileId)))) {
+
+  let file = await db.getFileById(Number(fileId));
+
+  if (file === null) {
     res
       .status(404)
       .json({ status: 'fail', message: 'fileId does not exists.' });
     return;
   }
 
-  const file = await db.deleteFile(Number(fileId));
-
-  const { data, error } = await supabase.storage
+  const { error } = await supabase.storage
     .from(file.bucket)
     .remove([file.path]);
+
+  if (error) {
+    res.status(500).json({
+      status: 'fail',
+      message: 'Error encountered while deleting file from storage',
+    });
+    return;
+  }
+
+  file = await db.deleteFile(Number(fileId));
+
   res.status(204).json(file);
 });
 

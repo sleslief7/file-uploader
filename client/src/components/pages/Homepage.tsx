@@ -1,16 +1,13 @@
-import useGetItems from '@/hooks/useGetItems';
-import ItemsTable from '../ItemsTable';
+import ItemsTable from '../table/ItemsTable';
 import BreadcrumbComp from '../BreadCrumb';
-import useGetBreadcrumb from '@/hooks/useGetBReadCrumb';
+import { Stack } from '@chakra-ui/react';
 
 const Homepage = () => {
-  const { data: items } = useGetItems();
-  const { data: breadcrumbs } = useGetBreadcrumb();
   return (
-    <div>
-      <BreadcrumbComp breadcrumbs={breadcrumbs} />
-      <ItemsTable items={items} />
-    </div>
+    <Stack gap={2}>
+      <BreadcrumbComp />
+      <ItemsTable />
+    </Stack>
   );
 };
 

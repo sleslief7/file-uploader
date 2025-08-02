@@ -4,6 +4,7 @@ import cors from 'cors';
 import sessionMiddleware from './auth/session';
 import passport from './auth';
 import apiRouter from './routes';
+import { errorMiddleware } from './middleware/errorMiddleware';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,6 +22,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(apiRouter);
+
+app.use(errorMiddleware);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

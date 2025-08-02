@@ -7,6 +7,7 @@ import {
   getFileById,
   updateFile,
   renameFile,
+  getFileUrl,
 } from '../controllers/fileController';
 import { ensureAuthenticated } from '../controllers/authController';
 
@@ -17,6 +18,7 @@ fileRouter.put('/:fileId', ensureAuthenticated, updateFile);
 fileRouter.get('/:fileId', ensureAuthenticated, getFileById);
 fileRouter.get('/', ensureAuthenticated, getFiles);
 fileRouter.post('/:fileId/rename', ensureAuthenticated, renameFile);
+fileRouter.get('/:fileId/signed_url', ensureAuthenticated, getFileUrl);
 
 const folderFilesRouter = Router();
 

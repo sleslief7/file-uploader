@@ -5,6 +5,7 @@ import { BadRequestError } from '../validation/errors';
 import {
   validateFolderExists,
   validateFolderId,
+  validateNullableFolderId,
 } from '../validation/validators';
 
 export const createFolder = asyncHandler(async (req, res) => {
@@ -44,8 +45,7 @@ export const getFolderById = asyncHandler(async (req, res) => {
 });
 
 export const getFolders = asyncHandler(async (req, res) => {
-  const parentFolderId =
-    req.body?.parentFolderId == null ? null : Number(req.body.parentFolderId);
+  const parentFolderId = validateNullableFolderId(req.body.parentFolderId);
 
   const folders = await db.getFolders(req.user!.id, parentFolderId);
 
@@ -53,7 +53,7 @@ export const getFolders = asyncHandler(async (req, res) => {
 });
 
 export const getItemsByParentFolderId = asyncHandler(async (req, res) => {
-  const folderId = Number(req.params.folderId);
+  const folderId = validateNullableFolderId(req.params.folderId);
   const folders = await db.getFolders(req.user!.id, folderId);
   const files = await db.getFiles(req.user!.id, folderId);
 
@@ -84,9 +84,7 @@ export const getItemsByParentFolderId = asyncHandler(async (req, res) => {
 });
 
 export const getBreadCrumb = asyncHandler(async (req, res) => {
-  let folderId: number | null | undefined = req.params.folderId
-    ? Number(req.params.folderId)
-    : null;
+  let folderId = validateNullableFolderId(req.params.folderId);
 
   const breadCrumb: Breadcrumb = [];
 
@@ -97,7 +95,7 @@ export const getBreadCrumb = asyncHandler(async (req, res) => {
       folderId: folder?.id,
       position: 0,
     });
-    folderId = folder?.parentFolderId;
+    folderId = folder?.parentFolderId ?? null;
   }
 
   breadCrumb.unshift({

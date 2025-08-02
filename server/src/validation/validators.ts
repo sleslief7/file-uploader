@@ -23,17 +23,28 @@ export async function validateFileExists(fileId: number) {
   return file;
 }
 
-export function validateFolderId(folderId: string | undefined): number {
-  if (!folderId) {
+export function validateNullableFolderId(
+  folderId: string | undefined | null
+): number | null {
+  if (folderId === undefined) {
     throw new BadRequestError('Provide folderId.');
   }
 
+  if (folderId === null || folderId === 'home') return null;
+
   const id = Number(folderId);
   if (isNaN(id)) {
-    throw new BadRequestError('folderId must be a number.');
+    throw new BadRequestError('folderId must be a number or null.');
   }
 
   return id;
+}
+
+export function validateFolderId(folderId: string | undefined | null): number {
+  const nullableFolderId = validateNullableFolderId(folderId);
+  if (nullableFolderId === null)
+    throw new BadRequestError('folderId can not be null/home');
+  return nullableFolderId;
 }
 
 export async function validateFolderExists(folderId: number) {

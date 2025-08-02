@@ -2,7 +2,11 @@ import db from '../db';
 import asyncHandler from 'express-async-handler';
 import { supabase } from '../lib/supabase';
 import { User } from '../../generated/prisma';
-import { validateFileExists, validateFileId } from '../validation/validators';
+import {
+  validateFileExists,
+  validateFileId,
+  validateFolderId,
+} from '../validation/validators';
 import { BadRequestError } from '../validation/errors';
 
 export const createFiles = asyncHandler(async (req, res) => {
@@ -123,18 +127,22 @@ export const getFileById = asyncHandler(async (req, res) => {
 });
 
 export const getFiles = asyncHandler(async (req, res) => {
-  let folderId;
-  if (!req.body?.folderId) {
-    folderId = null;
-  } else {
-    folderId = Number(req.body.folderId);
-  }
+  const folderId = validateFolderId(req.body.folderId);
 
-  let files;
-  if (!folderId) {
-    files = await db.getFiles(req.user!.id, folderId);
-  } else {
-    files = await db.getFiles(req.user!.id, folderId);
-  }
+  const files = await db.getFiles(req.user!.id, folderId);
+
   res.status(200).json(files);
+});
+
+export const getFileUrl = asyncHandler(async (req, res) => {
+  const fileId = validateFileId(req.params.fileId);
+  let file = await validateFileExists(fileId);
+
+  const { data, error } = await supabase.storage
+    .from(file.bucket)
+    .createSignedUrl(file.path, 60);
+
+  if (error) throw error;
+
+  res.status(200).json({ signedUrl: data.signedUrl });
 });

@@ -24,6 +24,7 @@
     "@types/multer": "^1.4.12",
     "@types/node": "^22.15.20",
     "@types/passport": "^1.0.17",
+    "@types/passport-google-oauth20": "^2.0.16",
     "@types/passport-local": "^1.0.38",
     "prisma": "^6.8.2",
     "ts-node-dev": "^2.0.0",
@@ -42,6 +43,7 @@
     "express-session": "^1.18.1",
     "multer": "^2.0.0",
     "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0"
   }
 }

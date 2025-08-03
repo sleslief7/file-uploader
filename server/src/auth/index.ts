@@ -1,5 +1,6 @@
 import passport from 'passport';
 import './strategies/local';
+import './strategies/google';
 import db from '../db';
 import { User as PrismaUser } from '../../generated/prisma';
 

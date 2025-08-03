@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import db from '../db';
 import bcrypt from 'bcrypt';
 import { RequestHandler } from 'express';
@@ -62,3 +63,32 @@ export const checkAuthStatus: RequestHandler = async (req, res) => {
 
   res.status(200).json({ isAuth, user });
 };
+
+export const googleLogin = asyncHandler(async (req, res, next) => {
+  passport.authenticate('google', { scope: ['profile', 'email'] })(
+    req,
+    res,
+    next
+  );
+});
+
+export const googleLoginCallback = asyncHandler(async (req, res, next) => {
+  passport.authenticate(
+    'google',
+    (err: any, user: Express.User | false, info: { message?: string }) => {
+      if (err) return next(err);
+
+      if (!user) {
+        return res
+          .status(401)
+          .json({ message: info?.message || 'Login failed' });
+      }
+
+      req.logIn(user, function (err) {
+        if (err) return next(err);
+
+        res.redirect(`${process.env.CLIENT_URL}/`);
+      });
+    }
+  )(req, res, next);
+});

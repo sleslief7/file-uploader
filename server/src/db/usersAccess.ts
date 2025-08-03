@@ -1,6 +1,7 @@
 const prisma = require('./prisma');
 import { Prisma, User } from '../../generated/prisma';
 import type { UserWithoutPassword } from '../interfaces';
+import { Profile as GoogleProfile } from 'passport-google-oauth20';
 
 export const createUser = async (
   newUser: Prisma.UserCreateInput,
@@ -64,6 +65,37 @@ export const userExists = async (username: string) => {
   const user = await prisma.user.findFirst({
     where: {
       username,
+    },
+  });
+  return user;
+};
+
+export const findOrCreateGoogleUser = async (
+  profile: GoogleProfile
+): Promise<User> => {
+  let user = await findUserByGoogleId(profile.id);
+
+  if (!user) {
+    const newUserInput: Prisma.UserCreateInput = {
+      name: profile.displayName,
+      username: profile.displayName,
+      googleId: profile.id,
+      email: profile.emails![0].value,
+      profileImgUrl: profile.photos ? profile.photos[0].value : null,
+    };
+
+    user = (await createUser(newUserInput)) as User;
+  }
+
+  return user!;
+};
+
+export const findUserByGoogleId = async (
+  googleId: string
+): Promise<User | null> => {
+  const user = await prisma.user.findFirst({
+    where: {
+      googleId,
     },
   });
   return user;

@@ -30,7 +30,8 @@ export function validateNullableFolderId(
     throw new BadRequestError('Provide folderId.');
   }
 
-  if (folderId === null || folderId === 'home') return null;
+  if (folderId === null || folderId === 'home' || folderId === 'null')
+    return null;
 
   const id = Number(folderId);
   if (isNaN(id)) {

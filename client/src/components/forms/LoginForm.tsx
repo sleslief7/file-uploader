@@ -39,6 +39,10 @@ const LoginForm = () => {
     });
   };
 
+  const handleGoogleLogin = () => {
+    window.location.href = `${import.meta.env.VITE_API_URL}/api/login/google`;
+  };
+
   return (
     <form onSubmit={handleSubmit(handleLogin)}>
       <Fieldset.Root size="lg" maxW="md">
@@ -65,10 +69,10 @@ const LoginForm = () => {
         {errors.root && <Text color={'fg.error'}>{errors.root.message}</Text>}
 
         <Button type="submit">
-          {isSubmitting ? 'Logging in...' : 'Login'}
+          {isSubmitting ? 'Signing in...' : 'Sign in'}
         </Button>
-        <Button>
-          Login with <FcGoogle />
+        <Button onClick={handleGoogleLogin}>
+          Sign in with <FcGoogle />
         </Button>
 
         <Link to="/sign-up">Create an account</Link>

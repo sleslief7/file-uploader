@@ -37,7 +37,7 @@ const ItemsTable = () => {
               {item.size ? bytesToMegabytes(item.size) : '-'}
             </Table.Cell>
             <Table.Cell textAlign="end">
-              <ItemMenu />
+              <ItemMenu item={item} />
             </Table.Cell>
           </Table.Row>
         ))}

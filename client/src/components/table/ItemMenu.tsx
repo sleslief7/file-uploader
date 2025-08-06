@@ -1,7 +1,23 @@
+import useDeleteFile from '@/hooks/useDeleteFile';
+import useDeleteFolder from '@/hooks/useDeleteFolder';
+import type { ItemType } from '@/interfaces/ItemInterface';
 import { Button, Menu, Portal } from '@chakra-ui/react';
 import { PiDotsThreeVerticalBold } from 'react-icons/pi';
 
-const ItemMenu = () => {
+type ItemMenuProp = {
+  item: ItemType;
+};
+const ItemMenu = ({ item }: ItemMenuProp) => {
+  const { mutate: deleteFile } = useDeleteFile();
+  const { mutate: deleteFolder } = useDeleteFolder();
+
+  const handleDelete = () => {
+    if (item.isFile) {
+      deleteFile(item.id);
+    } else {
+      deleteFolder(item.id);
+    }
+  };
   return (
     <Menu.Root>
       <Menu.Trigger asChild>
@@ -18,6 +34,7 @@ const ItemMenu = () => {
               value="delete"
               color="fg.error"
               _hover={{ bg: 'bg.error', color: 'fg.error' }}
+              onClick={handleDelete}
             >
               Delete...
             </Menu.Item>

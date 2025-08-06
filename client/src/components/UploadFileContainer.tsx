@@ -43,12 +43,17 @@ const UploadFileContainer = ({ isOpen, setIsOpen }: FileFormProps) => {
     maxFileSize: 5 * 1024 * 1024, // 5MB
   });
 
+  const handleOnOpenChange = (e: { open: boolean }) => {
+    setIsOpen(e.open);
+    fileUpload.clearFiles();
+  };
+
   return (
     <Dialog.Root
       size="sm"
       placement="center"
       open={isOpen}
-      onOpenChange={(e) => setIsOpen(e.open)}
+      onOpenChange={handleOnOpenChange}
     >
       <Portal>
         <Dialog.Backdrop />

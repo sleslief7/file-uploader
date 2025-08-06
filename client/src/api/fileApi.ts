@@ -23,3 +23,13 @@ export const createFile = async (
     throw err;
   }
 };
+
+export const deleteFile = async (id: number) => {
+  try {
+    const res = await apiClient.delete(`files/${id}`);
+    return res.data;
+  } catch (err) {
+    console.error('Error deleting file', err);
+    throw err;
+  }
+};

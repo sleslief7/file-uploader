@@ -13,7 +13,7 @@ import { FaFolder } from 'react-icons/fa6';
 import { useAuth } from '@/hooks/useAuth';
 import { formatDate } from '@/util/formatDate';
 import { bytesToMegabytes } from '@/util/bytesToMegabytes';
-import useGetItems from '@/hooks/useGetItems';
+import useItems from '@/hooks/useItems';
 import ItemMenu from './ItemMenu';
 import { useNavigate } from 'react-router-dom';
 import useFolderIdParam from '@/hooks/useFolderIdParam';
@@ -21,7 +21,7 @@ import useFolderIdParam from '@/hooks/useFolderIdParam';
 const ItemsTable = () => {
   const { user } = useAuth();
   const folderId = useFolderIdParam();
-  const { data: items } = useGetItems(folderId);
+  const { data: items } = useItems(folderId);
   const navigate = useNavigate();
 
   if (items.length === 0) return <EmptyStateComponent />;

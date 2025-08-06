@@ -1,11 +1,11 @@
 import useFolderIdParam from '@/hooks/useFolderIdParam';
-import useGetBreadcrumb from '@/hooks/useGetBreadCrumb';
+import useBreadcrumb from '@/hooks/useBreadcrumb';
 import { Breadcrumb as ChakraBreadcrumb } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
 const Breadcrumb = () => {
   const folderId = useFolderIdParam();
-  const { data: breadcrumbs } = useGetBreadcrumb(folderId);
+  const { data: breadcrumbs } = useBreadcrumb(folderId);
   const navigate = useNavigate();
 
   return (

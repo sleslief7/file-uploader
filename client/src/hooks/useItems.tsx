@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getItems } from '../api/folderApi';
 import type { ItemType } from '@/interfaces/ItemInterface';
 
-const useGetItems = (folderId: number | null = null) => {
+const useItems = (folderId: number | null = null) => {
   const dataFallback: ItemType[] = [];
   const { data = dataFallback, ...queryRest } = useQuery<ItemType[]>({
     queryKey: ['items', folderId],
@@ -12,4 +12,4 @@ const useGetItems = (folderId: number | null = null) => {
   return { data, ...queryRest };
 };
 
-export default useGetItems;
+export default useItems;

@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react';
 import { HiUpload } from 'react-icons/hi';
 import { toaster } from './ui/toaster';
+import useFolderIdParam from '@/hooks/useFolderIdParam';
 
 type FileFormProps = {
   isOpen: boolean;
@@ -17,13 +18,15 @@ type FileFormProps = {
 };
 
 const UploadFileContainer = ({ isOpen, setIsOpen }: FileFormProps) => {
+  const folderId = useFolderIdParam();
   const { mutate: createFile, isPending } = useCreateFile();
+
   const handleUpload = () => {
     if (isPending) return;
 
     toaster.loading({ title: 'Uploading...' });
     createFile(
-      { files: fileUpload.acceptedFiles, folderId: null },
+      { files: fileUpload.acceptedFiles, folderId },
       {
         onSuccess: () => {
           toaster.dismiss();

@@ -1,24 +1,24 @@
 import useFolderIdParam from '@/hooks/useFolderIdParam';
 import useGetBreadcrumb from '@/hooks/useGetBreadCrumb';
-import { Breadcrumb } from '@chakra-ui/react';
+import { Breadcrumb as ChakraBreadcrumb } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
-const BreadcrumbComp = () => {
+const Breadcrumb = () => {
   const folderId = useFolderIdParam();
   const { data: breadcrumbs } = useGetBreadcrumb(folderId);
   const navigate = useNavigate();
 
   return (
-    <Breadcrumb.Root size="lg">
-      <Breadcrumb.List>
+    <ChakraBreadcrumb.Root size="lg">
+      <ChakraBreadcrumb.List>
         {breadcrumbs.map((breadcrumb) => {
           const LinkComponent =
             breadcrumb.folderId === folderId
-              ? Breadcrumb.CurrentLink
-              : Breadcrumb.Link;
+              ? ChakraBreadcrumb.CurrentLink
+              : ChakraBreadcrumb.Link;
           return (
             <>
-              <Breadcrumb.Item
+              <ChakraBreadcrumb.Item
                 key={`${breadcrumb.folderName}-${breadcrumb.position}`}
                 cursor="pointer"
               >
@@ -27,18 +27,16 @@ const BreadcrumbComp = () => {
                 >
                   {breadcrumb.folderName}
                 </LinkComponent>
-              </Breadcrumb.Item>
-              {breadcrumbs.length === breadcrumb.position ? (
-                ''
-              ) : (
-                <Breadcrumb.Separator />
+              </ChakraBreadcrumb.Item>
+              {breadcrumbs.length !== breadcrumb.position && (
+                <ChakraBreadcrumb.Separator />
               )}
             </>
           );
         })}
-      </Breadcrumb.List>
-    </Breadcrumb.Root>
+      </ChakraBreadcrumb.List>
+    </ChakraBreadcrumb.Root>
   );
 };
 
-export default BreadcrumbComp;
+export default Breadcrumb;

@@ -1,6 +1,14 @@
 import type { ItemType } from '@/interfaces/ItemInterface';
-import { Flex, Table } from '@chakra-ui/react';
+import {
+  Flex,
+  Table,
+  EmptyState,
+  VStack,
+  ButtonGroup,
+  Button,
+} from '@chakra-ui/react';
 import { FiFileText } from 'react-icons/fi';
+import { TbFolders } from 'react-icons/tb';
 import { FaFolder } from 'react-icons/fa6';
 import { useAuth } from '@/hooks/useAuth';
 import { formatDate } from '@/util/formatDate';
@@ -16,8 +24,17 @@ const ItemsTable = () => {
   const { data: items } = useGetItems(folderId);
   const navigate = useNavigate();
 
+  if (items.length === 0) return <EmptyStateComponent />;
+
   return (
     <Table.Root variant="outline" interactive>
+      <Table.ColumnGroup>
+        <Table.Column htmlWidth="40%" />
+        <Table.Column htmlWidth="30%" />
+        <Table.Column htmlWidth="12%" />
+        <Table.Column />
+        <Table.Column />
+      </Table.ColumnGroup>
       <Table.Header>
         <Table.Row>
           <Table.ColumnHeader>Name</Table.ColumnHeader>
@@ -51,6 +68,30 @@ const ItemsTable = () => {
         ))}
       </Table.Body>
     </Table.Root>
+  );
+};
+
+const EmptyStateComponent = () => {
+  return (
+    <Flex width="100%">
+      <EmptyState.Root>
+        <EmptyState.Content>
+          <EmptyState.Indicator>
+            <TbFolders />
+          </EmptyState.Indicator>
+          <VStack textAlign="center">
+            <EmptyState.Title>Start adding files</EmptyState.Title>
+            <EmptyState.Description>
+              Add a new file or create a folder to get started
+            </EmptyState.Description>
+          </VStack>
+          <ButtonGroup>
+            <Button variant="outline">Create folder</Button>
+            <Button>Upload file</Button>
+          </ButtonGroup>
+        </EmptyState.Content>
+      </EmptyState.Root>
+    </Flex>
   );
 };
 

@@ -21,18 +21,19 @@ const UploadFileContainer = ({ isOpen, setIsOpen }: FileFormProps) => {
   const handleUpload = () => {
     if (isPending) return;
 
+    toaster.loading({ title: 'Uploading...' });
     createFile(
       { files: fileUpload.acceptedFiles, folderId: null },
       {
         onSuccess: () => {
+          toaster.dismiss();
+          toaster.success({ title: 'Uploaded successfully!' });
           setIsOpen(!isOpen);
           fileUpload.clearFiles();
         },
         onError: () => {
-          toaster.create({
-            title: 'Error while uploading file(s)',
-            type: 'error',
-          });
+          toaster.dismiss();
+          toaster.error({ title: 'Error while uploading file(s)' });
         },
       }
     );

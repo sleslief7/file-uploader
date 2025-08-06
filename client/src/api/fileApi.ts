@@ -33,3 +33,13 @@ export const deleteFile = async (id: number) => {
     throw err;
   }
 };
+
+export const getSignedUrl = async (fileId: number): Promise<string> => {
+  try {
+    const res = await apiClient.get(`/files/${fileId}/signed_url`);
+    return res.data.signedUrl;
+  } catch (err) {
+    console.error('Error deleting file', err);
+    throw err;
+  }
+};

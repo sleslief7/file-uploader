@@ -22,7 +22,7 @@ const Header = () => {
         <GridItem colSpan={1} justifySelf={'center'}>
           <HStack>
             <Image
-              src="../../../public/favicon.png"
+              src="/favicon.png"
               alt="File Uploader"
               aspectRatio={1 / 1}
               w="40px"

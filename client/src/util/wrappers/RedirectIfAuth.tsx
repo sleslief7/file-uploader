@@ -6,7 +6,7 @@ const RedirectIfAuth = ({ children }: { children: ReactNode }) => {
   const { isAuth } = useAuth();
 
   if (isAuth) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/home" replace />;
   }
 
   return children;

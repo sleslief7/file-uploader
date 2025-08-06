@@ -7,10 +7,14 @@ import { formatDate } from '@/util/formatDate';
 import { bytesToMegabytes } from '@/util/bytesToMegabytes';
 import useGetItems from '@/hooks/useGetItems';
 import ItemMenu from './ItemMenu';
+import { useNavigate } from 'react-router-dom';
+import useFolderIdParam from '@/hooks/useFolderIdParam';
 
 const ItemsTable = () => {
   const { user } = useAuth();
-  const { data: items } = useGetItems();
+  const folderId = useFolderIdParam();
+  const { data: items } = useGetItems(folderId);
+  const navigate = useNavigate();
 
   return (
     <Table.Root variant="outline" interactive>
@@ -26,7 +30,11 @@ const ItemsTable = () => {
       <Table.Body>
         {items.map((item: ItemType) => (
           <Table.Row key={item.id}>
-            <Table.Cell>
+            <Table.Cell
+              onClick={() => {
+                if (!item.isFile) navigate(`/${item.id}`);
+              }}
+            >
               <Flex gap={3}>
                 {item.isFile ? <FiFileText /> : <FaFolder />} {item.name}
               </Flex>

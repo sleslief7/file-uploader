@@ -1,5 +1,5 @@
 import ItemsTable from '../table/ItemsTable';
-import BreadcrumbComp from '../BreadCrumb';
+import BreadcrumbComp from '../BreadcrumbComp';
 import { Stack } from '@chakra-ui/react';
 
 const Homepage = () => {

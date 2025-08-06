@@ -1,10 +1,10 @@
-import { Menu, Portal, IconButton, Text, Flex } from '@chakra-ui/react';
-import { GoPlus } from 'react-icons/go';
+import { Menu, Portal, Text, Flex } from '@chakra-ui/react';
 import UploadFileContainer from './UploadFileContainer';
 import FolderForm from './forms/FolderForm';
 import { useState } from 'react';
 import { HiUpload } from 'react-icons/hi';
 import { HiFolderAdd } from 'react-icons/hi';
+import { IoIosAddCircleOutline } from 'react-icons/io';
 
 const AddMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,9 +13,7 @@ const AddMenu = () => {
   return (
     <Menu.Root>
       <Menu.Trigger>
-        <IconButton size="sm" rounded="sm" px={1}>
-          <GoPlus /> New
-        </IconButton>
+        <IoIosAddCircleOutline size={26} cursor="pointer" />
       </Menu.Trigger>
       <Portal>
         <Menu.Positioner>

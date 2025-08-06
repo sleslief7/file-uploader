@@ -12,6 +12,7 @@ import useCreateFolder from '@/hooks/useCreateFolder';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import * as z from 'zod/v4';
+import useFolderIdParam from '@/hooks/useFolderIdParam';
 
 const schema = z.object({
   name: z.string().trim().min(1),
@@ -26,6 +27,7 @@ type FolderFormProps = {
 
 const FolderForm = ({ isOpen, setIsOpen }: FolderFormProps) => {
   const { mutate: createFolder } = useCreateFolder();
+  const parentFolderId = useFolderIdParam();
 
   const {
     register,
@@ -41,13 +43,16 @@ const FolderForm = ({ isOpen, setIsOpen }: FolderFormProps) => {
   });
 
   const handleCreateFolder: SubmitHandler<FormFields> = async (data) => {
-    await createFolder(data.name, {
-      onError: () => {
-        setError('root', {
-          message: 'Error creating folder',
-        });
-      },
-    });
+    await createFolder(
+      { name: data.name, parentFolderId },
+      {
+        onError: () => {
+          setError('root', {
+            message: 'Error creating folder',
+          });
+        },
+      }
+    );
     reset();
     setIsOpen(!isOpen);
   };

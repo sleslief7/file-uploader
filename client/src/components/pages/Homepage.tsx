@@ -1,13 +1,15 @@
 import ItemsTable from '../table/ItemsTable';
-import BreadcrumbComp from '../BreadcrumbComp';
-import { Box, Stack } from '@chakra-ui/react';
+import Breadcrumb from '../Breadcrumb';
+import { Flex, Stack } from '@chakra-ui/react';
+import AddMenu from '../AddMenu';
 
 const Homepage = () => {
   return (
-    <Stack gap={2}>
-      <Box p={2}>
-        <BreadcrumbComp />
-      </Box>
+    <Stack gap={0}>
+      <Flex p={2} justifyContent="space-between">
+        <Breadcrumb />
+        <AddMenu />
+      </Flex>
       <ItemsTable />
     </Stack>
   );

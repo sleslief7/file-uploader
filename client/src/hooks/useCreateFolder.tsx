@@ -4,11 +4,17 @@ import { queryClient } from '@/tanstack/queryClient';
 import { useMutation } from '@tanstack/react-query';
 import useFolderIdParam from './useFolderIdParam';
 
+type CreateFolderRequest = {
+  name: string;
+  parentFolderId: number | null;
+};
+
 const useCreateFolder = () => {
   const folderId = useFolderIdParam();
 
   return useMutation({
-    mutationFn: (name: string) => createFolder(name),
+    mutationFn: ({ name, parentFolderId }: CreateFolderRequest) =>
+      createFolder(name, parentFolderId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['items', folderId] });
       toaster.create({

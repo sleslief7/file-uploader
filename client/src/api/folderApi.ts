@@ -1,9 +1,13 @@
 import apiClient from './apiClient';
 
-export const createFolder = async (name: string) => {
+export const createFolder = async (
+  name: string,
+  parentFolderId: number | null = null
+) => {
   try {
     const res = await apiClient.post(`/folders`, {
       name,
+      parentFolderId,
     });
     return res.data;
   } catch (err) {

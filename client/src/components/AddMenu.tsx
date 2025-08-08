@@ -1,14 +1,14 @@
 import { Menu, Portal, Text, Flex } from '@chakra-ui/react';
 import UploadFileContainer from './UploadFileContainer';
 import FolderForm from './forms/FolderForm';
-import { useState } from 'react';
 import { HiUpload } from 'react-icons/hi';
 import { HiFolderAdd } from 'react-icons/hi';
 import { IoIosAddCircleOutline } from 'react-icons/io';
+import { useModal } from '@/hooks/useModal';
 
 const AddMenu = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isFileOpen, setIsFileOpen] = useState(false);
+  const { isFolderOpen, setIsFolderOpen, isFileOpen, setIsFileOpen } =
+    useModal();
 
   return (
     <Menu.Root>
@@ -19,7 +19,7 @@ const AddMenu = () => {
         <Menu.Positioner>
           <Menu.Content>
             <Menu.Item cursor="pointer" value="new-folder">
-              <Text onClick={() => setIsOpen(!isOpen)}>
+              <Text onClick={() => setIsFolderOpen(!isFolderOpen)}>
                 <Flex gap={1} alignItems={'center'}>
                   <HiFolderAdd />
                   New Folder
@@ -38,7 +38,7 @@ const AddMenu = () => {
         </Menu.Positioner>
       </Portal>
       <UploadFileContainer isOpen={isFileOpen} setIsOpen={setIsFileOpen} />
-      <FolderForm isOpen={isOpen} setIsOpen={setIsOpen} />
+      <FolderForm isOpen={isFolderOpen} setIsOpen={setIsFolderOpen} />
     </Menu.Root>
   );
 };

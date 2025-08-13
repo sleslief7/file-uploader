@@ -2,6 +2,7 @@ import useFolderIdParam from '@/hooks/useFolderIdParam';
 import useBreadcrumb from '@/hooks/useBreadcrumb';
 import { Breadcrumb as ChakraBreadcrumb } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import { Fragment } from 'react/jsx-runtime';
 
 const Breadcrumb = () => {
   const folderId = useFolderIdParam();
@@ -17,9 +18,8 @@ const Breadcrumb = () => {
               ? ChakraBreadcrumb.CurrentLink
               : ChakraBreadcrumb.Link;
           return (
-            <>
+            <Fragment key={`${breadcrumb.folderName}-${breadcrumb.position}`}>
               <ChakraBreadcrumb.Item
-                key={`${breadcrumb.folderName}-${breadcrumb.position}`}
                 cursor="pointer"
               >
                 <LinkComponent
@@ -31,7 +31,7 @@ const Breadcrumb = () => {
               {breadcrumbs.length !== breadcrumb.position && (
                 <ChakraBreadcrumb.Separator />
               )}
-            </>
+            </Fragment>
           );
         })}
       </ChakraBreadcrumb.List>

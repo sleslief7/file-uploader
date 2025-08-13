@@ -39,7 +39,7 @@ const ItemsTable = () => {
       </Table.Header>
       <Table.Body>
         {items.map((item: ItemType) => (
-          <Table.Row key={item.id}>
+          <Table.Row key={`item-${item.id}-${item.isFile ? 'file' : 'folder'}`} cursor={!item.isFile ? 'pointer' : 'default'}>
             <Table.Cell
               onClick={() => {
                 if (!item.isFile) navigate(`/${item.id}`);

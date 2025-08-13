@@ -33,6 +33,8 @@ export const updateFolder = asyncHandler(async (req, res) => {
 export const deleteFolder = asyncHandler(async (req, res) => {
   const folderId = validateFolderId(req.params.folderId);
   let folder = await validateFolderExists(folderId);
+  const bucket = process.env.SUPABASE_BUCKET_NAME || 'uploads';
+  const userId = req.user!.id;
 
   folder = await db.deleteFolder(Number(folderId));
   res.status(204).json(folder);

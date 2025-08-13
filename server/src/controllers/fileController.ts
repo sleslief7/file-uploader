@@ -16,7 +16,7 @@ export const createFiles = asyncHandler(async (req, res) => {
   if (!files || files.length === 0)
     throw new BadRequestError('No files uploaded');
 
-  const bucket = 'uploads';
+  const bucket = process.env.SUPABASE_BUCKET_NAME || 'uploads';
   const folderId =
     req.params.folderId === 'home' ? null : Number(req.params.folderId);
   const uploaded = [];

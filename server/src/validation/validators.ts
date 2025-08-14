@@ -26,11 +26,7 @@ export async function validateFileExists(fileId: number) {
 export function validateNullableFolderId(
   folderId: string | undefined | null
 ): number | null {
-  if (folderId === undefined) {
-    throw new BadRequestError('Provide folderId.');
-  }
-
-  if (folderId === null || folderId === 'home' || folderId === 'null')
+  if (!folderId || folderId === 'home' || folderId === 'null')
     return null;
 
   const id = Number(folderId);
@@ -43,8 +39,8 @@ export function validateNullableFolderId(
 
 export function validateFolderId(folderId: string | undefined | null): number {
   const nullableFolderId = validateNullableFolderId(folderId);
-  if (nullableFolderId === null)
-    throw new BadRequestError('folderId can not be null/home');
+  if (!nullableFolderId)
+    throw new BadRequestError('folderId can not be null/home/undefined');
   return nullableFolderId;
 }
 

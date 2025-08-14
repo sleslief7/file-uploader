@@ -5,11 +5,15 @@ import type { ItemType } from '@/interfaces/ItemInterface';
 import { Button, Menu, Portal } from '@chakra-ui/react';
 import { PiDotsThreeVerticalBold } from 'react-icons/pi';
 import { toaster } from '../ui/toaster';
+import RenameModal from '../RenameModal';
+import { useState } from 'react';
 
 type ItemMenuProp = {
   item: ItemType;
 };
+
 const ItemMenu = ({ item }: ItemMenuProp) => {
+  const [isRenameOpen, setIsRenameOpen] = useState(false);
   const { mutate: deleteFile } = useDeleteFile();
   const { mutate: deleteFolder } = useDeleteFolder();
 
@@ -65,7 +69,7 @@ const ItemMenu = ({ item }: ItemMenuProp) => {
       <Portal>
         <Menu.Positioner>
           <Menu.Content>
-            <Menu.Item value="rename">Rename</Menu.Item>
+            <Menu.Item value="rename" onClick={() => setIsRenameOpen(!isRenameOpen)}>Rename</Menu.Item>
             {item.isFile && (
               <Menu.Item value="download" onClick={handleDownload}>
                 Download
@@ -82,6 +86,7 @@ const ItemMenu = ({ item }: ItemMenuProp) => {
           </Menu.Content>
         </Menu.Positioner>
       </Portal>
+    <RenameModal isOpen={isRenameOpen} item={item} setIsOpen={setIsRenameOpen}/>
     </Menu.Root>
   );
 };

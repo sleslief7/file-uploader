@@ -49,14 +49,16 @@ export const deleteFolder = asyncHandler(async (req, res) => {
     filesToDelete.push(...currentFolderFilesToDelete)
   }
 
-  const { error } = await supabase
-    .storage
-    .from(process.env.SUPABASE_BUCKET_NAME!)
-    .remove(filesToDelete);
-
-  if (error) {
-    console.error(`Failed to delete the following files: ${filesToDelete.join(', ')}\nError message: ${error.message}`);
-    throw new Error('Failed to delete the following files: ' + filesToDelete.join(', ') + '\nError message: ' + error.message);
+  if (filesToDelete.length > 0) {
+    const { error } = await supabase
+      .storage
+      .from(process.env.SUPABASE_BUCKET_NAME!)
+      .remove(filesToDelete);
+    
+    if (error) {
+      console.error(`Failed to delete the following files: ${filesToDelete.join(', ')}\nError message: ${error.message}`);
+      throw new Error('Failed to delete the following files: ' + filesToDelete.join(', ') + '\nError message: ' + error.message);
+    }
   }
 
   let deletedRootFolder = await db.deleteFolder(folderId);
@@ -70,7 +72,7 @@ export const getFolderById = asyncHandler(async (req, res) => {
 });
 
 export const getFolders = asyncHandler(async (req, res) => {
-  const parentFolderId = validateNullableFolderId(req.body.parentFolderId);
+  const parentFolderId = validateNullableFolderId(req.body?.parentFolderId);
 
   const folders = await db.getFolders(req.user!.id, parentFolderId);
 

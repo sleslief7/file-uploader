@@ -28,7 +28,7 @@ export const getItems = async (folderId: number | null = null) => {
 
 export const getBreadcrumb = async (folderId: number | null = null) => {
   try {
-    const res = await apiClient.get(`folders/${folderId}/breadcrumb`);
+    const res = await apiClient.get(`/folders/${folderId}/breadcrumb`);
     return res.data;
   } catch (err) {
     console.error('Error getting breadcrumb', err);
@@ -38,10 +38,23 @@ export const getBreadcrumb = async (folderId: number | null = null) => {
 
 export const deleteFolder = async (id: number) => {
   try {
-    const res = await apiClient.delete(`folders/${id}`);
+    const res = await apiClient.delete(`/folders/${id}`);
     return res.data;
   } catch (err) {
     console.error('Error deleting folder', err);
     throw err;
   }
 };
+
+export const renameFolder = async (folderId: number, name: string) => {
+try {
+  const res = await apiClient.put(`/folders/${folderId}`, {
+    data: {name}
+  })
+  return res.data.folder
+} catch (err) {
+    console.error('Error renaming folder', err);
+    throw err;
+  
+}
+}

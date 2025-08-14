@@ -43,3 +43,15 @@ export const getSignedUrl = async (fileId: number): Promise<string> => {
     throw err;
   }
 };
+
+export const renameFile = async(fileId: number, name: string) => {
+  try {
+    const res = await apiClient.post(`/files/${fileId}/rename`, {
+      name 
+    })
+    return res.data.file;
+  } catch (err) {
+    console.error('Error renaming file', err)
+    throw err;
+  }
+}

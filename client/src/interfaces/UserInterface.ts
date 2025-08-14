@@ -5,7 +5,7 @@ export interface User {
   email: string | null;
   password: string | null;
   googleId: string | null;
-  profileImgUrl: string | null;
+  profileImgUrl: string | undefined;
   createdAt: Date;
   updatedAt: Date;
 }

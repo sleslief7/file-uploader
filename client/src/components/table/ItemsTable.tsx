@@ -1,5 +1,5 @@
 import type { ItemType } from '@/interfaces/ItemInterface';
-import { Flex, Table } from '@chakra-ui/react';
+import { Avatar, Flex, Table } from '@chakra-ui/react';
 import { FiFileText } from 'react-icons/fi';
 import { FaFolder } from 'react-icons/fa6';
 import { useAuth } from '@/hooks/useAuth';
@@ -49,7 +49,14 @@ const ItemsTable = () => {
                 {item.isFile ? <FiFileText /> : <FaFolder />} {item.name}
               </Flex>
             </Table.Cell>
-            <Table.Cell>{user!.name}</Table.Cell>
+            <Table.Cell>
+              <Avatar.Root>
+                <Avatar.Fallback name={user!.name} />
+                <Avatar.Image src={user!.profileImgUrl} />
+              </Avatar.Root>
+              
+
+            </Table.Cell>
             <Table.Cell>{formatDate(item.updatedAt.toString())}</Table.Cell>
             <Table.Cell textAlign="start">
               {item.size ? bytesToMegabytes(item.size) : '-'}

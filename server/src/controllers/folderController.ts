@@ -7,6 +7,7 @@ import {
   validateFolderId,
   validateNullableFolderId,
 } from '../validation/validators';
+import { supabase } from '../lib/supabase';
 
 export const createFolder = asyncHandler(async (req, res) => {
   const { name } = req.body;
@@ -32,12 +33,34 @@ export const updateFolder = asyncHandler(async (req, res) => {
 
 export const deleteFolder = asyncHandler(async (req, res) => {
   const folderId = validateFolderId(req.params.folderId);
-  let folder = await validateFolderExists(folderId);
-  const bucket = process.env.SUPABASE_BUCKET_NAME || 'uploads';
-  const userId = req.user!.id;
+  await validateFolderExists(folderId);
 
-  folder = await db.deleteFolder(Number(folderId));
-  res.status(204).json(folder);
+  let filesToDelete: string[] = []
+
+  let folderIdsToScan: number[] = [folderId]
+  
+  while (folderIdsToScan.length) {
+    let currentFolderId = folderIdsToScan.pop()!;
+    let currentFolder = await db.getFolderWithContent(currentFolderId);
+
+    folderIdsToScan.push(...currentFolder.folders.map(f => f.id))
+    
+    let currentFolderFilesToDelete = currentFolder.files.map(f => f.path)
+    filesToDelete.push(...currentFolderFilesToDelete)
+  }
+
+  const { error } = await supabase
+    .storage
+    .from(process.env.SUPABASE_BUCKET_NAME!)
+    .remove(filesToDelete);
+
+  if (error) {
+    console.error(`Failed to delete the following files: ${filesToDelete.join(', ')}\nError message: ${error.message}`);
+    throw new Error('Failed to delete the following files: ' + filesToDelete.join(', ') + '\nError message: ' + error.message);
+  }
+
+  let deletedRootFolder = await db.deleteFolder(folderId);
+  res.status(204).json(deletedRootFolder);
 });
 
 export const getFolderById = asyncHandler(async (req, res) => {

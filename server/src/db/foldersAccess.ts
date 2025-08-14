@@ -1,5 +1,6 @@
 const prisma = require('./prisma');
 import { Prisma, Folder } from '../../generated/prisma';
+import { FolderWithContent } from '../interfaces';
 
 export const createFolder = async (
   data: Prisma.FolderCreateInput
@@ -37,6 +38,21 @@ export const getFolderById = async (
     where: {
       id: folderId,
     },
+  });
+  return folder;
+};
+
+export const getFolderWithContent = async (
+  folderId: number
+): Promise<FolderWithContent> => {
+  const folder = await prisma.folder.findUnique({
+    where: {
+      id: folderId,
+    },
+    include: {
+      folders: true,
+      files: true
+    }
   });
   return folder;
 };

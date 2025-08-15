@@ -21,13 +21,15 @@ export const updateFile = async (
   return file;
 };
 
-export const deleteFile = async (fileId: number): Promise<File> => {
-  const file = await prisma.file.delete({
+export const deleteFiles = async (fileIds: number[]): Promise<number> => {
+  const deletedFilesCount = await prisma.file.deleteMany({
     where: {
-      id: fileId,
+      id: {
+        in: fileIds
+      }
     },
   });
-  return file;
+  return deletedFilesCount;
 };
 
 export const getFileById = async (fileId: number): Promise<File | null> => {

@@ -71,7 +71,7 @@ export const deleteFile = asyncHandler(async (req, res) => {
 
   if (error) throw error;
 
-  file = await db.deleteFile(fileId);
+  await db.deleteFiles([fileId]);
 
   res.status(204).json(file);
 });

@@ -1,5 +1,5 @@
 const prisma = require('./prisma');
-import { Prisma, Folder } from '../../generated/prisma';
+import { Prisma, Folder, File } from '../../generated/prisma';
 import { FolderWithContent } from '../interfaces';
 
 export const createFolder = async (
@@ -55,6 +55,23 @@ export const getFolderWithContent = async (
     }
   });
   return folder;
+};
+
+export const getNestedFilesForFolder = async (folderId: number): Promise<File[]> => {
+  let files: File[] = []
+  
+  let folderIdsToScan: number[] = [folderId]
+    
+  while (folderIdsToScan.length) {
+    let currentFolderId = folderIdsToScan.pop()!;
+    let currentFolder = await getFolderWithContent(currentFolderId);
+
+    folderIdsToScan.push(...currentFolder.folders.map(f => f.id))
+    
+    let currentFolderFiles = currentFolder.files
+    files.push(...currentFolderFiles)
+  }
+  return files;
 };
 
 export const getFolders = async (

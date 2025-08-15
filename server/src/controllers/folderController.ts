@@ -35,30 +35,18 @@ export const deleteFolder = asyncHandler(async (req, res) => {
   const folderId = validateFolderId(req.params.folderId);
   await validateFolderExists(folderId);
 
-  let filesToDelete: string[] = []
+  const nestedFiles = await db.getNestedFilesForFolder(folderId);
 
-  let folderIdsToScan: number[] = [folderId]
-  
-  while (folderIdsToScan.length) {
-    let currentFolderId = folderIdsToScan.pop()!;
-    let currentFolder = await db.getFolderWithContent(currentFolderId);
+  const filesPathsToDelete = nestedFiles.map(f => f.path)
 
-    folderIdsToScan.push(...currentFolder.folders.map(f => f.id))
-    
-    let currentFolderFilesToDelete = currentFolder.files.map(f => f.path)
-    filesToDelete.push(...currentFolderFilesToDelete)
-  }
-
-  if (filesToDelete.length > 0) {
+  if (filesPathsToDelete.length > 0) {
     const { error } = await supabase
       .storage
       .from(process.env.SUPABASE_BUCKET_NAME!)
-      .remove(filesToDelete);
+      .remove(filesPathsToDelete);
     
-    if (error) {
-      console.error(`Failed to delete the following files: ${filesToDelete.join(', ')}\nError message: ${error.message}`);
-      throw new Error('Failed to delete the following files: ' + filesToDelete.join(', ') + '\nError message: ' + error.message);
-    }
+    if (error)
+      throw new Error('Failed to delete the following files: ' + filesPathsToDelete.join(', ') + '\nError message: ' + error.message);
   }
 
   let deletedRootFolder = await db.deleteFolder(folderId);

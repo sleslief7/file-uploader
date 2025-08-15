@@ -1,11 +1,13 @@
 import { getBreadcrumb } from '@/api/folderApi';
-import type { BreadCrumb } from '@/interfaces/folderInterface';
+import type { FolderBreadcrumbItem } from '@/interfaces/folderInterface';
 import { useQuery } from '@tanstack/react-query';
 
 const useBreadcrumb = (folderId: number | null = null) => {
-  const dataFallback: BreadCrumb[] = [];
+  const dataFallback: FolderBreadcrumbItem[] = [];
 
-  const { data = dataFallback, ...queryRest } = useQuery<BreadCrumb[]>({
+  const { data = dataFallback, ...queryRest } = useQuery<
+    FolderBreadcrumbItem[]
+  >({
     queryKey: ['breadcrumb', folderId],
     queryFn: () => getBreadcrumb(folderId),
   });

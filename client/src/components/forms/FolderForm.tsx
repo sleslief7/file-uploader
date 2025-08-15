@@ -15,7 +15,7 @@ import * as z from 'zod/v4';
 import useFolderIdParam from '@/hooks/useFolderIdParam';
 
 const schema = z.object({
-  name: z.string().trim().min(1),
+  name: z.string().trim().min(1).max(18),
 });
 
 type FormFields = z.infer<typeof schema>;
@@ -59,8 +59,8 @@ const FolderForm = ({ isOpen, setIsOpen }: FolderFormProps) => {
 
   return (
     <Dialog.Root
-      size="xs"
-      placement="center"
+      size='xs'
+      placement='center'
       open={isOpen}
       onOpenChange={(e) => setIsOpen(e.open)}
     >
@@ -73,24 +73,24 @@ const FolderForm = ({ isOpen, setIsOpen }: FolderFormProps) => {
             </Dialog.Header>
             <Dialog.Body>
               <form onSubmit={handleSubmit(handleCreateFolder)}>
-                <Fieldset.Root size="md" maxW="sm">
+                <Fieldset.Root size='md' maxW='sm'>
                   <Field.Root>
                     <Input
-                      placeholder="Enter folder name"
+                      placeholder='Enter folder name'
                       {...register('name')}
                     />
                     {errors.name && (
                       <Text color={'fg.error'}>{errors.name.message}</Text>
                     )}
                   </Field.Root>
-                  <Button type="submit">
+                  <Button type='submit'>
                     {isSubmitting ? 'Creating folder...' : 'Create folder'}
                   </Button>
                 </Fieldset.Root>
               </form>
             </Dialog.Body>
             <Dialog.CloseTrigger asChild>
-              <CloseButton size="sm" />
+              <CloseButton size='sm' />
             </Dialog.CloseTrigger>
           </Dialog.Content>
         </Dialog.Positioner>

@@ -40,8 +40,7 @@ export const deleteFolder = asyncHandler(async (req, res) => {
   const filesPathsToDelete = nestedFiles.map(f => f.path)
 
   if (filesPathsToDelete.length > 0) {
-    const { error } = await supabase
-      .storage
+    const { error } = await supabase.storage
       .from(process.env.SUPABASE_BUCKET_NAME!)
       .remove(filesPathsToDelete);
     

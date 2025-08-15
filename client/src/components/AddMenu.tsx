@@ -1,9 +1,9 @@
-import { Menu, Portal, Text, Flex } from '@chakra-ui/react';
+import { Menu, Portal, Text, Flex, IconButton } from '@chakra-ui/react';
 import UploadFileContainer from './UploadFileContainer';
 import FolderForm from './forms/FolderForm';
 import { HiUpload } from 'react-icons/hi';
 import { HiFolderAdd } from 'react-icons/hi';
-import { IoIosAddCircleOutline } from 'react-icons/io';
+import { IoMdAdd } from "react-icons/io";
 import { useModal } from '@/hooks/useModal';
 
 const AddMenu = () => {
@@ -13,7 +13,9 @@ const AddMenu = () => {
   return (
     <Menu.Root>
       <Menu.Trigger>
-        <IoIosAddCircleOutline size={26} cursor="pointer" />
+        <IconButton aria-label="Add Menu" variant="outline" size="lg" cursor="pointer">
+          <IoMdAdd />
+        </IconButton>
       </Menu.Trigger>
       <Portal>
         <Menu.Positioner>

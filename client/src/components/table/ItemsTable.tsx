@@ -54,8 +54,6 @@ const ItemsTable = () => {
                 <Avatar.Fallback name={user!.name} />
                 <Avatar.Image src={user!.profileImgUrl} />
               </Avatar.Root>
-              
-
             </Table.Cell>
             <Table.Cell>{formatDate(item.updatedAt.toString())}</Table.Cell>
             <Table.Cell textAlign="start">

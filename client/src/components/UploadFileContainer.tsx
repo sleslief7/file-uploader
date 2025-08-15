@@ -85,8 +85,13 @@ const UploadFileContainer = ({ isOpen, setIsOpen }: FileFormProps) => {
                   Cancel
                 </Button>
               </Dialog.ActionTrigger>
-              <Button size='xs' onClick={handleUpload}>
-                {isPending ? 'Uploading...' : 'Upload'}
+              <Button
+                size='xs'
+                loading={isPending}
+                loadingText='Uploading...'
+                onClick={handleUpload}
+              >
+                Upload
               </Button>
             </Dialog.Footer>
             <Dialog.CloseTrigger asChild>

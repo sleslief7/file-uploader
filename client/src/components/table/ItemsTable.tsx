@@ -67,7 +67,9 @@ const ItemsTable = () => {
               if (!item.isFile) navigate(`/${item.id}`);
             }}
             backgroundColor={
-              selection[toItemIdentifier(item)] === true ? undefined : undefined
+              selection[toItemIdentifier(item)] === true
+                ? 'teal.subtle'
+                : undefined
             }
           >
             <Table.Cell>

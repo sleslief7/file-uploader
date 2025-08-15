@@ -16,10 +16,11 @@ const AddMenu = () => {
         <IconButton
           aria-label='Add Menu'
           variant='outline'
-          size='lg'
+          size='sm'
           cursor='pointer'
+          px={2}
         >
-          <IoMdAdd />
+          <IoMdAdd /> New
         </IconButton>
       </Menu.Trigger>
       <Portal>

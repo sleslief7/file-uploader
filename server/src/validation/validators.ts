@@ -14,6 +14,15 @@ export function validateFileId(fileId: string | undefined): number {
   return id;
 }
 
+export function validateFileIds(fileIds: string[] | undefined): number[] {
+  if (!fileIds) 
+    throw new BadRequestError('Provide fileIds');
+
+  if (fileIds.length === 0) throw new BadRequestError('Must provide at least one file id to delete');
+
+  return fileIds.map(i => validateFileId(i))
+}
+
 export async function validateFileExists(fileId: number) {
   const file = await db.getFileById(fileId);
 
@@ -21,6 +30,15 @@ export async function validateFileExists(fileId: number) {
     throw new NotFoundError(`File with id '${fileId}' does not exist.`);
 
   return file;
+}
+
+export async function validateFilesExist(fileIds: number[]) {
+  const files = await db.getFilesByIds(fileIds);
+
+  if (files.length !== fileIds.length)
+    throw new NotFoundError(`Some file(s) where not found`);
+
+  return files;
 }
 
 export function validateNullableFolderId(

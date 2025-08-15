@@ -54,6 +54,15 @@ export const getFiles = async (
   return files;
 };
 
+export const getFilesByIds = async (fileIds: number[]): Promise<File[]> => {
+  const files = await prisma.file.findMany({
+    where: {
+      id: { in: fileIds }
+    }
+  });
+  return files;
+};
+
 export const getFileByOwnerId = async (
   ownerId: number
 ): Promise<File | null> => {

@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { upload } from '../middleware/upload';
 import {
   createFiles,
-  deleteFile,
+  deleteFiles,
   getFiles,
   getFileById,
   updateFile,
@@ -13,7 +13,7 @@ import { ensureAuthenticated } from '../controllers/authController';
 
 const fileRouter = Router();
 
-fileRouter.delete('/:fileId', ensureAuthenticated, deleteFile);
+fileRouter.delete('/', ensureAuthenticated, deleteFiles);
 fileRouter.put('/:fileId', ensureAuthenticated, updateFile);
 fileRouter.get('/:fileId', ensureAuthenticated, getFileById);
 fileRouter.get('/', ensureAuthenticated, getFiles);

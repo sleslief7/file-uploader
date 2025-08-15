@@ -24,9 +24,9 @@ export const createFile = async (
   }
 };
 
-export const deleteFile = async (id: number) => {
+export const deleteFiles = async (fileIds: number[]) => {
   try {
-    const res = await apiClient.delete(`files/${id}`);
+    const res = await apiClient.delete(`files`, { data: { fileIds } });
     return res.data;
   } catch (err) {
     console.error('Error deleting file', err);

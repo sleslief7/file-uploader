@@ -4,7 +4,9 @@ import { supabase } from '../lib/supabase';
 import { User } from '../../generated/prisma';
 import {
   validateFileExists,
+  validateFilesExist,
   validateFileId,
+  validateFileIds,
   validateFolderId,
 } from '../validation/validators';
 import { BadRequestError } from '../validation/errors';
@@ -61,19 +63,21 @@ export const createFiles = asyncHandler(async (req, res) => {
   res.status(200).json({ uploaded, failed });
 });
 
-export const deleteFile = asyncHandler(async (req, res) => {
-  const fileId = validateFileId(req.params.fileId);
-  let file = await validateFileExists(fileId);
+export const deleteFiles = asyncHandler(async (req, res) => {
+  const fileIds = validateFileIds(req.body.fileIds);
+  let files = await validateFilesExist(fileIds);
+
+  const filePaths = files.map(f => f.path);
 
   const { error } = await supabase.storage
-    .from(file.bucket)
-    .remove([file.path]);
+    .from(files[0].bucket)
+    .remove(filePaths);
 
   if (error) throw error;
 
-  await db.deleteFiles([fileId]);
+  await db.deleteFiles(fileIds);
 
-  res.status(204).json(file);
+  res.status(204).send();
 });
 
 export const updateFile = asyncHandler(async (req, res) => {
@@ -85,7 +89,7 @@ export const updateFile = asyncHandler(async (req, res) => {
 
   file = await db.updateFile(fileId, data);
 
-  res.status(204).json(file);
+  res.status(200).json(file);
 });
 
 export const renameFile = asyncHandler(async (req, res) => {
@@ -117,7 +121,7 @@ export const renameFile = asyncHandler(async (req, res) => {
 
   file = await db.updateFile(file.id, file);
 
-  res.status(204).json(file);
+  res.status(200).json(file);
 });
 
 export const getFileById = asyncHandler(async (req, res) => {

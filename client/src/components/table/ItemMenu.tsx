@@ -1,5 +1,5 @@
 import { getSignedUrl } from '@/api/fileApi';
-import useDeleteFile from '@/hooks/useDeleteFile';
+import useDeleteFiles from '@/hooks/useDeleteFiles';
 import useDeleteFolder from '@/hooks/useDeleteFolder';
 import type { ItemType } from '@/interfaces/ItemInterface';
 import { Button, Menu, Portal } from '@chakra-ui/react';
@@ -14,7 +14,7 @@ type ItemMenuProp = {
 
 const ItemMenu = ({ item }: ItemMenuProp) => {
   const [isRenameOpen, setIsRenameOpen] = useState(false);
-  const { mutate: deleteFile } = useDeleteFile();
+  const { mutate: deleteFiles } = useDeleteFiles();
   const { mutate: deleteFolder } = useDeleteFolder();
 
   const handleDelete = () => {
@@ -22,7 +22,7 @@ const ItemMenu = ({ item }: ItemMenuProp) => {
       title: `Deleting ${item.isFile ? 'file' : 'folder'}...`,
     });
     if (item.isFile) {
-      deleteFile(item.id);
+      deleteFiles([item.id]);
     } else {
       deleteFolder(item.id);
     }

@@ -6,7 +6,7 @@ import AddMenu from '../AddMenu';
 const Homepage = () => {
   return (
     <Stack gap={0}>
-      <Flex p={2} justifyContent='space-between'>
+      <Flex p={2} justifyContent='space-between' alignItems='center'>
         <Breadcrumb />
         <AddMenu />
       </Flex>

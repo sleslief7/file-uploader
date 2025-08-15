@@ -61,7 +61,7 @@ const ItemMenu = ({ item }: ItemMenuProp) => {
 
   return (
     <Menu.Root>
-      <Menu.Trigger asChild>
+      <Menu.Trigger asChild onClick={(e) => e.stopPropagation()}>
         <Button variant='outline' size='xs'>
           <PiDotsThreeVerticalBold />
         </Button>

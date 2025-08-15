@@ -42,12 +42,11 @@ const ItemsTable = () => {
           <Table.Row
             key={`item-${item.id}-${item.isFile ? 'file' : 'folder'}`}
             cursor={!item.isFile ? 'pointer' : 'default'}
+            onClick={() => {
+              if (!item.isFile) navigate(`/${item.id}`);
+            }}
           >
-            <Table.Cell
-              onClick={() => {
-                if (!item.isFile) navigate(`/${item.id}`);
-              }}
-            >
+            <Table.Cell>
               <Flex gap={3}>
                 {item.isFile ? <FiFileText /> : <FaFolder />} {item.name}
               </Flex>

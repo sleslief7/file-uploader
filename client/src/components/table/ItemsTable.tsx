@@ -10,12 +10,32 @@ import ItemMenu from './ItemMenu';
 import { useNavigate } from 'react-router-dom';
 import useFolderIdParam from '@/hooks/useFolderIdParam';
 import { EmptyStateComponent } from '../EmptyStateComponent';
+import { useState, type MouseEventHandler } from 'react';
 
 const ItemsTable = () => {
+  const [selection, setSelection] = useState<{ [key: string]: boolean }>({});
   const { user } = useAuth();
   const folderId = useFolderIdParam();
   const { data: items, isLoading } = useItems(folderId);
   const navigate = useNavigate();
+
+  const handleRowSelection = (
+    e: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
+    item: ItemType
+  ) => {
+    const newSelection: any = {};
+    const itemIdentifier = toItemIdentifier(item);
+    newSelection[itemIdentifier] = !selection[itemIdentifier];
+
+    if (e.ctrlKey || e.metaKey) {
+      setSelection({ ...selection, ...newSelection });
+    } else {
+      setSelection(newSelection);
+    }
+  };
+
+  const toItemIdentifier = (item: ItemType): string =>
+    `${item.isFile ? 'file' : 'folder'}-${item.id}`;
 
   if (items.length === 0 && !isLoading) return <EmptyStateComponent />;
 
@@ -42,9 +62,13 @@ const ItemsTable = () => {
           <Table.Row
             key={`item-${item.id}-${item.isFile ? 'file' : 'folder'}`}
             cursor={!item.isFile ? 'pointer' : 'default'}
-            onClick={() => {
+            onClick={(e) => handleRowSelection(e, item)}
+            onDoubleClick={() => {
               if (!item.isFile) navigate(`/${item.id}`);
             }}
+            backgroundColor={
+              selection[toItemIdentifier(item)] === true ? undefined : undefined
+            }
           >
             <Table.Cell>
               <Flex gap={3}>

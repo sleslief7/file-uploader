@@ -12,13 +12,13 @@ export const EmptyStateComponent = () => {
   const { isFileOpen, setIsFileOpen, isFolderOpen, setIsFolderOpen } =
     useModal();
   return (
-    <Flex width="100%">
+    <Flex width='100%'>
       <EmptyState.Root>
         <EmptyState.Content>
           <EmptyState.Indicator>
             <TbFolders />
           </EmptyState.Indicator>
-          <VStack textAlign="center">
+          <VStack textAlign='center'>
             <EmptyState.Title>Start adding files</EmptyState.Title>
             <EmptyState.Description>
               Add a new file or create a folder to get started
@@ -26,7 +26,7 @@ export const EmptyStateComponent = () => {
           </VStack>
           <ButtonGroup>
             <Button
-              variant="outline"
+              variant='outline'
               onClick={() => setIsFolderOpen(!isFolderOpen)}
             >
               Create folder

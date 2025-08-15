@@ -45,20 +45,20 @@ const LoginForm = () => {
 
   return (
     <form onSubmit={handleSubmit(handleLogin)}>
-      <Fieldset.Root size="lg" maxW="md">
-        <Fieldset.Legend fontSize="xl">Sign in to your account</Fieldset.Legend>
+      <Fieldset.Root size='lg' maxW='md'>
+        <Fieldset.Legend fontSize='xl'>Sign in to your account</Fieldset.Legend>
         <Field.Root>
-          <Field.Label id="username">Username: </Field.Label>
-          <Input placeholder="Enter your username" {...register('username')} />
+          <Field.Label id='username'>Username: </Field.Label>
+          <Input placeholder='Enter your username' {...register('username')} />
           {errors.username && (
             <Text color={'fg.error'}>{errors.username.message}</Text>
           )}
         </Field.Root>
         <Field.Root>
-          <Field.Label id="password">Password: </Field.Label>
+          <Field.Label id='password'>Password: </Field.Label>
           <Input
-            placeholder="Enter your password"
-            type="password"
+            placeholder='Enter your password'
+            type='password'
             {...register('password')}
           />
           {errors.password && (
@@ -68,14 +68,14 @@ const LoginForm = () => {
 
         {errors.root && <Text color={'fg.error'}>{errors.root.message}</Text>}
 
-        <Button type="submit">
+        <Button type='submit'>
           {isSubmitting ? 'Signing in...' : 'Sign in'}
         </Button>
         <Button onClick={handleGoogleLogin}>
           Sign in with <FcGoogle />
         </Button>
 
-        <Link to="/sign-up">Create an account</Link>
+        <Link to='/sign-up'>Create an account</Link>
       </Fieldset.Root>
     </form>
   );

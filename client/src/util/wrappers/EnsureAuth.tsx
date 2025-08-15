@@ -6,7 +6,7 @@ const EnsureAuth = ({ children }: { children: ReactNode }) => {
   const { isAuth } = useAuth();
 
   if (!isAuth) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to='/login' replace />;
   }
 
   return children;

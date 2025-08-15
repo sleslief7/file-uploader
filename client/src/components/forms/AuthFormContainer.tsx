@@ -7,13 +7,13 @@ type AuthFormContainerProps = {
 const AuthFormContainer = ({ children }: AuthFormContainerProps) => {
   return (
     <Box
-      maxW="md"
-      minW="sm"
+      maxW='md'
+      minW='sm'
       p={8}
       borderWidth={1}
-      borderRadius="md"
-      bg="gray.subtle"
-      boxShadow="md"
+      borderRadius='md'
+      bg='gray.subtle'
+      boxShadow='md'
     >
       {children}
     </Box>

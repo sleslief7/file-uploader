@@ -20,11 +20,11 @@ const ItemsTable = () => {
   if (items.length === 0 && !isLoading) return <EmptyStateComponent />;
 
   return (
-    <Table.Root variant="outline" interactive>
+    <Table.Root variant='outline' interactive>
       <Table.ColumnGroup>
-        <Table.Column htmlWidth="40%" />
-        <Table.Column htmlWidth="30%" />
-        <Table.Column htmlWidth="12%" />
+        <Table.Column htmlWidth='40%' />
+        <Table.Column htmlWidth='30%' />
+        <Table.Column htmlWidth='12%' />
         <Table.Column />
         <Table.Column />
       </Table.ColumnGroup>
@@ -34,12 +34,15 @@ const ItemsTable = () => {
           <Table.ColumnHeader>Owner</Table.ColumnHeader>
           <Table.ColumnHeader>Last modified</Table.ColumnHeader>
           <Table.ColumnHeader>File size</Table.ColumnHeader>
-          <Table.ColumnHeader textAlign="end"></Table.ColumnHeader>
+          <Table.ColumnHeader textAlign='end'></Table.ColumnHeader>
         </Table.Row>
       </Table.Header>
       <Table.Body>
         {items.map((item: ItemType) => (
-          <Table.Row key={`item-${item.id}-${item.isFile ? 'file' : 'folder'}`} cursor={!item.isFile ? 'pointer' : 'default'}>
+          <Table.Row
+            key={`item-${item.id}-${item.isFile ? 'file' : 'folder'}`}
+            cursor={!item.isFile ? 'pointer' : 'default'}
+          >
             <Table.Cell
               onClick={() => {
                 if (!item.isFile) navigate(`/${item.id}`);
@@ -56,10 +59,10 @@ const ItemsTable = () => {
               </Avatar.Root>
             </Table.Cell>
             <Table.Cell>{formatDate(item.updatedAt.toString())}</Table.Cell>
-            <Table.Cell textAlign="start">
+            <Table.Cell textAlign='start'>
               {item.size ? bytesToMegabytes(item.size) : '-'}
             </Table.Cell>
-            <Table.Cell textAlign="end">
+            <Table.Cell textAlign='end'>
               <ItemMenu item={item} />
             </Table.Cell>
           </Table.Row>

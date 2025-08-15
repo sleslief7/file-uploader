@@ -47,14 +47,13 @@ export const deleteFolder = async (id: number) => {
 };
 
 export const renameFolder = async (folderId: number, name: string) => {
-try {
-  const res = await apiClient.put(`/folders/${folderId}`, {
-    data: {name}
-  })
-  return res.data.folder
-} catch (err) {
+  try {
+    const res = await apiClient.put(`/folders/${folderId}`, {
+      data: { name },
+    });
+    return res.data.folder;
+  } catch (err) {
     console.error('Error renaming folder', err);
     throw err;
-  
-}
-}
+  }
+};

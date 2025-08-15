@@ -4,7 +4,7 @@ import AuthFormContainer from '../forms/AuthFormContainer';
 
 const SignupPage = () => {
   return (
-    <Center flex="1">
+    <Center flex='1'>
       <AuthFormContainer>
         <SignupForm />
       </AuthFormContainer>

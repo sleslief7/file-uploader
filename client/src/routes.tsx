@@ -4,7 +4,7 @@ import EnsureAuth from './util/wrappers/EnsureAuth';
 import RedirectIfAuth from './util/wrappers/RedirectIfAuth';
 import Homepage from './components/pages/Homepage';
 import LoginPage from './components/pages/LoginPage';
-import SignupPage from './components/pages/SignupPage';
+import SignupPage from './components/pages/SignUpPage';
 
 const router = createBrowserRouter([
   {
@@ -13,7 +13,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Navigate to="/home" replace />,
+        element: <Navigate to='/home' replace />,
       },
       {
         path: '/:folderId',
@@ -41,7 +41,7 @@ const router = createBrowserRouter([
       },
       {
         path: '*',
-        element: <Navigate to="/home" replace />,
+        element: <Navigate to='/home' replace />,
       },
     ],
   },

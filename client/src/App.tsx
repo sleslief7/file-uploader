@@ -8,9 +8,9 @@ import { useAuth } from './hooks/useAuth';
 function App() {
   const { isAuth } = useAuth();
   return (
-    <Flex direction="column" maxWidth="100vw" minHeight="100vh">
+    <Flex direction='column' maxWidth='100vw' minHeight='100vh'>
       <Header />
-      <Flex as="main" id="outlet" direction="column" flex="1">
+      <Flex as='main' id='outlet' direction='column' flex='1'>
         <Outlet />
       </Flex>
       {!isAuth && <Footer />}

@@ -3,7 +3,7 @@ import UploadFileContainer from './UploadFileContainer';
 import FolderForm from './forms/FolderForm';
 import { HiUpload } from 'react-icons/hi';
 import { HiFolderAdd } from 'react-icons/hi';
-import { IoMdAdd } from "react-icons/io";
+import { IoMdAdd } from 'react-icons/io';
 import { useModal } from '@/hooks/useModal';
 
 const AddMenu = () => {
@@ -13,14 +13,19 @@ const AddMenu = () => {
   return (
     <Menu.Root>
       <Menu.Trigger>
-        <IconButton aria-label="Add Menu" variant="outline" size="lg" cursor="pointer">
+        <IconButton
+          aria-label='Add Menu'
+          variant='outline'
+          size='lg'
+          cursor='pointer'
+        >
           <IoMdAdd />
         </IconButton>
       </Menu.Trigger>
       <Portal>
         <Menu.Positioner>
           <Menu.Content>
-            <Menu.Item cursor="pointer" value="new-folder">
+            <Menu.Item cursor='pointer' value='new-folder'>
               <Text onClick={() => setIsFolderOpen(!isFolderOpen)}>
                 <Flex gap={1} alignItems={'center'}>
                   <HiFolderAdd />
@@ -28,7 +33,7 @@ const AddMenu = () => {
                 </Flex>
               </Text>
             </Menu.Item>
-            <Menu.Item cursor="pointer" value="new-file">
+            <Menu.Item cursor='pointer' value='new-file'>
               <Text onClick={() => setIsFileOpen(!isFileOpen)}>
                 <Flex gap={1} alignItems={'center'}>
                   <HiUpload />

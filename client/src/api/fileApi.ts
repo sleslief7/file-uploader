@@ -44,14 +44,14 @@ export const getSignedUrl = async (fileId: number): Promise<string> => {
   }
 };
 
-export const renameFile = async(fileId: number, name: string) => {
+export const renameFile = async (fileId: number, name: string) => {
   try {
     const res = await apiClient.post(`/files/${fileId}/rename`, {
-      name 
-    })
+      name,
+    });
     return res.data.file;
   } catch (err) {
-    console.error('Error renaming file', err)
+    console.error('Error renaming file', err);
     throw err;
   }
-}
+};

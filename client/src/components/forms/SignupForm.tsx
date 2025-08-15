@@ -38,26 +38,26 @@ const SignupForm = () => {
   return (
     <form>
       <Fieldset.Root>
-        <Fieldset.Legend fontSize="xl">Create an account</Fieldset.Legend>
+        <Fieldset.Legend fontSize='xl'>Create an account</Fieldset.Legend>
         <Field.Root>
-          <Field.Label id="name">Name: </Field.Label>
-          <Input placeholder="Enter your name" {...register('name')} />
+          <Field.Label id='name'>Name: </Field.Label>
+          <Input placeholder='Enter your name' {...register('name')} />
           {errors.name && <Text color={'fg.error'}>{errors.name.message}</Text>}
         </Field.Root>
 
         <Field.Root>
-          <Field.Label id="username">Username: </Field.Label>
-          <Input placeholder="Enter your username" {...register('username')} />
+          <Field.Label id='username'>Username: </Field.Label>
+          <Input placeholder='Enter your username' {...register('username')} />
           {errors.username && (
             <Text color={'fg.error'}>{errors.username.message}</Text>
           )}
         </Field.Root>
 
         <Field.Root>
-          <Field.Label id="password">Password: </Field.Label>
+          <Field.Label id='password'>Password: </Field.Label>
           <Input
-            placeholder="Enter your password"
-            type="password"
+            placeholder='Enter your password'
+            type='password'
             {...register('password')}
           />
           {errors.password && (
@@ -65,7 +65,7 @@ const SignupForm = () => {
           )}
         </Field.Root>
 
-        <Button type="submit" onClick={handleSubmit(handleSignup)}>
+        <Button type='submit' onClick={handleSubmit(handleSignup)}>
           Create account
         </Button>
         <Button>

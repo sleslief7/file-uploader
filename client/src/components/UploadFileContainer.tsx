@@ -54,8 +54,8 @@ const UploadFileContainer = ({ isOpen, setIsOpen }: FileFormProps) => {
 
   return (
     <Dialog.Root
-      size="sm"
-      placement="center"
+      size='sm'
+      placement='center'
       open={isOpen}
       onOpenChange={handleOnOpenChange}
     >
@@ -71,8 +71,8 @@ const UploadFileContainer = ({ isOpen, setIsOpen }: FileFormProps) => {
                 <FileUpload.HiddenInput />
                 <FileUpload.List showSize clearable />
                 <FileUpload.Trigger>
-                  <Card.Root size="sm">
-                    <Card.Body cursor="pointer" color="fg.muted">
+                  <Card.Root size='sm'>
+                    <Card.Body cursor='pointer' color='fg.muted'>
                       <HiUpload />
                     </Card.Body>
                   </Card.Root>
@@ -81,16 +81,16 @@ const UploadFileContainer = ({ isOpen, setIsOpen }: FileFormProps) => {
             </Dialog.Body>
             <Dialog.Footer>
               <Dialog.ActionTrigger asChild>
-                <Button size="xs" variant="outline">
+                <Button size='xs' variant='outline'>
                   Cancel
                 </Button>
               </Dialog.ActionTrigger>
-              <Button size="xs" onClick={handleUpload}>
+              <Button size='xs' onClick={handleUpload}>
                 {isPending ? 'Uploading...' : 'Upload'}
               </Button>
             </Dialog.Footer>
             <Dialog.CloseTrigger asChild>
-              <CloseButton size="sm" />
+              <CloseButton size='sm' />
             </Dialog.CloseTrigger>
           </Dialog.Content>
         </Dialog.Positioner>

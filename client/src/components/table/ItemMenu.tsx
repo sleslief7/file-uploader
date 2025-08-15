@@ -62,22 +62,27 @@ const ItemMenu = ({ item }: ItemMenuProp) => {
   return (
     <Menu.Root>
       <Menu.Trigger asChild>
-        <Button variant="outline" size="xs">
+        <Button variant='outline' size='xs'>
           <PiDotsThreeVerticalBold />
         </Button>
       </Menu.Trigger>
       <Portal>
         <Menu.Positioner>
           <Menu.Content>
-            <Menu.Item value="rename" onClick={() => setIsRenameOpen(!isRenameOpen)}>Rename</Menu.Item>
+            <Menu.Item
+              value='rename'
+              onClick={() => setIsRenameOpen(!isRenameOpen)}
+            >
+              Rename
+            </Menu.Item>
             {item.isFile && (
-              <Menu.Item value="download" onClick={handleDownload}>
+              <Menu.Item value='download' onClick={handleDownload}>
                 Download
               </Menu.Item>
             )}
             <Menu.Item
-              value="delete"
-              color="fg.error"
+              value='delete'
+              color='fg.error'
               _hover={{ bg: 'bg.error', color: 'fg.error' }}
               onClick={handleDelete}
             >
@@ -86,7 +91,11 @@ const ItemMenu = ({ item }: ItemMenuProp) => {
           </Menu.Content>
         </Menu.Positioner>
       </Portal>
-    <RenameModal isOpen={isRenameOpen} item={item} setIsOpen={setIsRenameOpen}/>
+      <RenameModal
+        isOpen={isRenameOpen}
+        item={item}
+        setIsOpen={setIsRenameOpen}
+      />
     </Menu.Root>
   );
 };

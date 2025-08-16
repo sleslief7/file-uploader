@@ -7,7 +7,7 @@ import {
   validateFolderId,
   validateNullableFolderId,
 } from '../validation/validators';
-import supabase from '../lib/supabase';
+import supabase from '../storage/supabase';
 
 export const createFolder = asyncHandler(async (req, res) => {
   const { name } = req.body;

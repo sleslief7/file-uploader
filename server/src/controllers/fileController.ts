@@ -1,6 +1,6 @@
 import db from '../db';
 import asyncHandler from 'express-async-handler';
-import supabase from '../lib/supabase';
+import supabase from '../storage/supabase';
 import { User } from '../../generated/prisma';
 import {
   validateFileExists,

@@ -22,14 +22,14 @@ async function main() {
   await prisma.folder.create({
     data: {
       ownerId: 1,
-      name: "Leslie's First Folder",
+      name: "LS's 1st Folder",
     },
   });
 
   await prisma.folder.create({
     data: {
       ownerId: 2,
-      name: `LJ's First Folder`,
+      name: `LJ's 1st Folder`,
     },
   });
 

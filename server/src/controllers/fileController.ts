@@ -1,6 +1,6 @@
 import db from '../db';
 import asyncHandler from 'express-async-handler';
-import { supabase } from '../lib/supabase';
+import supabase from '../lib/supabase';
 import { User } from '../../generated/prisma';
 import {
   validateFileExists,
@@ -30,12 +30,9 @@ export const createFiles = asyncHandler(async (req, res) => {
     const name = `${sanitizedName}`;
     const path = `${user.id}/${folderId ?? 'home'}/${name}`;
 
-    const { error } = await supabase.storage
-      .from(bucket)
-      .upload(path, file.buffer, { contentType: file.mimetype });
-
-    if (error) {
-      console.error(`Failed to upload file ${rawName}:`, error.message);
+    try {
+      await supabase.uploadFile(path, file);
+    } catch {
       failed.push(name);
       continue; // skip to the next file
     }
@@ -55,7 +52,7 @@ export const createFiles = asyncHandler(async (req, res) => {
       uploaded.push(prismaFile);
     } catch (err) {
       console.error(`Failed to save file ${name} to DB:`, err);
-      await supabase.storage.from(bucket).remove([path]);
+      await supabase.deleteFiles([path]);
       throw err;
     }
   }
@@ -67,13 +64,9 @@ export const deleteFiles = asyncHandler(async (req, res) => {
   const fileIds = validateFileIds(req.body.fileIds);
   let files = await validateFilesExist(fileIds);
 
-  const filePaths = files.map(f => f.path);
+  const filePaths = files.map((f) => f.path);
 
-  const { error } = await supabase.storage
-    .from(files[0].bucket)
-    .remove(filePaths);
-
-  if (error) throw error;
+  await supabase.deleteFiles(filePaths);
 
   await db.deleteFiles(fileIds);
 
@@ -104,17 +97,9 @@ export const renameFile = asyncHandler(async (req, res) => {
   const newNameWithExtension = `${name}.${extension}`;
   const newPath = file.path.replace(file.name, newNameWithExtension);
 
-  const { error: copyError } = await supabase.storage
-    .from(file.bucket)
-    .copy(file.path, newPath);
+  await supabase.copyFile(file.path, newPath);
 
-  if (copyError) throw copyError;
-
-  const { error } = await supabase.storage
-    .from(file.bucket)
-    .remove([file.path]);
-
-  if (error) throw error;
+  await supabase.deleteFiles([file.path]);
 
   file.name = newNameWithExtension;
   file.path = newPath;
@@ -126,7 +111,9 @@ export const renameFile = asyncHandler(async (req, res) => {
 
 export const getFileById = asyncHandler(async (req, res) => {
   const fileId = validateFileId(req.params.fileId);
+
   let file = await validateFileExists(fileId);
+
   res.status(200).json(file);
 });
 
@@ -140,13 +127,10 @@ export const getFiles = asyncHandler(async (req, res) => {
 
 export const getFileUrl = asyncHandler(async (req, res) => {
   const fileId = validateFileId(req.params.fileId);
+
   let file = await validateFileExists(fileId);
 
-  const { data, error } = await supabase.storage
-    .from(file.bucket)
-    .createSignedUrl(file.path, 60);
+  const signedUrl = await supabase.createSignedUrl(file.path);
 
-  if (error) throw error;
-
-  res.status(200).json({ signedUrl: data.signedUrl });
+  res.status(200).json({ signedUrl });
 });

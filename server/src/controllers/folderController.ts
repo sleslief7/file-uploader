@@ -7,7 +7,7 @@ import {
   validateFolderId,
   validateNullableFolderId,
 } from '../validation/validators';
-import { supabase } from '../lib/supabase';
+import supabase from '../lib/supabase';
 
 export const createFolder = asyncHandler(async (req, res) => {
   const { name } = req.body;
@@ -37,16 +37,9 @@ export const deleteFolder = asyncHandler(async (req, res) => {
 
   const nestedFiles = await db.getNestedFilesForFolder(folderId);
 
-  const filesPathsToDelete = nestedFiles.map(f => f.path)
+  const filesPathsToDelete = nestedFiles.map((f) => f.path);
 
-  if (filesPathsToDelete.length > 0) {
-    const { error } = await supabase.storage
-      .from(process.env.SUPABASE_BUCKET_NAME!)
-      .remove(filesPathsToDelete);
-    
-    if (error)
-      throw new Error('Failed to delete the following files: ' + filesPathsToDelete.join(', ') + '\nError message: ' + error.message);
-  }
+  await supabase.deleteFiles(filesPathsToDelete);
 
   let deletedRootFolder = await db.deleteFolder(folderId);
   res.status(204).json(deletedRootFolder);

@@ -22,13 +22,11 @@ export const updateFolder = async (
   return folder;
 };
 
-export const deleteFolder = async (folderId: number): Promise<Folder> => {
-  const folder = await prisma.folder.delete({
-    where: {
-      id: folderId,
-    },
+export const deleteFolders = async (folderIds: number[]): Promise<number> => {
+  const deletedCount = await prisma.folder.deleteMany({
+    where: { id: { in: folderIds } },
   });
-  return folder;
+  return deletedCount;
 };
 
 export const getFolderById = async (
@@ -42,6 +40,17 @@ export const getFolderById = async (
   return folder;
 };
 
+export const getFoldersByIds = async (
+  folderIds: number[]
+): Promise<Folder[]> => {
+  const folders = await prisma.folder.findMany({
+    where: {
+      id: { in: folderIds },
+    },
+  });
+  return folders;
+};
+
 export const getFolderWithContent = async (
   folderId: number
 ): Promise<FolderWithContent> => {
@@ -51,25 +60,27 @@ export const getFolderWithContent = async (
     },
     include: {
       folders: true,
-      files: true
-    }
+      files: true,
+    },
   });
   return folder;
 };
 
-export const getNestedFilesForFolder = async (folderId: number): Promise<File[]> => {
-  let files: File[] = []
-  
-  let folderIdsToScan: number[] = [folderId]
-    
+export const getNestedFilesForFolder = async (
+  folderId: number
+): Promise<File[]> => {
+  let files: File[] = [];
+
+  let folderIdsToScan: number[] = [folderId];
+
   while (folderIdsToScan.length) {
     let currentFolderId = folderIdsToScan.pop()!;
     let currentFolder = await getFolderWithContent(currentFolderId);
 
-    folderIdsToScan.push(...currentFolder.folders.map(f => f.id))
-    
-    let currentFolderFiles = currentFolder.files
-    files.push(...currentFolderFiles)
+    folderIdsToScan.push(...currentFolder.folders.map((f) => f.id));
+
+    let currentFolderFiles = currentFolder.files;
+    files.push(...currentFolderFiles);
   }
   return files;
 };

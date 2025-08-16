@@ -1,6 +1,6 @@
 import { getSignedUrl } from '@/api/fileApi';
 import useDeleteFiles from '@/hooks/useDeleteFiles';
-import useDeleteFolder from '@/hooks/useDeleteFolder';
+import useDeleteFolders from '@/hooks/useDeleteFolders';
 import type { ItemType } from '@/interfaces/ItemInterface';
 import { Button, Menu, Portal } from '@chakra-ui/react';
 import { PiDotsThreeVerticalBold } from 'react-icons/pi';
@@ -15,7 +15,7 @@ type ItemMenuProp = {
 const ItemMenu = ({ item }: ItemMenuProp) => {
   const [isRenameOpen, setIsRenameOpen] = useState(false);
   const { mutate: deleteFiles } = useDeleteFiles();
-  const { mutate: deleteFolder } = useDeleteFolder();
+  const { mutate: deleteFolders } = useDeleteFolders();
 
   const handleDelete = () => {
     toaster.loading({
@@ -24,7 +24,7 @@ const ItemMenu = ({ item }: ItemMenuProp) => {
     if (item.isFile) {
       deleteFiles([item.id]);
     } else {
-      deleteFolder(item.id);
+      deleteFolders([item.id]);
     }
 
     toaster.dismiss();

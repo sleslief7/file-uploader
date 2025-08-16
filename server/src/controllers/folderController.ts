@@ -4,7 +4,9 @@ import { Breadcrumb, Items } from '../interfaces';
 import { BadRequestError } from '../validation/errors';
 import {
   validateFolderExists,
+  validateFoldersExist,
   validateFolderId,
+  validateFolderIds,
   validateNullableFolderId,
 } from '../validation/validators';
 import supabase from '../storage/supabase';
@@ -31,18 +33,21 @@ export const updateFolder = asyncHandler(async (req, res) => {
   res.status(204).json(folder);
 });
 
-export const deleteFolder = asyncHandler(async (req, res) => {
-  const folderId = validateFolderId(req.params.folderId);
-  await validateFolderExists(folderId);
+export const deleteFolders = asyncHandler(async (req, res) => {
+  const folderIds = validateFolderIds(req.body.folderIds);
+  await validateFoldersExist(folderIds);
 
-  const nestedFiles = await db.getNestedFilesForFolder(folderId);
+  const filesPathsToDelete = [];
 
-  const filesPathsToDelete = nestedFiles.map((f) => f.path);
+  for (const folderId of folderIds) {
+    const nestedFiles = await db.getNestedFilesForFolder(folderId);
+    filesPathsToDelete.push(...nestedFiles.map((f) => f.path));
+  }
 
   await supabase.deleteFiles(filesPathsToDelete);
 
-  let deletedRootFolder = await db.deleteFolder(folderId);
-  res.status(204).json(deletedRootFolder);
+  await db.deleteFolders(folderIds);
+  res.status(204).send();
 });
 
 export const getFolderById = asyncHandler(async (req, res) => {

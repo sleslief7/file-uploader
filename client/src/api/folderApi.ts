@@ -36,9 +36,9 @@ export const getBreadcrumb = async (folderId: number | null = null) => {
   }
 };
 
-export const deleteFolder = async (id: number) => {
+export const deleteFolders = async (folderIds: number[]) => {
   try {
-    const res = await apiClient.delete(`/folders/${id}`);
+    const res = await apiClient.delete(`/folders`, { data: { folderIds } });
     return res.data;
   } catch (err) {
     console.error('Error deleting folder', err);

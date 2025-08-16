@@ -15,12 +15,12 @@ export function validateFileId(fileId: string | undefined): number {
 }
 
 export function validateFileIds(fileIds: string[] | undefined): number[] {
-  if (!fileIds) 
-    throw new BadRequestError('Provide fileIds');
+  if (!fileIds) throw new BadRequestError('Provide fileIds');
 
-  if (fileIds.length === 0) throw new BadRequestError('Must provide at least one file id to delete');
+  if (fileIds.length === 0)
+    throw new BadRequestError('Must provide at least one file id to delete');
 
-  return fileIds.map(i => validateFileId(i))
+  return fileIds.map((i) => validateFileId(i));
 }
 
 export async function validateFileExists(fileId: number) {
@@ -44,8 +44,7 @@ export async function validateFilesExist(fileIds: number[]) {
 export function validateNullableFolderId(
   folderId: string | undefined | null
 ): number | null {
-  if (!folderId || folderId === 'home' || folderId === 'null')
-    return null;
+  if (!folderId || folderId === 'home' || folderId === 'null') return null;
 
   const id = Number(folderId);
   if (isNaN(id)) {
@@ -62,6 +61,15 @@ export function validateFolderId(folderId: string | undefined | null): number {
   return nullableFolderId;
 }
 
+export function validateFolderIds(folderIds: string[] | undefined): number[] {
+  if (!folderIds) throw new BadRequestError('Provide folderIds');
+
+  if (folderIds.length === 0)
+    throw new BadRequestError('Must provide at least one folder id to delete');
+
+  return folderIds.map((i) => validateFolderId(i));
+}
+
 export async function validateFolderExists(folderId: number) {
   const folder = await db.getFolderById(folderId);
 
@@ -69,4 +77,13 @@ export async function validateFolderExists(folderId: number) {
     throw new NotFoundError(`Folder with id '${folderId}' does not exist.`);
 
   return folder;
+}
+
+export async function validateFoldersExist(folderIds: number[]) {
+  const folders = await db.getFoldersByIds(folderIds);
+
+  if (folders.length !== folderIds.length)
+    throw new NotFoundError(`Some folder(s) where not found`);
+
+  return folders;
 }

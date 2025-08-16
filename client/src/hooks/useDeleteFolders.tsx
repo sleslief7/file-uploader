@@ -1,13 +1,13 @@
-import { deleteFolder } from '@/api/folderApi';
+import { deleteFolders } from '@/api/folderApi';
 import { queryClient } from '@/tanstack/queryClient';
 import { useMutation } from '@tanstack/react-query';
 
-const useDeleteFolder = () =>
+const useDeleteFolders = () =>
   useMutation({
-    mutationFn: (id: number) => deleteFolder(id),
+    mutationFn: (ids: number[]) => deleteFolders(ids),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['items'] });
     },
   });
 
-export default useDeleteFolder;
+export default useDeleteFolders;

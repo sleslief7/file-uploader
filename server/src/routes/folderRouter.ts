@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import {
   createFolder,
-  deleteFolder,
+  deleteFolders,
   getFolders,
   getBreadCrumb,
   getFolderById,
@@ -14,7 +14,7 @@ const folderRouter = Router();
 
 folderRouter.post('/', ensureAuthenticated, createFolder);
 folderRouter.put('/:folderId', ensureAuthenticated, updateFolder);
-folderRouter.delete('/:folderId', ensureAuthenticated, deleteFolder);
+folderRouter.delete('/', ensureAuthenticated, deleteFolders);
 folderRouter.get('/:folderId', ensureAuthenticated, getFolderById);
 folderRouter.get('/', ensureAuthenticated, getFolders);
 folderRouter.get('/:folderId/breadcrumb', ensureAuthenticated, getBreadCrumb);

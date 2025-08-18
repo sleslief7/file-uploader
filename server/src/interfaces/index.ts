@@ -1,4 +1,4 @@
-import { Prisma, User } from '../../generated/prisma';
+import { File, Prisma, User } from '../../generated/prisma';
 
 export type UserWithoutPassword = Omit<User, 'password'>;
 
@@ -22,6 +22,9 @@ type Item = {
 
 export type Items = Item[];
 
-export type FolderWithContent = Prisma.FolderGetPayload<{
-  include: { folders: { include: { folders: true, files: true } }, files: true };
-}>;
+export type FolderBase = Prisma.FolderGetPayload<{}>;
+
+export type FolderTree = FolderBase & {
+  folders: FolderTree[];
+  files: File[];
+};

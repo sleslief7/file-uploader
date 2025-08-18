@@ -1,6 +1,6 @@
 const prisma = require('./prisma');
 import { Prisma, Folder, File } from '../../generated/prisma';
-import { FolderWithContent } from '../interfaces';
+import { FolderTree } from '../interfaces';
 
 export const createFolder = async (
   data: Prisma.FolderCreateInput
@@ -51,40 +51,6 @@ export const getFoldersByIds = async (
   return folders;
 };
 
-export const getFolderWithContent = async (
-  folderId: number
-): Promise<FolderWithContent> => {
-  const folder = await prisma.folder.findUnique({
-    where: {
-      id: folderId,
-    },
-    include: {
-      folders: true,
-      files: true,
-    },
-  });
-  return folder;
-};
-
-export const getNestedFilesForFolder = async (
-  folderId: number
-): Promise<File[]> => {
-  let files: File[] = [];
-
-  let folderIdsToScan: number[] = [folderId];
-
-  while (folderIdsToScan.length) {
-    let currentFolderId = folderIdsToScan.pop()!;
-    let currentFolder = await getFolderWithContent(currentFolderId);
-
-    folderIdsToScan.push(...currentFolder.folders.map((f) => f.id));
-
-    let currentFolderFiles = currentFolder.files;
-    files.push(...currentFolderFiles);
-  }
-  return files;
-};
-
 export const getFolders = async (
   ownerId: number,
   parentFolderId: number | null = null
@@ -105,4 +71,42 @@ export const folderExists = async (folderId: number): Promise<boolean> => {
     },
   });
   return folder !== null;
+};
+
+export const getNestedFilesForFolder = async (
+  folderId: number
+): Promise<File[]> => {
+  let files: File[] = [];
+  let rootFolder = await getFolderWithNestedItems(folderId);
+  let foldersToScan: FolderTree[] = [rootFolder];
+
+  while (foldersToScan.length !== 0) {
+    const currentFolder = foldersToScan.pop()!;
+    console.log(currentFolder.files);
+    foldersToScan.push(...currentFolder.folders);
+    files.push(...currentFolder.files);
+  }
+
+  return files;
+};
+
+export const getFolderWithNestedItems = async (
+  folderId: number
+): Promise<FolderTree> => {
+  const folder = await prisma.folder.findUnique({
+    where: {
+      id: folderId,
+    },
+    include: {
+      folders: true,
+      files: true,
+    },
+  });
+
+  const childFolders: Folder[] = [];
+  for (const childFolder of folder.folders) {
+    childFolders.push(await getFolderWithNestedItems(childFolder.id));
+  }
+
+  return { ...folder, folders: childFolders };
 };

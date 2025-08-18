@@ -1,4 +1,5 @@
 const prisma = require('./prisma');
+import { connect } from 'http2';
 import { Prisma, File } from '../../generated/prisma';
 
 export const createFile = async (
@@ -25,8 +26,8 @@ export const deleteFiles = async (fileIds: number[]): Promise<number> => {
   const deletedFilesCount = await prisma.file.deleteMany({
     where: {
       id: {
-        in: fileIds
-      }
+        in: fileIds,
+      },
     },
   });
   return deletedFilesCount;
@@ -57,8 +58,8 @@ export const getFiles = async (
 export const getFilesByIds = async (fileIds: number[]): Promise<File[]> => {
   const files = await prisma.file.findMany({
     where: {
-      id: { in: fileIds }
-    }
+      id: { in: fileIds },
+    },
   });
   return files;
 };
@@ -81,4 +82,42 @@ export const fileExists = async (fileId: number): Promise<boolean> => {
     },
   });
   return file !== null;
+};
+
+export const cloneFile = async (
+  fileId: number,
+  newFolderId: number | null | undefined = undefined
+): Promise<File> => {
+  const file = (await getFileById(fileId))!;
+  const newName = cloneName(file.name);
+  const { id, ...fileWithoutId } = file;
+
+  const fileCopied = await prisma.file.create({
+    data: {
+      ...fileWithoutId,
+      name: newName,
+      folderId: newFolderId,
+      ...(newFolderId !== undefined && {
+        folder: { connect: { id: newFolderId } },
+      }),
+    },
+  });
+
+  return fileCopied;
+};
+
+export const moveFile = async (
+  fileId: number,
+  newParentFolderId: number | null
+): Promise<File> => {
+  const movedFile = await prisma.file.update({
+    where: {
+      id: fileId,
+    },
+    data: {
+      folder: { connect: { id: newParentFolderId } },
+    },
+  });
+
+  return movedFile;
 };

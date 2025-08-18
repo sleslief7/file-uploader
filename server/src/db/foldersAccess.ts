@@ -1,6 +1,7 @@
 const prisma = require('./prisma');
 import { Prisma, Folder, File } from '../../generated/prisma';
 import { FolderTree } from '../interfaces';
+import { cloneFile } from './filesAccess';
 
 export const createFolder = async (
   data: Prisma.FolderCreateInput
@@ -109,4 +110,61 @@ export const getFolderWithNestedItems = async (
   }
 
   return { ...folder, folders: childFolders };
+};
+
+export const moveFolder = async (
+  folderId: number,
+  newParentFolderId: number | null
+): Promise<Folder> => {
+  const movedFolder = await prisma.folder.update({
+    where: {
+      id: folderId,
+    },
+    data: {
+      folder: {
+        connect: { id: newParentFolderId },
+      },
+    },
+  });
+
+  return movedFolder;
+};
+
+export const cloneFolder = async (
+  folderId: number,
+  newFolderId: number | null | undefined = undefined
+): Promise<Folder> => {
+  const folder = await prisma.folder.findUnique({
+    where: {
+      id: folderId,
+    },
+    include: {
+      folders: true,
+      files: true,
+    },
+  });
+
+  const { id, ...folderWithoutId } = folder;
+  const newName = cloneName(folder.name);
+
+  const copiedFolder = await prisma.folder.create({
+    data: {
+      ...folderWithoutId,
+      name: newName,
+      ...(newFolderId !== undefined && {
+        folder: { connect: { id: newFolderId } },
+      }),
+      folders: undefined,
+      files: undefined,
+    },
+  });
+
+  for (const childFolder of folder.folders) {
+    await cloneFolder(childFolder, copiedFolder.id);
+  }
+  for (const childFile of folder.files) {
+    await cloneFile(childFile.id, copiedFolder.id);
+  }
+
+  return copiedFolder;
 };

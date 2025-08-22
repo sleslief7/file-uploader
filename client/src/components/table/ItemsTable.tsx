@@ -10,13 +10,15 @@ import ItemMenu from './ItemMenu';
 import { useNavigate } from 'react-router-dom';
 import useFolderIdParam from '@/hooks/useFolderIdParam';
 import { EmptyStateComponent } from '../EmptyStateComponent';
-import { useState, type MouseEventHandler } from 'react';
+import { useState } from 'react';
+import { useSearch } from '@/hooks/useSearch';
 
 const ItemsTable = () => {
   const [selection, setSelection] = useState<{ [key: string]: boolean }>({});
   const { user } = useAuth();
+  const { searchName } = useSearch();
   const folderId = useFolderIdParam();
-  const { data: items, isLoading } = useItems(folderId);
+  const { data: items, isLoading } = useItems(folderId, searchName);
   const navigate = useNavigate();
 
   const handleRowSelection = (

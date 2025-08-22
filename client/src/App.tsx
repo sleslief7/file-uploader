@@ -4,7 +4,7 @@ import { Flex, Grid, GridItem } from '@chakra-ui/react';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import { useAuth } from './hooks/useAuth';
-import Navbar from './components/Navbar';
+import Navbar from './components/layout/Navbar';
 
 function App() {
   const { isAuth } = useAuth();
@@ -15,6 +15,7 @@ function App() {
         <GridItem colSpan={1}>
           <Navbar />
         </GridItem>
+
         <GridItem colSpan={4} mx={'4'}>
           <Outlet />
         </GridItem>

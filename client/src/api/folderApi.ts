@@ -16,9 +16,12 @@ export const createFolder = async (
   }
 };
 
-export const getItems = async (folderId: number | null = null) => {
+export const getItems = async (
+  folderId: number | null = null,
+  query?: string | undefined
+) => {
   try {
-    const res = await apiClient.get(`/folders/${folderId}/items`);
+    const res = await apiClient.get(`/folders/${folderId}/items/?q=${query}`);
     return res.data;
   } catch (err) {
     console.error('Error getting items', err);

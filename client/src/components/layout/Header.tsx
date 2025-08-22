@@ -14,10 +14,19 @@ import {
   InputGroup,
   Input,
 } from '@chakra-ui/react';
+import { useSearch } from '@/hooks/useSearch';
+import { useState } from 'react';
 
 const Header = () => {
+  const { searchName, setSearchName } = useSearch();
+  const [input, setInput] = useState(searchName || '');
   const { isAuth, user } = useAuth();
   const { mutate: logout } = useLogout();
+
+  const handleSubmit = () => {
+    setSearchName(input);
+    setInput('');
+  };
 
   return (
     <Box as='header' bg='teal.subtle' px={4} py={2}>
@@ -36,12 +45,24 @@ const Header = () => {
           </HStack>
         </GridItem>
         <GridItem w='100%' colSpan={4} justifySelf={'center'}>
-          <InputGroup startElement={<LuSearch />}>
+          <InputGroup
+            onClick={handleSubmit}
+            startElement={<LuSearch cursor={'pointer'} />}
+          >
             <Input
               id='search-input'
               placeholder='Search...'
               borderRadius={50}
               variant='subtle'
+              value={input}
+              onChange={(e) => {
+                setInput(e.target.value);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleSubmit();
+                }
+              }}
             />
           </InputGroup>
         </GridItem>

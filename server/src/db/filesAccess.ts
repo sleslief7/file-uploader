@@ -25,8 +25,8 @@ export const deleteFiles = async (fileIds: number[]): Promise<number> => {
   const deletedFilesCount = await prisma.file.deleteMany({
     where: {
       id: {
-        in: fileIds
-      }
+        in: fileIds,
+      },
     },
   });
   return deletedFilesCount;
@@ -43,12 +43,14 @@ export const getFileById = async (fileId: number): Promise<File | null> => {
 
 export const getFiles = async (
   ownerId: number,
-  folderId: number | null = null
+  folderId: number | null = null,
+  query?: string | undefined
 ): Promise<File[]> => {
   const files = await prisma.file.findMany({
     where: {
       ownerId,
       folderId,
+      ...(query ? { name: { startsWith: query, mode: 'insensitive' } } : {}),
     },
   });
   return files;
@@ -57,8 +59,8 @@ export const getFiles = async (
 export const getFilesByIds = async (fileIds: number[]): Promise<File[]> => {
   const files = await prisma.file.findMany({
     where: {
-      id: { in: fileIds }
-    }
+      id: { in: fileIds },
+    },
   });
   return files;
 };

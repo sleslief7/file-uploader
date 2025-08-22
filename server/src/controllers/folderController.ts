@@ -65,9 +65,17 @@ export const getFolders = asyncHandler(async (req, res) => {
 });
 
 export const getItemsByParentFolderId = asyncHandler(async (req, res) => {
+  const { q } = req.query;
+  const safeQuery: string | undefined =
+    typeof q === 'string'
+      ? q
+      : Array.isArray(q) && typeof q[0] === 'string'
+      ? q[0]
+      : undefined;
+
   const folderId = validateNullableFolderId(req.params.folderId);
-  const folders = await db.getFolders(req.user!.id, folderId);
-  const files = await db.getFiles(req.user!.id, folderId);
+  const folders = await db.getFolders(req.user!.id, folderId, safeQuery);
+  const files = await db.getFiles(req.user!.id, folderId, safeQuery);
 
   const items: Items = [];
   folders.map((folder) =>

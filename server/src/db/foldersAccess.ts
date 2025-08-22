@@ -87,12 +87,14 @@ export const getNestedFilesForFolder = async (
 
 export const getFolders = async (
   ownerId: number,
-  parentFolderId: number | null = null
+  parentFolderId: number | null = null,
+  query?: string | undefined
 ): Promise<Folder[]> => {
   const folders = await prisma.folder.findMany({
     where: {
       ownerId,
       parentFolderId,
+      ...(query ? { name: { startsWith: query, mode: 'insensitive' } } : {}),
     },
   });
   return folders;

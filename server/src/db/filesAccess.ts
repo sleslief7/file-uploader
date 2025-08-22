@@ -141,7 +141,7 @@ export const getFileNameDuplicate = async (fileId: number): Promise<string> => {
 
   let fileNameClone = cloneName(file!.name);
 
-  while (!existingFileNames.includes(fileNameClone)) {
+  while (existingFileNames.includes(fileNameClone)) {
     fileNameClone = cloneName(fileNameClone);
   }
 

@@ -50,7 +50,7 @@ export const getFiles = async (
     where: {
       ownerId,
       folderId,
-      ...(query ? { name: { startsWith: query, mode: 'insensitive' } } : {}),
+      ...(query ? { name: { contains: query, mode: 'insensitive' } } : {}),
     },
   });
   return files;

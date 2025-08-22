@@ -25,7 +25,6 @@ const Header = () => {
 
   const handleSubmit = () => {
     setSearchName(input);
-    setInput('');
   };
 
   return (
@@ -46,8 +45,9 @@ const Header = () => {
         </GridItem>
         <GridItem w='100%' colSpan={4} justifySelf={'center'}>
           <InputGroup
-            onClick={handleSubmit}
-            startElement={<LuSearch cursor={'pointer'} />}
+            startElement={
+              <LuSearch cursor={'pointer'} onClick={handleSubmit} />
+            }
           >
             <Input
               id='search-input'

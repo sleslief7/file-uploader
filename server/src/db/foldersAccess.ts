@@ -94,7 +94,7 @@ export const getFolders = async (
     where: {
       ownerId,
       parentFolderId,
-      ...(query ? { name: { startsWith: query, mode: 'insensitive' } } : {}),
+      ...(query ? { name: { contains: query, mode: 'insensitive' } } : {}),
     },
   });
   return folders;

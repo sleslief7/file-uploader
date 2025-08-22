@@ -8,7 +8,7 @@ const useItems = (
 ) => {
   const dataFallback: ItemType[] = [];
   const { data = dataFallback, ...queryRest } = useQuery<ItemType[]>({
-    queryKey: ['items', folderId],
+    queryKey: ['items', folderId, query],
     queryFn: () => getItems(folderId, query),
   });
 

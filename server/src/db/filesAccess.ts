@@ -1,6 +1,7 @@
 const prisma = require('./prisma');
-import { connect } from 'http2';
+import path from 'path';
 import { Prisma, File } from '../../generated/prisma';
+import { cloneFilePathName, cloneName } from '../util/util';
 
 export const createFile = async (
   data: Prisma.FileCreateInput
@@ -85,21 +86,25 @@ export const fileExists = async (fileId: number): Promise<boolean> => {
 };
 
 export const cloneFile = async (
-  fileId: number,
+  file: File,
   newFolderId: number | null | undefined = undefined
 ): Promise<File> => {
-  const file = (await getFileById(fileId))!;
-  const newName = cloneName(file.name);
-  const { id, ...fileWithoutId } = file;
+  const fileNameDuplicate = await getFileNameDuplicate(file.id);
+  const { id, updatedAt, createdAt, ...restOfFile } = file;
+
+  if (newFolderId === undefined) newFolderId = file.folderId;
+
+  let newPath = cloneFilePathName(file, newFolderId, fileNameDuplicate);
 
   const fileCopied = await prisma.file.create({
     data: {
-      ...fileWithoutId,
-      name: newName,
-      folderId: newFolderId,
-      ...(newFolderId !== undefined && {
-        folder: { connect: { id: newFolderId } },
-      }),
+      ...restOfFile,
+      name: fileNameDuplicate,
+      path: newPath,
+      ...(newFolderId === null ? { folderId: null } : {}),
+      ...(newFolderId !== null
+        ? { folder: { connect: { id: newFolderId } } }
+        : {}),
     },
   });
 
@@ -110,14 +115,45 @@ export const moveFile = async (
   fileId: number,
   newParentFolderId: number | null
 ): Promise<File> => {
+  const file = await getFileById(fileId);
+  const newPath = cloneFilePathName(file!, newParentFolderId);
+
   const movedFile = await prisma.file.update({
     where: {
       id: fileId,
     },
     data: {
-      folder: { connect: { id: newParentFolderId } },
+      path: newPath,
+      ...(newParentFolderId === null ? { folderId: null } : {}),
+      ...(newParentFolderId !== null
+        ? { folder: { connect: { id: newParentFolderId } } }
+        : {}),
     },
   });
 
   return movedFile;
+};
+
+export const getFileNameDuplicate = async (fileId: number): Promise<string> => {
+  const file = await getFileById(fileId);
+  const folderFiles = await getFiles(file!.ownerId, file!.folderId);
+  const existingFileNames = folderFiles.map((f) => f.name);
+
+  let fileNameClone = cloneName(file!.name);
+
+  while (!existingFileNames.includes(fileNameClone)) {
+    fileNameClone = cloneName(fileNameClone);
+  }
+
+  return fileNameClone;
+};
+
+export const fileNameExistsInFolder = async (
+  ownerId: number,
+  newParentFolderId: number | null,
+  fileName: string
+): Promise<boolean> => {
+  const filesInDestFolder = await getFiles(ownerId, newParentFolderId);
+  const fileNamesInDestFolder = filesInDestFolder.map((f) => f.name);
+  return fileNamesInDestFolder.includes(fileName);
 };

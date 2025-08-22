@@ -8,8 +8,11 @@ import {
   validateFileId,
   validateFileIds,
   validateFolderId,
+  validateFolderExists,
 } from '../validation/validators';
 import { BadRequestError } from '../validation/errors';
+import { cloneFilePathName, cloneName } from '../util/util';
+import { MoveFileDto } from '../interfaces';
 
 export const createFiles = asyncHandler(async (req, res) => {
   const user = req.user as User;
@@ -133,4 +136,59 @@ export const getFileUrl = asyncHandler(async (req, res) => {
   const signedUrl = await supabase.createSignedUrl(file.path);
 
   res.status(200).json({ signedUrl });
+});
+
+export const cloneFiles = asyncHandler(async (req, res) => {
+  const fileIds = validateFileIds(req.body.fileIds);
+
+  let files = await validateFilesExist(fileIds);
+
+  let clonedFiles = [];
+
+  for (const file of files) {
+    const fileNameDuplicate = await db.getFileNameDuplicate(file.id);
+    const newPath = cloneFilePathName(file, file.folderId, fileNameDuplicate);
+    await supabase.copyFile(file.path, newPath);
+    try {
+      const clonedFile = await db.cloneFile(file);
+      clonedFiles.push(clonedFile);
+    } catch (error) {
+      await supabase.deleteFiles([newPath]);
+      throw error;
+    }
+  }
+
+  res.status(200).json(clonedFiles);
+});
+
+export const moveFiles = asyncHandler(async (req, res) => {
+  const moveFileDtos = req.body.filesToMove as MoveFileDto[];
+
+  for (const moveFileDto of moveFileDtos) {
+    if (moveFileDto.newFolderId !== null)
+      await validateFolderExists(moveFileDto.newFolderId);
+    let file = await validateFileExists(moveFileDto.fileId);
+
+    const fileExistsInDestFolder = await db.fileNameExistsInFolder(
+      file.ownerId,
+      moveFileDto.newFolderId,
+      file.name
+    );
+    if (fileExistsInDestFolder)
+      throw new BadRequestError(
+        'File with same name already exists in destination folder'
+      );
+
+    const oldPath = file.path;
+    const newPath = cloneFilePathName(file, moveFileDto.newFolderId);
+    await supabase.moveFile(file.path, newPath);
+    try {
+      await db.moveFile(file.id, moveFileDto.newFolderId);
+    } catch (error) {
+      await supabase.moveFile(newPath, oldPath);
+      throw error;
+    }
+  }
+
+  res.status(200).send();
 });

@@ -28,3 +28,8 @@ export type FolderTree = FolderBase & {
   folders: FolderTree[];
   files: File[];
 };
+
+export type MoveFileDto = {
+  fileId: number;
+  newFolderId: number | null;
+};

@@ -1,6 +1,7 @@
 const prisma = require('./prisma');
 import { Prisma, Folder, File } from '../../generated/prisma';
 import { FolderTree } from '../interfaces';
+import { cloneName } from '../util/util';
 import { cloneFile } from './filesAccess';
 
 export const createFolder = async (
@@ -145,12 +146,13 @@ export const cloneFolder = async (
   });
 
   const { id, ...folderWithoutId } = folder;
-  const newName = cloneName(folder.name);
+
+  const folderNameDuplicate = await getFolderNameDuplicate(folderId);
 
   const copiedFolder = await prisma.folder.create({
     data: {
       ...folderWithoutId,
-      name: newName,
+      name: folderNameDuplicate,
       ...(newFolderId !== undefined && {
         folder: { connect: { id: newFolderId } },
       }),
@@ -163,8 +165,24 @@ export const cloneFolder = async (
     await cloneFolder(childFolder, copiedFolder.id);
   }
   for (const childFile of folder.files) {
-    await cloneFile(childFile.id, copiedFolder.id);
+    await cloneFile(childFile, copiedFolder.id);
   }
 
   return copiedFolder;
+};
+
+export const getFolderNameDuplicate = async (
+  folderId: number
+): Promise<string> => {
+  const folder = await getFolderById(folderId);
+  const folders = await getFolders(folder!.ownerId, folder!.parentFolderId);
+  const existingFolderNames = folders.map((f) => f.name);
+
+  let folderNameClone = cloneName(folder!.name);
+
+  while (!existingFolderNames.includes(folderNameClone)) {
+    folderNameClone = cloneName(folderNameClone);
+  }
+
+  return folderNameClone;
 };

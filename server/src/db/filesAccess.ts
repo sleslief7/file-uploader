@@ -1,5 +1,4 @@
 const prisma = require('./prisma');
-import path from 'path';
 import { Prisma, File } from '../../generated/prisma';
 import { cloneFilePathName, cloneName } from '../util/util';
 
@@ -91,10 +90,10 @@ export const cloneFile = async (
   file: File,
   newFolderId: number | null | undefined = undefined
 ): Promise<File> => {
-  const fileNameDuplicate = await getFileNameDuplicate(file.id);
-  const { id, updatedAt, createdAt, ...restOfFile } = file;
-
   if (newFolderId === undefined) newFolderId = file.folderId;
+
+  const fileNameDuplicate = await getFileNameDuplicate(file.id, newFolderId);
+  const { id, updatedAt, createdAt, ...restOfFile } = file;
 
   let newPath = cloneFilePathName(file, newFolderId, fileNameDuplicate);
 
@@ -103,10 +102,7 @@ export const cloneFile = async (
       ...restOfFile,
       name: fileNameDuplicate,
       path: newPath,
-      ...(newFolderId === null ? { folderId: null } : {}),
-      ...(newFolderId !== null
-        ? { folder: { connect: { id: newFolderId } } }
-        : {}),
+      folderId: newFolderId,
     },
   });
 
@@ -126,22 +122,22 @@ export const moveFile = async (
     },
     data: {
       path: newPath,
-      ...(newParentFolderId === null ? { folderId: null } : {}),
-      ...(newParentFolderId !== null
-        ? { folder: { connect: { id: newParentFolderId } } }
-        : {}),
+      folderId: newParentFolderId,
     },
   });
 
   return movedFile;
 };
 
-export const getFileNameDuplicate = async (fileId: number): Promise<string> => {
+export const getFileNameDuplicate = async (
+  fileId: number,
+  destinationFolderId: number | null
+): Promise<string> => {
   const file = await getFileById(fileId);
-  const folderFiles = await getFiles(file!.ownerId, file!.folderId);
+  const folderFiles = await getFiles(file!.ownerId, destinationFolderId);
   const existingFileNames = folderFiles.map((f) => f.name);
 
-  let fileNameClone = cloneName(file!.name);
+  let fileNameClone = file!.name;
 
   while (existingFileNames.includes(fileNameClone)) {
     fileNameClone = cloneName(fileNameClone);

@@ -33,3 +33,8 @@ export type MoveFileDto = {
   fileId: number;
   newFolderId: number | null;
 };
+
+export type MoveFolderDto = {
+  folderId: number;
+  newFolderId: number | null;
+};

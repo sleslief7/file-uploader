@@ -7,6 +7,8 @@ import {
   getFolderById,
   updateFolder,
   getItemsByParentFolderId,
+  moveFolders,
+  cloneFolders,
 } from '../controllers/folderController';
 import { ensureAuthenticated } from '../controllers/authController';
 
@@ -23,5 +25,7 @@ folderRouter.get(
   ensureAuthenticated,
   getItemsByParentFolderId
 );
+folderRouter.post('/move', ensureAuthenticated, moveFolders);
+folderRouter.post('/clone', ensureAuthenticated, cloneFolders);
 
 export default folderRouter;

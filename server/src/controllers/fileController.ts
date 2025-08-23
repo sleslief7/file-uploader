@@ -146,7 +146,10 @@ export const cloneFiles = asyncHandler(async (req, res) => {
   let clonedFiles = [];
 
   for (const file of files) {
-    const fileNameDuplicate = await db.getFileNameDuplicate(file.id);
+    const fileNameDuplicate = await db.getFileNameDuplicate(
+      file.id,
+      file.folderId
+    );
     const newPath = cloneFilePathName(file, file.folderId, fileNameDuplicate);
     await supabase.copyFile(file.path, newPath);
     try {

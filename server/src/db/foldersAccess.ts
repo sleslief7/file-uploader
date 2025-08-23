@@ -2,7 +2,6 @@ const prisma = require('./prisma');
 import { Prisma, Folder, File } from '../../generated/prisma';
 import { FolderTree } from '../interfaces';
 import { cloneName } from '../util/util';
-import { cloneFile } from './filesAccess';
 
 export const createFolder = async (
   data: Prisma.FolderCreateInput
@@ -86,7 +85,6 @@ export const getNestedFilesForFolder = async (
 
   while (foldersToScan.length !== 0) {
     const currentFolder = foldersToScan.pop()!;
-    console.log(currentFolder.files);
     foldersToScan.push(...currentFolder.folders);
     files.push(...currentFolder.files);
   }
@@ -124,9 +122,7 @@ export const moveFolder = async (
       id: folderId,
     },
     data: {
-      folder: {
-        connect: { id: newParentFolderId },
-      },
+      parentFolder: newParentFolderId,
     },
   });
 
@@ -147,44 +143,49 @@ export const cloneFolder = async (
     },
   });
 
-  const { id, ...folderWithoutId } = folder;
+  const { id, createdAt, updatedAt, ...restOfFolder } = folder;
 
-  const folderNameDuplicate = await getFolderNameDuplicate(folderId);
+  const folderNameDuplicate = await getFolderNameDuplicate(
+    folderId,
+    newFolderId ?? null
+  );
 
   const copiedFolder = await prisma.folder.create({
     data: {
-      ...folderWithoutId,
+      ...restOfFolder,
       name: folderNameDuplicate,
-      ...(newFolderId !== undefined && {
-        folder: { connect: { id: newFolderId } },
-      }),
+      parentFolderId: newFolderId ?? null,
       folders: undefined,
       files: undefined,
     },
   });
 
-  for (const childFolder of folder.folders) {
-    await cloneFolder(childFolder, copiedFolder.id);
-  }
-  for (const childFile of folder.files) {
-    await cloneFile(childFile, copiedFolder.id);
-  }
-
   return copiedFolder;
 };
 
 export const getFolderNameDuplicate = async (
-  folderId: number
+  folderId: number,
+  destinationFolderId: number | null
 ): Promise<string> => {
   const folder = await getFolderById(folderId);
-  const folders = await getFolders(folder!.ownerId, folder!.parentFolderId);
+  const folders = await getFolders(folder!.ownerId, destinationFolderId);
   const existingFolderNames = folders.map((f) => f.name);
 
-  let folderNameClone = cloneName(folder!.name);
+  let folderNameClone = folder!.name;
 
-  while (!existingFolderNames.includes(folderNameClone)) {
+  while (existingFolderNames.includes(folderNameClone)) {
     folderNameClone = cloneName(folderNameClone);
   }
 
   return folderNameClone;
+};
+
+export const folderNameExistsInFolder = async (
+  ownerId: number,
+  newParentFolderId: number | null,
+  folderName: string
+): Promise<boolean> => {
+  const foldersInDestFolder = await getFolders(ownerId, newParentFolderId);
+  const folderNamesInDestFolder = foldersInDestFolder.map((f) => f.name);
+  return folderNamesInDestFolder.includes(folderName);
 };

@@ -1,6 +1,6 @@
 import db from '../db';
 import asyncHandler from 'express-async-handler';
-import { Breadcrumb, Items } from '../interfaces';
+import { Breadcrumb, FolderTree, Items, MoveFolderDto } from '../interfaces';
 import { BadRequestError } from '../validation/errors';
 import {
   validateFolderExists,
@@ -130,4 +130,60 @@ export const getBreadCrumb = asyncHandler(async (req, res) => {
   }
 
   res.status(200).json(breadCrumb);
+});
+
+export const moveFolders = asyncHandler(async (req, res) => {
+  const moveFolderDtos = req.body.foldersToMove as MoveFolderDto[];
+
+  for (const moveFolderDto of moveFolderDtos) {
+    if (moveFolderDto.newFolderId !== null)
+      await validateFolderExists(moveFolderDto.newFolderId);
+
+    let folder = await validateFolderExists(moveFolderDto.folderId);
+
+    const folderExistsInDestFolder = await db.folderNameExistsInFolder(
+      folder.ownerId,
+      moveFolderDto.newFolderId,
+      folder.name
+    );
+    if (folderExistsInDestFolder)
+      throw new BadRequestError(
+        'Folder with same name already exists in destination folder'
+      );
+
+    await db.moveFolder(folder.id, moveFolderDto.newFolderId);
+  }
+
+  res.status(200).send();
+});
+
+export const cloneFolders = asyncHandler(async (req, res) => {
+  const folderIds = validateFolderIds(req.body.folderIds);
+  await validateFoldersExist(folderIds);
+
+  for (const folderId of folderIds) {
+    let rootFolderTree = await db.getFolderWithNestedItems(folderId);
+
+    let foldersToClone: FolderTree[] = [rootFolderTree];
+    let folderIdMap: { [key: string]: number | null } = {};
+    folderIdMap[`${rootFolderTree.parentFolderId}`] =
+      rootFolderTree.parentFolderId;
+    while (foldersToClone.length > 0) {
+      const folderToClone = foldersToClone.pop();
+      foldersToClone.push(...folderToClone!.folders);
+
+      const clonedFolder = await db.cloneFolder(
+        folderToClone!.id,
+        folderIdMap[`${folderToClone!.parentFolderId}`]
+      );
+
+      folderIdMap[`${folderToClone!.id}`] = clonedFolder.id;
+
+      for (const fileToClone of folderToClone!.files) {
+        await db.cloneFile(fileToClone, clonedFolder.id);
+      }
+    }
+  }
+
+  res.status(200).send();
 });

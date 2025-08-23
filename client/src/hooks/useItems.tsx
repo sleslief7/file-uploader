@@ -10,6 +10,7 @@ const useItems = (
   const { data = dataFallback, ...queryRest } = useQuery<ItemType[]>({
     queryKey: ['items', folderId, query],
     queryFn: () => getItems(folderId, query),
+    staleTime: 60 * 1000,
   });
 
   return { data, ...queryRest };

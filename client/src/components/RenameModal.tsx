@@ -27,6 +27,12 @@ type RenameModalProps = {
   item: ItemType;
 };
 
+const getFilenameWithoutExtension = (filename: string): string => {
+  const lastDotIndex = filename.lastIndexOf('.');
+  if (lastDotIndex === -1) return filename; // no extension
+  return filename.substring(0, lastDotIndex);
+};
+
 const RenameModal = ({ isOpen, setIsOpen, item }: RenameModalProps) => {
   const { mutate: renameFile } = useRenameFile();
   const { mutate: renameFolder } = useRenameFolder();
@@ -37,7 +43,7 @@ const RenameModal = ({ isOpen, setIsOpen, item }: RenameModalProps) => {
     reset,
   } = useForm<FormFields>({
     defaultValues: {
-      name: item.name,
+      name: getFilenameWithoutExtension(item.name),
     },
     resolver: zodResolver(schema),
     mode: 'onChange',

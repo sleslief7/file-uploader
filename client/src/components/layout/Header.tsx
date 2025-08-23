@@ -13,6 +13,10 @@ import {
   Center,
   InputGroup,
   Input,
+  Popover,
+  Portal,
+  VStack,
+  Button,
 } from '@chakra-ui/react';
 import { useSearch } from '@/hooks/useSearch';
 import { useState } from 'react';
@@ -70,10 +74,35 @@ const Header = () => {
           <Center gap={2}>
             <ColorModeButton />
             {isAuth && (
-              <Avatar.Root onClick={() => logout()} cursor='pointer'>
-                <Avatar.Fallback name={user!.name} />
-                <Avatar.Image src={user!.profileImgUrl} />
-              </Avatar.Root>
+              <Popover.Root positioning={{ placement: 'bottom-end' }}>
+                <Popover.Trigger>
+                  <Avatar.Root cursor='pointer'>
+                    <Avatar.Fallback name={user!.name} />
+                    <Avatar.Image src={user!.profileImgUrl} />
+                  </Avatar.Root>
+                </Popover.Trigger>
+                <Portal>
+                  <Popover.Positioner>
+                    <Popover.Content>
+                      <Popover.Arrow />
+                      <Popover.Body>
+                        <VStack align='stretch'>
+                          <Button variant='ghost' justifyContent='flex-start'>
+                            <Text>TBD</Text>
+                          </Button>
+                          <Button
+                            variant='ghost'
+                            justifyContent='flex-start'
+                            onClick={() => logout()}
+                          >
+                            <Text>Logout</Text>
+                          </Button>
+                        </VStack>
+                      </Popover.Body>
+                    </Popover.Content>
+                  </Popover.Positioner>
+                </Portal>
+              </Popover.Root>
             )}
           </Center>
         </GridItem>

@@ -1,7 +1,8 @@
 import { ColorModeButton } from '@/components/ui/color-mode';
 import { useAuth } from '@/hooks/useAuth';
 import useLogout from '@/hooks/useLogout';
-import { LuSearch } from 'react-icons/lu';
+import { LuSearch, LuX } from 'react-icons/lu';
+
 import {
   Box,
   Avatar,
@@ -48,27 +49,32 @@ const Header = () => {
           </HStack>
         </GridItem>
         <GridItem w='100%' colSpan={4} justifySelf={'center'}>
-          <InputGroup
-            startElement={
-              <LuSearch cursor={'pointer'} onClick={handleSubmit} />
-            }
-          >
-            <Input
-              id='search-input'
-              placeholder='Search...'
-              borderRadius={50}
-              variant='subtle'
-              value={input}
-              onChange={(e) => {
-                setInput(e.target.value);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleSubmit();
-                }
-              }}
-            />
-          </InputGroup>
+          {isAuth && (
+            <InputGroup
+              startElement={
+                <LuSearch cursor={'pointer'} onClick={handleSubmit} />
+              }
+              endElement={
+                input && <LuX cursor={'pointer'} onClick={() => setInput('')} />
+              }
+            >
+              <Input
+                id='search-input'
+                placeholder='Search...'
+                borderRadius={50}
+                variant='subtle'
+                value={input}
+                onChange={(e) => {
+                  setInput(e.target.value);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleSubmit();
+                  }
+                }}
+              />
+            </InputGroup>
+          )}
         </GridItem>
         <GridItem colSpan={3} justifySelf={'end'}>
           <Center gap={2}>

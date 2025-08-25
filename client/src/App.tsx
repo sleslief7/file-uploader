@@ -11,12 +11,19 @@ function App() {
   return (
     <Flex direction='column' maxWidth='100vw' minHeight='100vh'>
       <Header />
-      <Grid as='main' id='outlet' templateColumns='repeat(5, 1fr)'>
-        <GridItem colSpan={1}>
-          <Navbar />
-        </GridItem>
-
-        <GridItem colSpan={4} mx={'4'}>
+      <Grid
+        as='main'
+        id='outlet'
+        templateColumns={{ base: '1fr', xl: 'repeat(5, 1fr)' }}
+        flex='1'
+      >
+        {isAuth && (
+          <GridItem colSpan={1} display={{ base: 'none', xl: 'block' }}>
+            {' '}
+            <Navbar />
+          </GridItem>
+        )}
+        <GridItem colSpan={{ base: 5, xl: isAuth ? 4 : 5 }} mx={'4'}>
           <Outlet />
         </GridItem>
       </Grid>

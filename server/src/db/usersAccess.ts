@@ -100,3 +100,16 @@ export const findUserByGoogleId = async (
   });
   return user;
 };
+
+export const getFilesUsedStorage = async (userId: number): Promise<number> => {
+  const aggregate = await prisma.file.aggregate({
+    _sum: {
+      size: true,
+    },
+    where: {
+      ownerId: userId,
+    },
+  });
+
+  return aggregate._sum.size;
+};

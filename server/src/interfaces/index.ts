@@ -38,3 +38,8 @@ export type MoveFolderDto = {
   folderId: number;
   newFolderId: number | null;
 };
+
+export type Storage = {
+  total: number;
+  usedStorage: number;
+};

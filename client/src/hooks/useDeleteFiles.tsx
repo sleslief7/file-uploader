@@ -7,6 +7,7 @@ const useDeleteFiles = () =>
     mutationFn: (fileIds: number[]) => deleteFiles(fileIds),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['items'] });
+      queryClient.invalidateQueries({ queryKey: ['storage'] });
     },
   });
 

@@ -16,6 +16,7 @@ const useCreateFile = () =>
       queryClient.invalidateQueries({
         queryKey: ['items', files.uploaded[0].folderId],
       });
+      queryClient.invalidateQueries({ queryKey: ['storage'] });
       toaster.create({
         title: 'File created!',
         type: 'success',

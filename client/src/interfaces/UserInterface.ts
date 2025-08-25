@@ -16,3 +16,8 @@ export interface UserSignupRequest {
   username: string;
   password: string;
 }
+
+export type Storage = {
+  total: number;
+  usedStorage: number;
+};

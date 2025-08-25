@@ -7,6 +7,7 @@ const useDeleteFolders = () =>
     mutationFn: (ids: number[]) => deleteFolders(ids),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['items'] });
+      queryClient.invalidateQueries({ queryKey: ['storage'] });
     },
   });
 

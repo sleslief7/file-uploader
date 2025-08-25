@@ -1,5 +1,6 @@
 import db from '../db';
 import asyncHandler from 'express-async-handler';
+import { Storage } from '../interfaces';
 
 export const getUserById = asyncHandler(async (req, res) => {
   const { id } = req.params;
@@ -25,4 +26,14 @@ export const updateUser = asyncHandler(async (req, res) => {
   }
   const updatedUser = await db.updateUser(Number(id), data, true);
   res.status(201).json(updatedUser);
+});
+
+export const userStorage = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const usedStorage = await db.getFilesUsedStorage(Number(id));
+  const storage: Storage = {
+    total: Number(process.env.STORAGE_PER_USER_IN_BYTES!),
+    usedStorage,
+  };
+  res.status(200).json(storage);
 });

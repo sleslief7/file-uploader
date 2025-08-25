@@ -1,4 +1,8 @@
-import type { User, UserSignupRequest } from '@/interfaces/UserInterface';
+import type {
+  Storage,
+  User,
+  UserSignupRequest,
+} from '@/interfaces/UserInterface';
 import apiClient from './apiClient';
 
 export const checkAuth = async () => {
@@ -43,6 +47,16 @@ export const signup = async (user: UserSignupRequest) => {
       username: user.username,
       password: user.password,
     });
+  } catch (err) {
+    console.error('Error logging out', err);
+    throw err;
+  }
+};
+
+export const userStorage = async (userId: number): Promise<Storage> => {
+  try {
+    const { data: storage } = await apiClient.get(`/users/${userId}/storage`);
+    return storage as Storage;
   } catch (err) {
     console.error('Error logging out', err);
     throw err;

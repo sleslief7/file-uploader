@@ -38,6 +38,7 @@ model Folder {
   parentFolderId Int?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+  isFavorite Boolean  @default(false)
 
   owner        User     @relation("OwnedFolder", fields: [ownerId], references: [id], onDelete: Cascade)
   folders      Folder[] @relation("FolderToFolder")

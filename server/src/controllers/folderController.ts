@@ -86,6 +86,7 @@ export const getItemsByParentFolderId = asyncHandler(async (req, res) => {
       ownerId: folder.ownerId,
       parentId: folder.parentFolderId,
       updatedAt: folder.updatedAt,
+      isFavorite: false,
     })
   );
   files.map((file) =>
@@ -97,6 +98,7 @@ export const getItemsByParentFolderId = asyncHandler(async (req, res) => {
       ownerId: file.ownerId,
       parentId: file.folderId,
       updatedAt: file.updatedAt,
+      isFavorite: file.isFavorite,
     })
   );
 

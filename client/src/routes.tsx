@@ -5,6 +5,7 @@ import RedirectIfAuth from './util/wrappers/RedirectIfAuth';
 import Homepage from './components/pages/Homepage';
 import LoginPage from './components/pages/LoginPage';
 import SignupPage from './components/pages/SignUpPage';
+import FavoritesPage from './components/pages/FavoritesPage';
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,14 @@ const router = createBrowserRouter([
         element: (
           <EnsureAuth>
             <Homepage />
+          </EnsureAuth>
+        ),
+      },
+      {
+        path: '/favorites',
+        element: (
+          <EnsureAuth>
+            <FavoritesPage />
           </EnsureAuth>
         ),
       },

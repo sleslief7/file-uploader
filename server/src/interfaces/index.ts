@@ -18,6 +18,7 @@ type Item = {
   ownerId: number;
   parentId: number | null;
   updatedAt: Date;
+  isFavorite: boolean;
 };
 
 export type Items = Item[];

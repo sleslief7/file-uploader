@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import StorageStatus from '../StorageStatus';
 
 const Navbar = () => {
-  const tabs = ['Favorites', 'Shared with me'];
+  const tabs = ['Home', 'Favorites', 'Shared with me'];
   return (
     <VStack
       alignItems='start'
@@ -24,7 +24,7 @@ const Navbar = () => {
           borderRadius='lg'
           px='2'
         >
-          <Link to={`/${tab}`}>{tab}</Link>
+          <Link to={`/${tab.toLowerCase()}`}>{tab}</Link>
         </Box>
       ))}
       <StorageStatus />

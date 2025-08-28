@@ -7,7 +7,7 @@ import { formatDate } from '@/util/formatDate';
 import { bytesToMegabytes } from '@/util/bytesToMegabytes';
 import useItems from '@/hooks/useItems';
 import ItemMenu from './ItemMenu';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import useFolderIdParam from '@/hooks/useFolderIdParam';
 import { EmptyStateComponent } from '../EmptyStateComponent';
 import { useState } from 'react';
@@ -20,7 +20,11 @@ const ItemsTable = () => {
   const folderId = useFolderIdParam();
   const { data: items, isLoading } = useItems(folderId, searchName);
   const navigate = useNavigate();
-
+  const location = useLocation();
+  let filteredItems = items;
+  if (location.pathname === '/favorites') {
+    filteredItems = items.filter((item) => item.isFavorite);
+  }
   const handleRowSelection = (
     e: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
     item: ItemType
@@ -40,6 +44,8 @@ const ItemsTable = () => {
     `${item.isFile ? 'file' : 'folder'}-${item.id}`;
 
   if (items.length === 0 && !isLoading) return <EmptyStateComponent />;
+  if (filteredItems.length === 0 && !isLoading)
+    return <div>You do not have favorite files.</div>;
 
   return (
     <Table.Root variant='outline' interactive>
@@ -60,7 +66,7 @@ const ItemsTable = () => {
         </Table.Row>
       </Table.Header>
       <Table.Body>
-        {items.map((item: ItemType) => (
+        {filteredItems.map((item: ItemType) => (
           <Table.Row
             key={`item-${item.id}-${item.isFile ? 'file' : 'folder'}`}
             cursor={!item.isFile ? 'pointer' : 'default'}

@@ -6,4 +6,5 @@ export interface ItemType {
   parentId: number | null;
   updatedAt: Date | string;
   size: number | null;
+  isFavorite: boolean;
 }

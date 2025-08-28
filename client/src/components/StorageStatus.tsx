@@ -16,7 +16,7 @@ const StorageStatus = () => {
           variant='subtle'
           size='sm'
           width='90%'
-          colorPalette='teal'
+          colorPalette='primary'
         >
           <Progress.Track>
             <Progress.Range />

@@ -33,7 +33,7 @@ const Header = () => {
   };
 
   return (
-    <Box as='header' bg='teal.subtle' px={4} py={2}>
+    <Box as='header' bg='primary.subtle' px={4} py={2}>
       <Grid templateColumns='repeat(10, 1fr)' alignItems={'center'}>
         <GridItem colSpan={3}>
           <HStack>

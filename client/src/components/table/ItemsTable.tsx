@@ -70,7 +70,7 @@ const ItemsTable = () => {
             }}
             backgroundColor={
               selection[toItemIdentifier(item)] === true
-                ? 'teal.subtle'
+                ? 'primary.subtle'
                 : undefined
             }
           >

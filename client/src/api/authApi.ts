@@ -1,4 +1,5 @@
 import type {
+  FolderTree,
   Storage,
   User,
   UserSignupRequest,
@@ -59,6 +60,18 @@ export const userStorage = async (userId: number): Promise<Storage> => {
     return storage as Storage;
   } catch (err) {
     console.error('Error logging out', err);
+    throw err;
+  }
+};
+
+export const getFolderTrees = async (userId: number): Promise<FolderTree[]> => {
+  try {
+    const { data: trees } = await apiClient.get(
+      `/users/${userId}/folder_trees`
+    );
+    return trees as FolderTree[];
+  } catch (err) {
+    console.error('Error getting folder trees', err);
     throw err;
   }
 };

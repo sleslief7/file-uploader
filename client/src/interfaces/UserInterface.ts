@@ -21,3 +21,15 @@ export type Storage = {
   total: number;
   usedStorage: number;
 };
+
+export type FolderTree = {
+  id: number;
+  name: string;
+  folders: FolderTree[];
+  files: FolderTreeFile[];
+};
+
+export type FolderTreeFile = {
+  id: number;
+  name: string;
+};

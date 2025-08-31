@@ -5,7 +5,7 @@ import { cloneFiles, moveFiles } from '../controllers/fileController';
 
 const itemRouter = Router();
 
-itemRouter.post('/move', ensureAuthenticated, cloneFolders, cloneFiles);
-itemRouter.post('/clone', ensureAuthenticated, moveFolders, moveFiles);
+itemRouter.post('/clone', ensureAuthenticated, cloneFolders, cloneFiles);
+itemRouter.post('/move', ensureAuthenticated, moveFolders, moveFiles);
 
 export default itemRouter;

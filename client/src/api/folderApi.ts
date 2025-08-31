@@ -17,11 +17,23 @@ export const createFolder = async (
 };
 
 export const getItems = async (
-  folderId: number | null = null,
-  query?: string | undefined
+  folderId: number | string | null = null,
+  query?: string,
+  page?: number,
+  pageSize?: number,
+  favoritesOnly?: boolean
 ) => {
+  const params = new URLSearchParams();
+
+  if (query) params.append('q', query);
+  if (page) params.append('page', page.toString());
+  if (pageSize) params.append('page_size', pageSize.toString());
+  if (favoritesOnly) params.append('favorites_only', favoritesOnly.toString());
+
+  const path = `/folders/${folderId}/items/?${params.toString()}`;
+
   try {
-    const res = await apiClient.get(`/folders/${folderId}/items/?q=${query}`);
+    const res = await apiClient.get(path);
     return res.data;
   } catch (err) {
     console.error('Error getting items', err);

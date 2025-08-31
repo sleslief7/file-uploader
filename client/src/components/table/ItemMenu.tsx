@@ -7,6 +7,9 @@ import { PiDotsThreeVerticalBold } from 'react-icons/pi';
 import { toaster } from '../ui/toaster';
 import RenameModal from '../RenameModal';
 import { useState } from 'react';
+import MoveModal from '../MoveModal';
+import type { MoveFileDto } from '@/interfaces/fileInterface';
+import type { MoveFolderDto } from '@/interfaces/folderInterface';
 
 type ItemMenuProp = {
   item: ItemType;
@@ -14,6 +17,8 @@ type ItemMenuProp = {
 
 const ItemMenu = ({ item }: ItemMenuProp) => {
   const [isRenameOpen, setIsRenameOpen] = useState(false);
+  const [isMoveOpen, setIsMoveOpen] = useState(false);
+
   const { mutate: deleteFiles } = useDeleteFiles();
   const { mutate: deleteFolders } = useDeleteFolders();
 
@@ -59,6 +64,13 @@ const ItemMenu = ({ item }: ItemMenuProp) => {
     }
   };
 
+  const filesToMove: MoveFileDto[] = item.isFile
+    ? [{ fileId: item.id, newFolderId: null }]
+    : [];
+  const foldersToMove: MoveFolderDto[] = !item.isFile
+    ? [{ folderId: item.id, newFolderId: null }]
+    : [];
+
   return (
     <Menu.Root>
       <Menu.Trigger asChild onClick={(e) => e.stopPropagation()}>
@@ -74,6 +86,9 @@ const ItemMenu = ({ item }: ItemMenuProp) => {
               onClick={() => setIsRenameOpen(!isRenameOpen)}
             >
               Rename
+            </Menu.Item>
+            <Menu.Item value='move' onClick={() => setIsMoveOpen(!isMoveOpen)}>
+              Move
             </Menu.Item>
             {item.isFile && (
               <Menu.Item value='download' onClick={handleDownload}>
@@ -95,6 +110,12 @@ const ItemMenu = ({ item }: ItemMenuProp) => {
         isOpen={isRenameOpen}
         item={item}
         setIsOpen={setIsRenameOpen}
+      />
+      <MoveModal
+        isOpen={isMoveOpen}
+        setIsOpen={setIsMoveOpen}
+        filesToMove={filesToMove}
+        foldersToMove={foldersToMove}
       />
     </Menu.Root>
   );

@@ -3,3 +3,8 @@ export type FolderBreadcrumbItem = {
   folderId: number | null;
   position: number;
 };
+
+export interface MoveFolderDto {
+  folderId: number;
+  newFolderId: number | null;
+}

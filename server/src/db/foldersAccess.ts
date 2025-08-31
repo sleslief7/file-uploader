@@ -122,7 +122,7 @@ export const moveFolder = async (
       id: folderId,
     },
     data: {
-      parentFolder: newParentFolderId,
+      parentFolderId: newParentFolderId,
     },
   });
 

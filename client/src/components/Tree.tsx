@@ -1,55 +1,80 @@
 import { useAuth } from '@/hooks/useAuth';
-import useFolderTrees from '@/hooks/useFolderTrees';
+import useFolderTree from '@/hooks/useFolderTree';
 import type { FolderTree } from '@/interfaces/UserInterface';
-import { TreeView, createTreeCollection } from '@chakra-ui/react';
+import {
+  Spinner,
+  TreeView,
+  createTreeCollection,
+  ScrollArea,
+} from '@chakra-ui/react';
 import { LuFolder } from 'react-icons/lu';
 
-const Tree = () => {
+type TreeProps = {
+  focusedValue: string | null;
+  setFocusedValue: React.Dispatch<React.SetStateAction<string | null>>;
+  folderIdsBeingMoved: number[];
+};
+
+const Tree = ({
+  focusedValue,
+  setFocusedValue,
+  folderIdsBeingMoved,
+}: TreeProps) => {
   const { user } = useAuth();
-  const { data: trees } = useFolderTrees(user?.id);
+  const { data: folderTree, isPending } = useFolderTree(user?.id);
+
+  if (isPending || !folderTree) return <Spinner />;
 
   const collection = createTreeCollection<FolderTree>({
     nodeToValue: (node) => node.id.toString(),
     nodeToString: (node) => node.name,
     nodeToChildren: (node) => node.folders,
+    isNodeDisabled: (node) => folderIdsBeingMoved.includes(node.id),
     rootNode: {
       id: -1,
-      name: 'home',
-      folders: trees,
+      name: 'ROOT',
+      folders: [folderTree],
       files: [],
     },
   });
 
-  if (true) return <></>;
-
   return (
-    <TreeView.Root
-      collection={collection}
-      maxW='sm'
-      size='sm'
-      variant='solid'
-      colorPalette='teal'
-      defaultExpandedValue={['home']}
-    >
-      <TreeView.Label>Choose destination folder</TreeView.Label>
-      <TreeView.Tree>
-        <TreeView.Node
-          render={({ node, nodeState }) =>
-            nodeState.isBranch ? (
-              <TreeView.BranchControl>
-                <LuFolder />
-                <TreeView.BranchText>{node.name}</TreeView.BranchText>
-              </TreeView.BranchControl>
-            ) : (
-              <TreeView.Item>
-                <LuFolder />
-                <TreeView.ItemText>{node.name}</TreeView.ItemText>
-              </TreeView.Item>
-            )
-          }
-        />
-      </TreeView.Tree>
-    </TreeView.Root>
+    <ScrollArea.Root height='12rem' variant='hover'>
+      <ScrollArea.Viewport>
+        <ScrollArea.Content paddingEnd='3' textStyle='sm'>
+          <TreeView.Root
+            collection={collection}
+            maxW='sm'
+            size='sm'
+            variant='solid'
+            colorPalette='teal'
+            defaultExpandedValue={['0']}
+            focusedValue={focusedValue}
+            onFocusChange={(s) => setFocusedValue(s.focusedValue)}
+          >
+            <TreeView.Label>Choose destination folder</TreeView.Label>
+            <TreeView.Tree>
+              <TreeView.Node
+                render={({ node, nodeState }) =>
+                  nodeState.isBranch ? (
+                    <TreeView.BranchControl>
+                      <LuFolder />
+                      <TreeView.BranchText>{node.name}</TreeView.BranchText>
+                    </TreeView.BranchControl>
+                  ) : (
+                    <TreeView.Item>
+                      <LuFolder />
+                      <TreeView.ItemText>{node.name}</TreeView.ItemText>
+                    </TreeView.Item>
+                  )
+                }
+              />
+            </TreeView.Tree>
+          </TreeView.Root>
+        </ScrollArea.Content>
+      </ScrollArea.Viewport>
+      <ScrollArea.Scrollbar />
+    </ScrollArea.Root>
   );
 };
 

@@ -1,11 +1,11 @@
 import { createContext } from 'react';
 
 interface SearchContextType {
-  searchName: string;
+  searchName?: string;
   setSearchName: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const SearchContext = createContext<SearchContextType>({
-  searchName: '',
+  searchName: undefined,
   setSearchName: () => {},
 });

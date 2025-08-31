@@ -39,7 +39,7 @@ export const userStorage = asyncHandler(async (req, res) => {
   res.status(200).json(storage);
 });
 
-export const getFolderTree = asyncHandler(async (req, res) => {
+export const getUserFolderTree = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   if (!req.user || req.user!.id.toString() !== id)
@@ -47,13 +47,27 @@ export const getFolderTree = asyncHandler(async (req, res) => {
 
   const userId = Number(req.user!.id);
 
-  const trees: FolderTree[] = [];
+  const rootFolderTrees: FolderTree[] = [];
   const directChildrenOfRoot = await db.getFolders(userId, null);
 
   for (const directChildOfRoot of directChildrenOfRoot) {
     const tree = await db.getFolderWithNestedItems(directChildOfRoot.id);
-    trees.push(tree);
+    rootFolderTrees.push(tree);
   }
 
-  res.status(200).json(trees);
+  const rootFiles = await db.getFiles(userId, null);
+
+  const rootFolderTree: FolderTree = {
+    id: 0,
+    name: 'home',
+    ownerId: userId,
+    parentFolderId: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    isFavorite: false,
+    folders: rootFolderTrees,
+    files: rootFiles,
+  };
+
+  res.status(200).json(rootFolderTree);
 });

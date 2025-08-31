@@ -64,12 +64,12 @@ export const userStorage = async (userId: number): Promise<Storage> => {
   }
 };
 
-export const getFolderTrees = async (userId: number): Promise<FolderTree[]> => {
+export const getFolderTree = async (userId: number): Promise<FolderTree> => {
   try {
-    const { data: trees } = await apiClient.get(
-      `/users/${userId}/folder_trees`
+    const { data: folderTree } = await apiClient.get(
+      `/users/${userId}/folder_tree`
     );
-    return trees as FolderTree[];
+    return folderTree as FolderTree;
   } catch (err) {
     console.error('Error getting folder trees', err);
     throw err;

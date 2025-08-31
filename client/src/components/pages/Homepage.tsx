@@ -1,8 +1,7 @@
 import ItemsTable from '../table/ItemsTable';
 import Breadcrumb from '../breadcrumb/Breadcrumb';
-import { Box, Flex, Stack } from '@chakra-ui/react';
+import { Flex, Stack } from '@chakra-ui/react';
 import AddMenu from '../AddMenu';
-import Tree from '../Tree';
 
 const Homepage = () => {
   return (
@@ -12,9 +11,6 @@ const Homepage = () => {
         <AddMenu />
       </Flex>
       <ItemsTable />
-      <Box pt={4}>
-        <Tree />
-      </Box>
     </Stack>
   );
 };

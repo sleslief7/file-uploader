@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"npm run start:dev --prefix ./server\" \"npm run dev --prefix ./client\""
+    "dev": "concurrently \"pnpm --filter server start:dev\" \"pnpm --filter client dev\""
   },
   "keywords": [],
   "author": "",

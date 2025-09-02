@@ -25,7 +25,6 @@ folderRouter.get(
   ensureAuthenticated,
   getItemsByParentFolderId
 );
-folderRouter.post('/move', ensureAuthenticated, moveFolders);
 folderRouter.post('/clone', ensureAuthenticated, cloneFolders);
 
 export default folderRouter;

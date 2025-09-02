@@ -164,9 +164,7 @@ export const cloneFiles = asyncHandler(async (req, res) => {
   res.status(200).json(clonedFiles);
 });
 
-export const moveFiles = asyncHandler(async (req, res) => {
-  const moveFileDtos = req.body.filesToMove as MoveFileDto[];
-
+export const moveFiles = async (moveFileDtos: MoveFileDto[]) => {
   for (const moveFileDto of moveFileDtos) {
     if (moveFileDto.newFolderId !== null)
       await validateFolderExists(moveFileDto.newFolderId);
@@ -192,6 +190,4 @@ export const moveFiles = asyncHandler(async (req, res) => {
       throw error;
     }
   }
-
-  res.status(200).send();
-});
+};

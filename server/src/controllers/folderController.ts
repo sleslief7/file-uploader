@@ -134,9 +134,7 @@ export const getBreadCrumb = asyncHandler(async (req, res) => {
   res.status(200).json(breadCrumb);
 });
 
-export const moveFolders = asyncHandler(async (req, res) => {
-  const moveFolderDtos = req.body.foldersToMove as MoveFolderDto[];
-
+export const moveFolders = async (moveFolderDtos: MoveFolderDto[]) => {
   for (const moveFolderDto of moveFolderDtos) {
     if (moveFolderDto.newFolderId !== null)
       await validateFolderExists(moveFolderDto.newFolderId);
@@ -155,9 +153,7 @@ export const moveFolders = asyncHandler(async (req, res) => {
 
     await db.moveFolder(folder.id, moveFolderDto.newFolderId);
   }
-
-  res.status(200).send();
-});
+};
 
 export const cloneFolders = asyncHandler(async (req, res) => {
   const folderIds = validateFolderIds(req.body.folderIds);

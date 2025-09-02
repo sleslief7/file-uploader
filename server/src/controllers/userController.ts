@@ -1,7 +1,9 @@
 import db from '../db';
 import asyncHandler from 'express-async-handler';
-import { FolderTree, Storage } from '../interfaces';
+import { FolderTree, MoveFileDto, MoveFolderDto, Storage } from '../interfaces';
 import { BadRequestError } from '../validation/errors';
+import { moveFolders } from './folderController';
+import { moveFiles } from './fileController';
 
 export const getUserById = asyncHandler(async (req, res) => {
   const { id } = req.params;
@@ -70,4 +72,14 @@ export const getUserFolderTree = asyncHandler(async (req, res) => {
   };
 
   res.status(200).json(rootFolderTree);
+});
+
+export const moveItems = asyncHandler(async (req, res) => {
+  const moveFolderDtos = req.body.foldersToMove as MoveFolderDto[];
+  await moveFolders(moveFolderDtos);
+
+  const moveFileDtos = req.body.filesToMove as MoveFileDto[];
+  await moveFiles(moveFileDtos);
+
+  res.status(200).send();
 });

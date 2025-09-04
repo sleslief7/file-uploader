@@ -18,13 +18,21 @@ const ItemsTable = () => {
   const { user } = useAuth();
   const { searchName } = useSearch();
   const folderId = useFolderIdParam();
-  const { data: items, isLoading } = useItems(folderId, searchName);
-  const navigate = useNavigate();
   const location = useLocation();
-  let filteredItems = items;
-  if (location.pathname === '/favorites') {
-    filteredItems = items.filter((item) => item.isFavorite);
-  }
+  const isFavoritesScreen = location.pathname === '/favorites';
+
+  const { data, isLoading } = useItems(
+    isFavoritesScreen ? undefined : folderId,
+    searchName,
+    1,
+    100,
+    isFavoritesScreen
+  );
+
+  const { items } = data;
+
+  const navigate = useNavigate();
+
   const handleRowSelection = (
     e: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
     item: ItemType
@@ -44,8 +52,6 @@ const ItemsTable = () => {
     `${item.isFile ? 'file' : 'folder'}-${item.id}`;
 
   if (items.length === 0 && !isLoading) return <EmptyStateComponent />;
-  if (filteredItems.length === 0 && !isLoading)
-    return <div>You do not have favorite files.</div>;
 
   return (
     <Table.Root variant='outline' interactive>
@@ -66,7 +72,7 @@ const ItemsTable = () => {
         </Table.Row>
       </Table.Header>
       <Table.Body>
-        {filteredItems.map((item: ItemType) => (
+        {items.map((item: ItemType) => (
           <Table.Row
             key={`item-${item.id}-${item.isFile ? 'file' : 'folder'}`}
             cursor={!item.isFile ? 'pointer' : 'default'}

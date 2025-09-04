@@ -6,8 +6,6 @@ import {
   getBreadCrumb,
   getFolderById,
   updateFolder,
-  getItemsByParentFolderId,
-  moveFolders,
   cloneFolders,
 } from '../controllers/folderController';
 import { ensureAuthenticated } from '../controllers/authController';
@@ -20,11 +18,6 @@ folderRouter.delete('/', ensureAuthenticated, deleteFolders);
 folderRouter.get('/:folderId', ensureAuthenticated, getFolderById);
 folderRouter.get('/', ensureAuthenticated, getFolders);
 folderRouter.get('/:folderId/breadcrumb', ensureAuthenticated, getBreadCrumb);
-folderRouter.get(
-  '/:folderId/items',
-  ensureAuthenticated,
-  getItemsByParentFolderId
-);
 folderRouter.post('/clone', ensureAuthenticated, cloneFolders);
 
 export default folderRouter;

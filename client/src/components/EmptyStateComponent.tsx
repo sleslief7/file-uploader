@@ -7,10 +7,31 @@ import {
   EmptyState,
 } from '@chakra-ui/react';
 import { TbFolders } from 'react-icons/tb';
+import { useLocation } from 'react-router-dom';
 
 export const EmptyStateComponent = () => {
   const { isFileOpen, setIsFileOpen, isFolderOpen, setIsFolderOpen } =
     useModal();
+
+  const location = useLocation();
+  const isFavoritesScreen = location.pathname === '/favorites';
+
+  if (isFavoritesScreen)
+    return (
+      <Flex width='100%'>
+        <EmptyState.Root>
+          <EmptyState.Content>
+            <VStack textAlign='center'>
+              <EmptyState.Title>You do not have favorites</EmptyState.Title>
+              <EmptyState.Description>
+                Mark files or folders as favorites to see them here
+              </EmptyState.Description>
+            </VStack>
+          </EmptyState.Content>
+        </EmptyState.Root>
+      </Flex>
+    );
+
   return (
     <Flex width='100%'>
       <EmptyState.Root>

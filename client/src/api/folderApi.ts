@@ -17,20 +17,22 @@ export const createFolder = async (
 };
 
 export const getItems = async (
-  folderId: number | string | null = null,
-  query?: string,
+  folderId?: number | string | null,
+  search?: string,
   page?: number,
   pageSize?: number,
   favoritesOnly?: boolean
 ) => {
   const params = new URLSearchParams();
 
-  if (query) params.append('q', query);
+  if (search) params.append('q', search);
+  if (folderId !== undefined)
+    params.append('folderId', folderId?.toString() ?? 'null');
   if (page) params.append('page', page.toString());
-  if (pageSize) params.append('page_size', pageSize.toString());
-  if (favoritesOnly) params.append('favorites_only', favoritesOnly.toString());
+  if (pageSize) params.append('pageSize', pageSize.toString());
+  if (favoritesOnly) params.append('favoritesOnly', favoritesOnly.toString());
 
-  const path = `/folders/${folderId}/items/?${params.toString()}`;
+  const path = `/items/?${params.toString()}`;
 
   try {
     const res = await apiClient.get(path);

@@ -44,17 +44,56 @@ export const getFileById = async (fileId: number): Promise<File | null> => {
 
 export const getFiles = async (
   ownerId: number,
-  folderId: number | null = null,
-  query?: string | undefined
+  folderId?: number | null,
+  search?: string,
+  page?: number,
+  pageSize?: number,
+  favoritesOnly?: boolean
 ): Promise<File[]> => {
-  const files = await prisma.file.findMany({
-    where: {
-      ownerId,
-      folderId,
-      ...(query ? { name: { contains: query, mode: 'insensitive' } } : {}),
-    },
-  });
+  const [files, totalCount] = await getFilesWithCount(
+    ownerId,
+    folderId,
+    search,
+    page,
+    pageSize,
+    favoritesOnly
+  );
+
   return files;
+};
+
+export const getFilesWithCount = async (
+  ownerId: number,
+  folderId?: number | null,
+  search?: string,
+  page?: number,
+  pageSize?: number,
+  favoritesOnly?: boolean
+): Promise<[File[], number]> => {
+  const skip =
+    page === undefined || pageSize === undefined
+      ? undefined
+      : (page - 1) * pageSize;
+  const take = pageSize ?? undefined;
+
+  const where = {
+    ownerId,
+    ...(folderId !== undefined ? { folderId } : {}),
+    ...(favoritesOnly ? { isFavorite: true } : {}),
+    ...(search ? { name: { contains: search, mode: 'insensitive' } } : {}),
+  };
+
+  const files = await prisma.file.findMany({
+    skip,
+    take,
+    orderBy: {
+      updatedAt: 'desc',
+    },
+    where,
+  });
+
+  const totalCount = await prisma.file.count({ where });
+  return [files, totalCount];
 };
 
 export const getFilesByIds = async (fileIds: number[]): Promise<File[]> => {

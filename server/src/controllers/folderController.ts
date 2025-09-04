@@ -1,6 +1,13 @@
 import db from '../db';
 import asyncHandler from 'express-async-handler';
-import { Breadcrumb, FolderTree, Items, MoveFolderDto } from '../interfaces';
+import {
+  Breadcrumb,
+  FolderTree,
+  GetItemsQueryParams,
+  getItemsQueryParamsSchema,
+  Items,
+  MoveFolderDto,
+} from '../interfaces';
 import { BadRequestError } from '../validation/errors';
 import {
   validateFolderExists,
@@ -62,47 +69,6 @@ export const getFolders = asyncHandler(async (req, res) => {
   const folders = await db.getFolders(req.user!.id, parentFolderId);
 
   res.status(200).json(folders);
-});
-
-export const getItemsByParentFolderId = asyncHandler(async (req, res) => {
-  const { q } = req.query;
-  const safeQuery: string | undefined =
-    typeof q === 'string'
-      ? q
-      : Array.isArray(q) && typeof q[0] === 'string'
-      ? q[0]
-      : undefined;
-
-  const folderId = validateNullableFolderId(req.params.folderId);
-  const folders = await db.getFolders(req.user!.id, folderId, safeQuery);
-  const files = await db.getFiles(req.user!.id, folderId, safeQuery);
-
-  const items: Items = [];
-  folders.map((folder) =>
-    items.push({
-      id: folder.id,
-      isFile: false,
-      name: folder.name,
-      ownerId: folder.ownerId,
-      parentId: folder.parentFolderId,
-      updatedAt: folder.updatedAt,
-      isFavorite: folder.isFavorite,
-    })
-  );
-  files.map((file) =>
-    items.push({
-      id: file.id,
-      isFile: true,
-      name: file.name,
-      size: file.size,
-      ownerId: file.ownerId,
-      parentId: file.folderId,
-      updatedAt: file.updatedAt,
-      isFavorite: file.isFavorite,
-    })
-  );
-
-  res.status(200).json(items);
 });
 
 export const getBreadCrumb = asyncHandler(async (req, res) => {

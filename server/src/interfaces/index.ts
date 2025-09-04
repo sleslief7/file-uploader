@@ -1,4 +1,6 @@
 import { File, Prisma, User } from '../../generated/prisma';
+import { z } from 'zod';
+import { validateNullableFolderId } from '../validation/validators';
 
 export type UserWithoutPassword = Omit<User, 'password'>;
 
@@ -44,3 +46,34 @@ export type Storage = {
   total: number;
   usedStorage: number;
 };
+
+export type GetItemsResponse = {
+  items: Items;
+  totalCount: number;
+  page?: number;
+  pageSize?: number;
+};
+
+const preProcessFodlerId = (folderIdRaw: any) => {
+  if (folderIdRaw === undefined) return undefined;
+  return validateNullableFolderId(folderIdRaw);
+};
+
+const preProcessFavoritesOnly = (favoritesOnlyRaw: any) => {
+  if (!favoritesOnlyRaw) return false;
+  if (favoritesOnlyRaw?.toLowerCase() === 'true') return true;
+  return false;
+};
+
+export const getItemsQueryParamsSchema = z.object({
+  search: z.string().optional(),
+  favoritesOnly: z.preprocess(
+    preProcessFavoritesOnly,
+    z.boolean().default(false)
+  ),
+  page: z.coerce.number().optional(),
+  pageSize: z.coerce.number().optional(),
+  folderId: z.preprocess(preProcessFodlerId, z.number().nullable().optional()),
+});
+
+export type GetItemsQueryParams = z.infer<typeof getItemsQueryParamsSchema>;

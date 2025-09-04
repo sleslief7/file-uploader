@@ -54,17 +54,53 @@ export const getFoldersByIds = async (
 
 export const getFolders = async (
   ownerId: number,
-  parentFolderId: number | null = null,
-  query?: string | undefined
+  parentFolderId?: number | null,
+  search?: string,
+  page?: number,
+  pageSize?: number,
+  favoritesOnly?: boolean
 ): Promise<Folder[]> => {
-  const folders = await prisma.folder.findMany({
-    where: {
-      ownerId,
-      parentFolderId,
-      ...(query ? { name: { contains: query, mode: 'insensitive' } } : {}),
-    },
-  });
+  const [folders, totlaCount] = await getFoldersWithCount(
+    ownerId,
+    parentFolderId,
+    search,
+    page,
+    pageSize,
+    favoritesOnly
+  );
   return folders;
+};
+
+export const getFoldersWithCount = async (
+  ownerId: number,
+  parentFolderId?: number | null,
+  search?: string,
+  page?: number,
+  pageSize?: number,
+  favoritesOnly?: boolean
+): Promise<[Folder[], number]> => {
+  const skip =
+    page === undefined || pageSize === undefined
+      ? undefined
+      : (page - 1) * pageSize;
+  const take = pageSize ?? undefined;
+
+  const where = {
+    ownerId,
+    ...(parentFolderId !== undefined ? { parentFolderId } : {}),
+    ...(favoritesOnly ? { isFavorite: true } : {}),
+    ...(search ? { name: { contains: search, mode: 'insensitive' } } : {}),
+  };
+
+  const folders = await prisma.folder.findMany({
+    skip,
+    take,
+    orderBy: { updatedAt: 'desc' },
+    where,
+  });
+
+  const totalCount = await prisma.folder.count({ where });
+  return [folders, totalCount];
 };
 
 export const folderExists = async (folderId: number): Promise<boolean> => {

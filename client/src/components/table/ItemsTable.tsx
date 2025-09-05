@@ -56,8 +56,8 @@ const ItemsTable = () => {
   return (
     <Table.Root variant='outline' interactive>
       <Table.ColumnGroup>
-        <Table.Column htmlWidth='40%' />
-        <Table.Column htmlWidth='30%' />
+        <Table.Column htmlWidth='55%' />
+        <Table.Column htmlWidth='15%' />
         <Table.Column htmlWidth='12%' />
         <Table.Column />
         <Table.Column />

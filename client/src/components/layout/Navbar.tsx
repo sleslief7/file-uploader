@@ -23,6 +23,7 @@ const Navbar = () => {
           w='100%'
           borderRadius='lg'
           px='2'
+          asChild
         >
           <Link to={`/${tab.toLowerCase()}`}>{tab}</Link>
         </Box>

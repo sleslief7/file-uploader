@@ -8,8 +8,12 @@ const useFavorite = () =>
     mutationFn: (item: ItemType) => makeFavoriteItem(item),
     onSuccess: ({ data }) => {
       const folderIdToInvalite = data.folderId ?? data.parentFolderId ?? null;
+
       queryClient.invalidateQueries({
         queryKey: ['items', folderIdToInvalite],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['items', undefined],
       });
     },
   });

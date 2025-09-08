@@ -37,7 +37,7 @@ export const updateFolder = asyncHandler(async (req, res) => {
   const folderId = validateFolderId(req.params.folderId);
 
   const folder = await db.updateFolder(folderId, data);
-  res.status(204).json(folder);
+  res.status(200).json(folder);
 });
 
 export const deleteFolders = asyncHandler(async (req, res) => {

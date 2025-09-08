@@ -2,6 +2,7 @@ import type { MoveFileDto } from '@/interfaces/fileInterface';
 import apiClient from './apiClient';
 import type { MoveFolderDto } from '@/interfaces/folderInterface';
 import { toaster } from '@/components/ui/toaster';
+import type { ItemType } from '@/interfaces/ItemInterface';
 
 export const moveItems = async (
   filesToMove: MoveFileDto[],
@@ -21,6 +22,23 @@ export const moveItems = async (
     });
   } catch (err) {
     console.error('Error creating folder', err);
+    throw err;
+  }
+};
+
+export const makeFavoriteItem = async (item: ItemType) => {
+  try {
+    const res = await apiClient.put(
+      `/${item.isFile ? 'files' : 'folders'}/${item.id}`,
+      {
+        data: {
+          isFavorite: !item.isFavorite,
+        },
+      }
+    );
+    return res;
+  } catch (err) {
+    console.error('Updatng item', err);
     throw err;
   }
 };

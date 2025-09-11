@@ -1,14 +1,15 @@
 import useCreateFile from '@/hooks/useCreateFile';
 import {
-  Card,
   FileUpload,
   Dialog,
   Portal,
   CloseButton,
   Button,
+  Icon,
+  Box,
   useFileUpload,
 } from '@chakra-ui/react';
-import { HiUpload } from 'react-icons/hi';
+import { LuUpload } from 'react-icons/lu';
 import { toaster } from './ui/toaster';
 import useFolderIdParam from '@/hooks/useFolderIdParam';
 
@@ -64,19 +65,21 @@ const UploadFileContainer = ({ isOpen, setIsOpen }: FileFormProps) => {
         <Dialog.Positioner>
           <Dialog.Content>
             <Dialog.Header>
-              <Dialog.Title>Upload file</Dialog.Title>
+              <Dialog.Title>Upload file(s)</Dialog.Title>
             </Dialog.Header>
             <Dialog.Body>
               <FileUpload.RootProvider value={fileUpload}>
                 <FileUpload.HiddenInput />
                 <FileUpload.List showSize clearable />
-                <FileUpload.Trigger>
-                  <Card.Root size='sm'>
-                    <Card.Body cursor='pointer' color='fg.muted'>
-                      <HiUpload />
-                    </Card.Body>
-                  </Card.Root>
-                </FileUpload.Trigger>
+                <FileUpload.Dropzone cursor='pointer' w='100%'>
+                  <Icon size='md' color='fg.muted'>
+                    <LuUpload />
+                  </Icon>
+                  <FileUpload.DropzoneContent>
+                    <Box>Drag and drop files here</Box>
+                    <Box color='fg.muted'>files up to 5MB</Box>
+                  </FileUpload.DropzoneContent>
+                </FileUpload.Dropzone>
               </FileUpload.RootProvider>
             </Dialog.Body>
             <Dialog.Footer>

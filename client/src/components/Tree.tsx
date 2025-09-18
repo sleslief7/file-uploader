@@ -29,7 +29,7 @@ const Tree = ({
     nodeToValue: (node) => node.id.toString(),
     nodeToString: (node) => node.name,
     nodeToChildren: (node) => node.folders,
-    isNodeDisabled: (node) => node.name.length > 0,
+    isNodeDisabled: (node) => folderIdsBeingMoved.includes(node.id),
     rootNode: {
       id: -1,
       name: 'ROOT',
@@ -55,12 +55,19 @@ const Tree = ({
             <TreeView.Label>Choose destination folder</TreeView.Label>
             <TreeView.Tree>
               <TreeView.Node
-                render={({ node }) => (
-                  <TreeView.BranchControl>
-                    <LuFolder />
-                    <TreeView.BranchText>{node.name}</TreeView.BranchText>
-                  </TreeView.BranchControl>
-                )}
+                render={({ node, nodeState }) =>
+                  nodeState.isBranch ? (
+                    <TreeView.BranchControl>
+                      <LuFolder />
+                      <TreeView.BranchText>{node.name}</TreeView.BranchText>
+                    </TreeView.BranchControl>
+                  ) : (
+                    <TreeView.Item>
+                      <LuFolder />
+                      <TreeView.ItemText>{node.name}</TreeView.ItemText>
+                    </TreeView.Item>
+                  )
+                }
               />
             </TreeView.Tree>
           </TreeView.Root>

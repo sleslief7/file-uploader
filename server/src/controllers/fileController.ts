@@ -7,22 +7,17 @@ import {
   validateNullableFolderId,
 } from '../validation/validators';
 import { MoveFileDto } from '../interfaces';
-import {
-  createFiles,
-  updateFile,
-  renameFile,
-  getFileById,
-  getFiles,
-  getFileUrl,
-  cloneFiles,
-  moveFiles,
-} from '../services/fileService';
+import * as fileService from '../services/fileService';
 
 export const createFilesHandler = asyncHandler(async (req, res) => {
   const user = req.user as User;
   const files = req.files as Express.Multer.File[];
   const folderId = validateNullableFolderId(req.params.folderId);
-  const { uploaded, failed } = await createFiles(user, files, folderId);
+  const { uploaded, failed } = await fileService.createFiles(
+    user,
+    files,
+    folderId
+  );
   res.status(200).json({ uploaded, failed });
 });
 
@@ -38,7 +33,7 @@ export const updateFileHandler = asyncHandler(async (req, res) => {
   const { data } = req.body;
   const fileId = validateFileId(req.params.fileId);
 
-  const file = await updateFile(fileId, data);
+  const file = await fileService.updateFile(fileId, data);
 
   res.status(200).json(file);
 });
@@ -47,7 +42,7 @@ export const renameFileHandler = asyncHandler(async (req, res) => {
   const fileId = validateFileId(req.params.fileId);
   const { name } = req.body;
 
-  const file = await renameFile(fileId, name);
+  const file = await fileService.renameFile(fileId, name);
 
   res.status(200).json(file);
 });
@@ -55,7 +50,7 @@ export const renameFileHandler = asyncHandler(async (req, res) => {
 export const getFileByIdHandler = asyncHandler(async (req, res) => {
   const fileId = validateFileId(req.params.fileId);
 
-  const file = await getFileById(fileId);
+  const file = await fileService.getFileById(fileId);
 
   res.status(200).json(file);
 });
@@ -63,7 +58,7 @@ export const getFileByIdHandler = asyncHandler(async (req, res) => {
 export const getFilesHandler = asyncHandler(async (req, res) => {
   const folderId = validateFolderId(req.body.folderId);
 
-  const files = await getFiles(req.user!.id, folderId);
+  const files = await fileService.getFiles(req.user!.id, folderId);
 
   res.status(200).json(files);
 });
@@ -71,7 +66,7 @@ export const getFilesHandler = asyncHandler(async (req, res) => {
 export const getFileUrlHandler = asyncHandler(async (req, res) => {
   const fileId = validateFileId(req.params.fileId);
 
-  const signedUrl = await getFileUrl(fileId);
+  const signedUrl = await fileService.getFileUrl(fileId);
 
   res.status(200).json({ signedUrl });
 });
@@ -79,11 +74,11 @@ export const getFileUrlHandler = asyncHandler(async (req, res) => {
 export const cloneFilesHandler = asyncHandler(async (req, res) => {
   const fileIds = validateFileIds(req.body.fileIds);
 
-  const clonedFiles = await cloneFiles(fileIds);
+  const clonedFiles = await fileService.cloneFiles(fileIds);
 
   res.status(200).json(clonedFiles);
 });
 
 export const moveFilesHandler = async (moveFileDtos: MoveFileDto[]) => {
-  await moveFiles(moveFileDtos);
+  await fileService.moveFiles(moveFileDtos);
 };

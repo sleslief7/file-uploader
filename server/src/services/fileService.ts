@@ -11,7 +11,7 @@ import { MoveFileDto } from '../interfaces';
 import { cloneFilePathName } from '../util/util';
 
 export const updateFile = async (fileId: number, data: any): Promise<File> => {
-  let file = await validateFileExists(fileId);
+  await validateFileExists(fileId);
   return await db.updateFile(fileId, data);
 };
 

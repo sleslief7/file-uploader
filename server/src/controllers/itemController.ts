@@ -1,78 +1,29 @@
-import db from '../db';
 import asyncHandler from 'express-async-handler';
 import {
   GetItemsQueryParams,
   getItemsQueryParamsSchema,
-  GetItemsResponse,
-  Items,
+  MoveFileDto,
+  MoveFolderDto,
 } from '../interfaces';
+import * as itemService from '../services/itemService';
 
-export const getItems = asyncHandler(async (req, res) => {
+export const getItemsHandler = asyncHandler(async (req, res) => {
   const params: GetItemsQueryParams = getItemsQueryParamsSchema.parse(
     req.query
   );
 
   const userId = req.user!.id;
 
-  const { search, folderId, page, pageSize, favoritesOnly } = params;
+  const response = await itemService.getItems(userId, params);
 
-  const [folders, foldersTotalCount] = await db.getFoldersWithCount(
-    userId,
-    folderId,
-    search,
-    undefined,
-    undefined,
-    favoritesOnly
-  );
-  const [files, filesTotalCount] = await db.getFilesWithCount(
-    userId,
-    folderId,
-    search,
-    undefined,
-    undefined,
-    favoritesOnly
-  );
-
-  let items: Items = [];
-
-  folders.map((folder) =>
-    items.push({
-      id: folder.id,
-      isFile: false,
-      name: folder.name,
-      ownerId: folder.ownerId,
-      parentId: folder.parentFolderId,
-      updatedAt: folder.updatedAt,
-      isFavorite: folder.isFavorite,
-    })
-  );
-  files.map((file) =>
-    items.push({
-      id: file.id,
-      isFile: true,
-      name: file.name,
-      size: file.size,
-      ownerId: file.ownerId,
-      parentId: file.folderId,
-      updatedAt: file.updatedAt,
-      isFavorite: file.isFavorite,
-    })
-  );
-
-  items = items.sort((x, y) => {
-    if (x.isFile !== y.isFile) return x.isFile ? 1 : -1;
-    return y.updatedAt.getTime() - x.updatedAt.getTime();
-  });
-
-  if (page && pageSize) {
-    const skip = (page - 1) * pageSize;
-    items = items.slice(skip, skip + pageSize);
-  }
-  const response: GetItemsResponse = {
-    items,
-    totalCount: foldersTotalCount + filesTotalCount,
-    page,
-    pageSize,
-  };
   res.status(200).json(response);
+});
+
+export const moveItemsHandler = asyncHandler(async (req, res) => {
+  const moveFolderDtos = req.body.foldersToMove as MoveFolderDto[];
+  const moveFileDtos = req.body.filesToMove as MoveFileDto[];
+
+  await itemService.moveItems(moveFolderDtos, moveFileDtos);
+
+  res.status(200).send();
 });

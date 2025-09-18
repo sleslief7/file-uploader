@@ -2,8 +2,8 @@ import db from '../db';
 import asyncHandler from 'express-async-handler';
 import { FolderTree, MoveFileDto, MoveFolderDto, Storage } from '../interfaces';
 import { BadRequestError } from '../validation/errors';
-import { moveFolders } from './folderController';
-import { moveFiles } from './fileController';
+import { moveFolders } from '../services/folderService';
+import { moveFiles } from '../services/fileService';
 
 export const getUserById = asyncHandler(async (req, res) => {
   const { id } = req.params;

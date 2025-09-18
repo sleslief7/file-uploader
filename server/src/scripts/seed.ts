@@ -10,7 +10,6 @@ async function main() {
       password: '$2b$10$61/MvArRA5HhYSXvU1jL6O5Kt3/i8yGRNKiC2oEAItapzK7obTbmm',
     },
   });
-
   await prisma.user.create({
     data: {
       name: 'Liomard J Mesa',
@@ -18,33 +17,18 @@ async function main() {
       password: '$2b$10$bRX0Zj0FoJffnncDwPFc6eUfTtvn33tC7SgbEcdd6m1Jb4z/toM/G',
     },
   });
-
   await prisma.folder.create({
     data: {
       ownerId: 1,
       name: "LS's 1st Folder",
     },
   });
-
   await prisma.folder.create({
     data: {
       ownerId: 2,
       name: `LJ's 1st Folder`,
     },
   });
-
-  // await prisma.file.create({
-  //   data: {
-  //     id: 1,
-  //     ownerId: 1,
-  //     name: 'locrio.jpeg',
-  //     bucket: 'uploads',
-  //     mimeType: 'image/jpeg',
-  //     path: '1/home/locrio.jpeg',
-  //     size: 339806,
-  //     isFavorite: false,
-  //   },
-  // });
 }
 
 main()

@@ -1,13 +1,6 @@
 import db from '../db';
 import asyncHandler from 'express-async-handler';
-import {
-  Breadcrumb,
-  FolderTree,
-  GetItemsQueryParams,
-  getItemsQueryParamsSchema,
-  Items,
-  MoveFolderDto,
-} from '../interfaces';
+import { Breadcrumb, FolderTree, MoveFolderDto } from '../interfaces';
 import { BadRequestError } from '../validation/errors';
 import {
   validateFolderExists,
@@ -16,138 +9,69 @@ import {
   validateFolderIds,
   validateNullableFolderId,
 } from '../validation/validators';
-import supabase from '../storage/supabase';
+import {
+  createFolder,
+  deleteFolders,
+  getFolderById,
+  updateFolder,
+  cloneFolders,
+  moveFolders,
+  getFolders,
+  getBreadCrumbForFolder,
+} from '../services/folderService';
 
-export const createFolder = asyncHandler(async (req, res) => {
+export const createFolderHandler = asyncHandler(async (req, res) => {
   const { name } = req.body;
   if (!name) throw new BadRequestError('Folder name is required.');
 
-  const folder = await db.createFolder({
+  const folder = await createFolder(
+    req.user!.id,
     name,
-    owner: { connect: { id: req.user?.id } },
-    ...(req.body.parentFolderId && {
-      parentFolder: { connect: { id: Number(req.body.parentFolderId) } },
-    }),
-  });
+    req.body.parentFolderId
+  );
+
   res.status(201).json(folder);
 });
 
-export const updateFolder = asyncHandler(async (req, res) => {
+export const updateFolderHandler = asyncHandler(async (req, res) => {
   const { data } = req.body;
   const folderId = validateFolderId(req.params.folderId);
-
-  const folder = await db.updateFolder(folderId, data);
+  const folder = await updateFolder(folderId, data);
   res.status(200).json(folder);
 });
 
-export const deleteFolders = asyncHandler(async (req, res) => {
+export const deleteFoldersHandler = asyncHandler(async (req, res) => {
   const folderIds = validateFolderIds(req.body.folderIds);
-  await validateFoldersExist(folderIds);
-
-  const filesPathsToDelete = [];
-
-  for (const folderId of folderIds) {
-    const nestedFiles = await db.getNestedFilesForFolder(folderId);
-    filesPathsToDelete.push(...nestedFiles.map((f) => f.path));
-  }
-
-  await supabase.deleteFiles(filesPathsToDelete);
-
-  await db.deleteFolders(folderIds);
+  await deleteFolders(folderIds);
   res.status(204).send();
 });
 
-export const getFolderById = asyncHandler(async (req, res) => {
+export const getFolderByIdHandler = asyncHandler(async (req, res) => {
   const folderId = validateFolderId(req.params.folderId);
-  const folder = await validateFolderExists(folderId);
+  const folder = await getFolderById(folderId);
   res.status(200).json(folder);
 });
 
-export const getFolders = asyncHandler(async (req, res) => {
+export const getFoldersHandler = asyncHandler(async (req, res) => {
   const parentFolderId = validateNullableFolderId(req.body?.parentFolderId);
-
-  const folders = await db.getFolders(req.user!.id, parentFolderId);
-
+  const folders = await getFolders(req.user!.id, parentFolderId);
   res.status(200).json(folders);
 });
 
-export const getBreadCrumb = asyncHandler(async (req, res) => {
+export const getBreadCrumbHandler = asyncHandler(async (req, res) => {
   let folderId = validateNullableFolderId(req.params.folderId);
-
-  const breadCrumb: Breadcrumb = [];
-
-  while (folderId) {
-    const folder = await db.getFolderById(folderId);
-    breadCrumb.unshift({
-      folderName: folder?.name,
-      folderId: folder?.id,
-      position: 0,
-    });
-    folderId = folder?.parentFolderId ?? null;
-  }
-
-  breadCrumb.unshift({
-    folderName: 'Home',
-    folderId: null,
-    position: 0,
-  });
-
-  for (let i = 0; i < breadCrumb.length; i++) {
-    let breadCrumbItem = breadCrumb[i];
-    breadCrumbItem.position = i + 1;
-  }
-
+  const breadCrumb = await getBreadCrumbForFolder(folderId);
   res.status(200).json(breadCrumb);
 });
 
-export const moveFolders = async (moveFolderDtos: MoveFolderDto[]) => {
-  for (const moveFolderDto of moveFolderDtos) {
-    if (moveFolderDto.newFolderId !== null)
-      await validateFolderExists(moveFolderDto.newFolderId);
+export const moveFoldersHandler = asyncHandler(async (req, res) => {
+  const moveFolderDtos = req.body.moveFolderDtos as MoveFolderDto[];
+  await moveFolders(moveFolderDtos);
+  res.status(200).send();
+});
 
-    let folder = await validateFolderExists(moveFolderDto.folderId);
-
-    const folderExistsInDestFolder = await db.folderNameExistsInFolder(
-      folder.ownerId,
-      moveFolderDto.newFolderId,
-      folder.name
-    );
-    if (folderExistsInDestFolder)
-      throw new BadRequestError(
-        'Folder with same name already exists in destination folder'
-      );
-
-    await db.moveFolder(folder.id, moveFolderDto.newFolderId);
-  }
-};
-
-export const cloneFolders = asyncHandler(async (req, res) => {
+export const cloneFoldersHandler = asyncHandler(async (req, res) => {
   const folderIds = validateFolderIds(req.body.folderIds);
-  await validateFoldersExist(folderIds);
-
-  for (const folderId of folderIds) {
-    let rootFolderTree = await db.getFolderWithNestedItems(folderId);
-
-    let foldersToClone: FolderTree[] = [rootFolderTree];
-    let folderIdMap: { [key: string]: number | null } = {};
-    folderIdMap[`${rootFolderTree.parentFolderId}`] =
-      rootFolderTree.parentFolderId;
-    while (foldersToClone.length > 0) {
-      const folderToClone = foldersToClone.pop();
-      foldersToClone.push(...folderToClone!.folders);
-
-      const clonedFolder = await db.cloneFolder(
-        folderToClone!.id,
-        folderIdMap[`${folderToClone!.parentFolderId}`]
-      );
-
-      folderIdMap[`${folderToClone!.id}`] = clonedFolder.id;
-
-      for (const fileToClone of folderToClone!.files) {
-        await db.cloneFile(fileToClone, clonedFolder.id);
-      }
-    }
-  }
-
+  await cloneFolders(folderIds);
   res.status(200).send();
 });

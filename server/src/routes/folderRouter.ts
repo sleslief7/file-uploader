@@ -1,23 +1,27 @@
 import { Router } from 'express';
 import {
-  createFolder,
-  deleteFolders,
-  getFolders,
-  getBreadCrumb,
-  getFolderById,
-  updateFolder,
-  cloneFolders,
+  createFolderHandler,
+  deleteFoldersHandler,
+  getFoldersHandler,
+  getBreadCrumbHandler,
+  getFolderByIdHandler,
+  updateFolderHandler,
+  cloneFoldersHandler,
 } from '../controllers/folderController';
 import { ensureAuthenticated } from '../controllers/authController';
 
 const folderRouter = Router();
 
-folderRouter.post('/', ensureAuthenticated, createFolder);
-folderRouter.put('/:folderId', ensureAuthenticated, updateFolder);
-folderRouter.delete('/', ensureAuthenticated, deleteFolders);
-folderRouter.get('/:folderId', ensureAuthenticated, getFolderById);
-folderRouter.get('/', ensureAuthenticated, getFolders);
-folderRouter.get('/:folderId/breadcrumb', ensureAuthenticated, getBreadCrumb);
-folderRouter.post('/clone', ensureAuthenticated, cloneFolders);
+folderRouter.post('/', ensureAuthenticated, createFolderHandler);
+folderRouter.put('/:folderId', ensureAuthenticated, updateFolderHandler);
+folderRouter.delete('/', ensureAuthenticated, deleteFoldersHandler);
+folderRouter.get('/:folderId', ensureAuthenticated, getFolderByIdHandler);
+folderRouter.get('/', ensureAuthenticated, getFoldersHandler);
+folderRouter.get(
+  '/:folderId/breadcrumb',
+  ensureAuthenticated,
+  getBreadCrumbHandler
+);
+folderRouter.post('/clone', ensureAuthenticated, cloneFoldersHandler);
 
 export default folderRouter;

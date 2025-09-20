@@ -67,6 +67,14 @@ export const getFolderById = async (folderId: number): Promise<Folder> => {
   return folder;
 };
 
+export const findFolder = async (
+  userId: number,
+  folderName: string,
+  parentFolderId?: number | null
+): Promise<Folder | null> => {
+  return await db.findFolder(userId, folderName, parentFolderId);
+};
+
 export const getFolders = async (
   userId: number,
   parentFolderId: number | null

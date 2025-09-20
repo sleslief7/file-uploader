@@ -41,6 +41,22 @@ export const getFolderById = async (
   return folder;
 };
 
+export const findFolder = async (
+  userId: number,
+  folderName: string,
+  parentFolderId?: number | null
+): Promise<Folder | null> => {
+  const folders = await getFolders(userId, parentFolderId, folderName);
+
+  const exactMatches = folders.filter(
+    (f) => f.name.toLowerCase() === folderName.toLowerCase()
+  );
+
+  if (exactMatches.length === 1) return exactMatches[0];
+
+  return null;
+};
+
 export const getFoldersByIds = async (
   folderIds: number[]
 ): Promise<Folder[]> => {

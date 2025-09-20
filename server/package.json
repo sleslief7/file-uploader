@@ -33,6 +33,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "@google/genai": "^1.20.0",
     "@prisma/client": "^6.8.2",
     "@quixo3/prisma-session-store": "^3.1.13",
     "@supabase/supabase-js": "^2.49.8",

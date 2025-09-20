@@ -5,6 +5,7 @@ import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import { useAuth } from './hooks/useAuth';
 import Navbar from './components/layout/Navbar';
+import Assistant from './components/Assistant';
 
 function App() {
   const { isAuth } = useAuth();
@@ -26,6 +27,7 @@ function App() {
         <GridItem colSpan={{ base: 5, xl: isAuth ? 4 : 5 }} mx={'4'}>
           <Outlet />
         </GridItem>
+        {isAuth && <Assistant />}
       </Grid>
       {!isAuth && <Footer />}
       <Toaster />

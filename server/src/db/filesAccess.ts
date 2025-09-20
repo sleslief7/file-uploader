@@ -203,7 +203,8 @@ export const findFile = async (
   const files = await getFiles(userId, parentFolderId, fileName);
 
   const exactMatches = files.filter(
-    (f) => f.name.toLowerCase() === fileName.toLowerCase()
+    (f) =>
+      f.name.replace(/\.[^/.]+$/, '').toLowerCase() === fileName.toLowerCase()
   );
 
   if (exactMatches.length === 1) return exactMatches[0];

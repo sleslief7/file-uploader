@@ -2,6 +2,7 @@ import { Folder, Prisma } from '../../generated/prisma';
 import db from '../db';
 import { MoveFolderDto } from '../interfaces';
 import supabase from '../storage/supabase';
+import { BadRequestError } from '../validation/errors';
 import {
   validateFolderExists,
   validateFoldersExist,
@@ -12,6 +13,18 @@ export const createFolder = async (
   name: string,
   parentFolderId: null | number
 ): Promise<Folder> => {
+  const folderExists = await db.folderNameExistsInFolder(
+    userId,
+    parentFolderId,
+    name
+  );
+
+  if (folderExists) {
+    throw new BadRequestError(
+      'Folder with same name already exists in this location'
+    );
+  }
+
   const folder = await db.createFolder({
     name,
     owner: { connect: { id: userId } },
@@ -22,7 +35,6 @@ export const createFolder = async (
 
   return folder;
 };
-
 export const updateFolder = async (
   folderId: number,
   updates: Prisma.FolderUpdateInput
@@ -129,6 +141,8 @@ export const moveFolders = async (moveFolderDtos: MoveFolderDto[]) => {
 export const cloneFolders = async (folderIds: number[]) => {
   await validateFoldersExist(folderIds);
 
+  const clonedFolders: Folder[] = [];
+
   for (const folderId of folderIds) {
     let rootFolderTree = await db.getFolderWithNestedItems(folderId);
 
@@ -145,6 +159,10 @@ export const cloneFolders = async (folderIds: number[]) => {
         folderIdMap[`${folderToClone.parentFolderId}`]
       );
 
+      if (folderIds.includes(folderToClone.id)) {
+        clonedFolders.push(clonedFolder);
+      }
+
       folderIdMap[`${folderToClone.id}`] = clonedFolder.id;
 
       for (const fileToClone of folderToClone.files) {
@@ -152,4 +170,5 @@ export const cloneFolders = async (folderIds: number[]) => {
       }
     }
   }
+  return clonedFolders;
 };

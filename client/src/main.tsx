@@ -20,7 +20,7 @@ createRoot(document.getElementById('root')!).render(
           </SearchProvider>
         </ModalProvider>
       </AuthProvider>
-      <ReactQueryDevtools />
+      <ReactQueryDevtools buttonPosition='bottom-left' />
     </QueryClientProvider>
   </ChakraProvider>
 );

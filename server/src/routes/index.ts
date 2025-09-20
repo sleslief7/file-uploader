@@ -4,6 +4,7 @@ import { fileRouter, folderFilesRouter } from './fileRouter';
 import authRouter from './authRouter';
 import folderRouter from './folderRouter';
 import itemRouter from './itemRouter';
+import aiRouter from './aiRouter';
 
 const apiRouter = Router();
 
@@ -12,6 +13,7 @@ apiRouter.use('/api/users', userRouter);
 apiRouter.use('/api/files', fileRouter);
 apiRouter.use('/api/folders', folderFilesRouter);
 apiRouter.use('/api/items', itemRouter);
+apiRouter.use('/api/ai', aiRouter);
 apiRouter.use('/api', authRouter);
 
 export default apiRouter;

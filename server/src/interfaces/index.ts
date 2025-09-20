@@ -1,6 +1,7 @@
 import { File, Prisma, User } from '../../generated/prisma';
 import { z } from 'zod';
 import { validateNullableFolderId } from '../validation/validators';
+import { Content } from '@google/genai';
 
 export type UserWithoutPassword = Omit<User, 'password'>;
 
@@ -77,3 +78,13 @@ export const getItemsQueryParamsSchema = z.object({
 });
 
 export type GetItemsQueryParams = z.infer<typeof getItemsQueryParamsSchema>;
+
+export type AIGenerateRequest = {
+  userInput: string;
+  history: Content[];
+  currentFolderId: number | null;
+};
+
+export type AIGenerateResponse = {
+  history: Content[];
+};

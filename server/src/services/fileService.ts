@@ -40,6 +40,14 @@ export const getFileById = async (fileId: number): Promise<File> => {
   return await validateFileExists(fileId);
 };
 
+export const findFile = async (
+  userId: number,
+  fileName: string,
+  parentFolderId?: number | null
+): Promise<File | null> => {
+  return await db.findFile(userId, fileName, parentFolderId);
+};
+
 export const getFiles = async (
   userId: number,
   folderId: number | null

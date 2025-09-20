@@ -194,3 +194,19 @@ export const fileNameExistsInFolder = async (
   const fileNamesInDestFolder = filesInDestFolder.map((f) => f.name);
   return fileNamesInDestFolder.includes(fileName);
 };
+
+export const findFile = async (
+  userId: number,
+  fileName: string,
+  parentFolderId?: number | null
+): Promise<File | null> => {
+  const files = await getFiles(userId, parentFolderId, fileName);
+
+  const exactMatches = files.filter(
+    (f) => f.name.toLowerCase() === fileName.toLowerCase()
+  );
+
+  if (exactMatches.length === 1) return exactMatches[0];
+
+  return null;
+};

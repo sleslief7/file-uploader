@@ -10,6 +10,7 @@ const useBreadcrumb = (folderId: number | null = null) => {
   >({
     queryKey: ['breadcrumb', folderId],
     queryFn: () => getBreadcrumb(folderId),
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   return { data, queryRest };

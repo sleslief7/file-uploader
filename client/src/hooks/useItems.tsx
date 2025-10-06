@@ -20,7 +20,7 @@ const useItems = (
   const { data = dataFallback, ...queryRest } = useQuery<GetItemsResponse>({
     queryKey: ['items', folderId, search, page, pageSize, favoritesOnly],
     queryFn: () => getItems(folderId, search, page, pageSize, favoritesOnly),
-    staleTime: 2 * 60 * 1000,
+    staleTime: 2 * 60 * 1000, // 2 minutes
   });
 
   return { data, ...queryRest };

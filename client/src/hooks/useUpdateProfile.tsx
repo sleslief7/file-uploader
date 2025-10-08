@@ -8,14 +8,15 @@ export const useUpdateProfile = () => {
   const { user, isAuth } = useAuth();
 
   return useMutation({
-    mutationFn: (updateData: UpdateProfileRequest) => {
+    mutationFn: async (updateData: UpdateProfileRequest) => {
       if (!isAuth) throw new Error('User not authenticated');
 
-      return updateProfile(user!.id, updateData);
+      const updatedUser = await updateProfile(user!.id, updateData);
+      return updatedUser;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['auth'],
+        queryKey: ['user'],
       });
 
       toaster.create({

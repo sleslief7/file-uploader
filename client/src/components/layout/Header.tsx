@@ -3,6 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import useLogout from '@/hooks/useLogout';
 import { LuSearch, LuX } from 'react-icons/lu';
 import { Link as RouterLink } from 'react-router-dom';
+import ProfileDialog from '@/components/pages/ProfileDialog';
 
 import {
   Box,
@@ -26,6 +27,8 @@ import { useState } from 'react';
 const Header = () => {
   const { searchName, setSearchName } = useSearch();
   const [input, setInput] = useState(searchName || '');
+  const [profileDialogOpen, setProfileDialogOpen] = useState(false);
+  const [popoverOpen, setPopoverOpen] = useState(false);
   const { isAuth, user } = useAuth();
   const { mutate: logout } = useLogout();
 
@@ -83,7 +86,11 @@ const Header = () => {
           <Center gap={2}>
             <ColorModeButton />
             {isAuth && (
-              <Popover.Root positioning={{ placement: 'bottom-end' }}>
+              <Popover.Root
+                open={popoverOpen}
+                onOpenChange={(details) => setPopoverOpen(details.open)}
+                positioning={{ placement: 'bottom-end' }}
+              >
                 <Popover.Trigger>
                   <Avatar.Root cursor='pointer'>
                     <Avatar.Fallback name={user!.name} />
@@ -96,13 +103,23 @@ const Header = () => {
                       <Popover.Arrow />
                       <Popover.Body>
                         <VStack align='stretch'>
-                          <Button variant='ghost' justifyContent='flex-start'>
-                            <Text>TBD</Text>
+                          <Button
+                            variant='ghost'
+                            justifyContent='flex-start'
+                            onClick={() => {
+                              setProfileDialogOpen(true);
+                              setPopoverOpen(false);
+                            }}
+                          >
+                            <Text>Profile</Text>
                           </Button>
                           <Button
                             variant='ghost'
                             justifyContent='flex-start'
-                            onClick={() => logout()}
+                            onClick={() => {
+                              logout();
+                              setPopoverOpen(false);
+                            }}
                           >
                             <Text>Logout</Text>
                           </Button>
@@ -116,6 +133,13 @@ const Header = () => {
           </Center>
         </GridItem>
       </Grid>
+
+      {isAuth && (
+        <ProfileDialog
+          open={profileDialogOpen}
+          onOpenChange={(open) => setProfileDialogOpen(open)}
+        />
+      )}
     </Box>
   );
 };

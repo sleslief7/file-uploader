@@ -2,6 +2,7 @@ import { Prisma } from '../../generated/prisma';
 import db from '../db';
 import { FolderTree, UserWithoutPassword } from '../interfaces';
 import { createSignedUrl, deleteFiles, uploadFile } from '../storage/supabase';
+import { BadRequestError } from '../validation/errors';
 
 const avatarBucketName = process.env.SUPABASE_AVATARS_BUCKET_NAME;
 
@@ -35,30 +36,38 @@ export const getUserFolderTree = async (
 
 export const updateUser = async (
   userId: number,
-  profileImageFile: Express.Multer.File,
+  profileImageFile?: Express.Multer.File,
   name?: string
 ): Promise<UserWithoutPassword> => {
+  if (!profileImageFile && !name)
+    throw new BadRequestError('Must provide one of profileImageFile or name');
+
   const user = await db.getUserById(userId);
 
-  const path = `${userId}/${Date.now().toString()}-${
-    profileImageFile.originalname
-  }`;
+  let presignedUrl: string | undefined = undefined;
+  let newProfileImgPath: string | undefined = undefined;
 
-  await uploadFile(path, profileImageFile, avatarBucketName);
+  if (profileImageFile) {
+    newProfileImgPath = `${userId}/${Date.now().toString()}-${
+      profileImageFile.originalname
+    }`;
 
-  if (user?.profileImgPath)
-    await deleteFiles([user.profileImgPath], avatarBucketName);
+    await uploadFile(newProfileImgPath, profileImageFile, avatarBucketName);
 
-  const presignedUrl = await createSignedUrl(
-    path,
-    avatarBucketName,
-    315_360_000 // 10 years in seconds
-  );
+    if (user?.profileImgPath)
+      await deleteFiles([user.profileImgPath], avatarBucketName);
+
+    presignedUrl = await createSignedUrl(
+      newProfileImgPath,
+      avatarBucketName,
+      315_360_000 // 10 years in seconds
+    );
+  }
 
   const dataToUpdate: Prisma.UserUpdateInput = {
     name,
     profileImgUrl: presignedUrl,
-    profileImgPath: path,
+    profileImgPath: newProfileImgPath,
   };
 
   const updatedUser = await db.updateUser(userId, dataToUpdate, true);

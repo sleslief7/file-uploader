@@ -27,7 +27,7 @@ export const updateProfile = async (
       },
     });
 
-    return data.user;
+    return data;
   } catch (err) {
     console.error('Error updating profile', err);
     throw err;

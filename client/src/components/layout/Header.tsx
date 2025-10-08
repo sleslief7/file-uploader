@@ -2,6 +2,7 @@ import { ColorModeButton } from '@/components/ui/color-mode';
 import { useAuth } from '@/hooks/useAuth';
 import useLogout from '@/hooks/useLogout';
 import { LuSearch, LuX } from 'react-icons/lu';
+import { Link as RouterLink } from 'react-router-dom';
 
 import {
   Box,
@@ -36,17 +37,19 @@ const Header = () => {
     <Box as='header' bg='primary.subtle' px={4} py={2}>
       <Grid templateColumns='repeat(10, 1fr)' alignItems={'center'}>
         <GridItem colSpan={3}>
-          <HStack>
-            <Image
-              src='/favicon.png'
-              alt='File Uploader'
-              aspectRatio={1 / 1}
-              w='40px'
-            />
-            <Text fontSize='2xl' textAlign='center'>
-              File Uploader
-            </Text>
-          </HStack>
+          <RouterLink to='/' style={{ textDecoration: 'none' }}>
+            <HStack>
+              <Image
+                src='/favicon.png'
+                alt='File Uploader'
+                aspectRatio={1 / 1}
+                w='40px'
+              />
+              <Text fontSize='2xl' textAlign='center'>
+                File Uploader
+              </Text>
+            </HStack>
+          </RouterLink>
         </GridItem>
         <GridItem w='100%' colSpan={4} justifySelf={'center'}>
           {isAuth && (

@@ -62,11 +62,12 @@ export const moveFile = async (
 
 export const createSignedUrl = async (
   path: string,
-  bucket: string = defaultBucket
+  bucket: string = defaultBucket,
+  expiresIn: number = 60
 ): Promise<string> => {
   const { data, error } = await supabase.storage
     .from(bucket)
-    .createSignedUrl(path, 60);
+    .createSignedUrl(path, expiresIn);
 
   if (error) throw error;
 

@@ -87,3 +87,16 @@ export async function validateFoldersExist(folderIds: number[]) {
 
   return folders;
 }
+
+export function validateUserId(userId: string | undefined): number {
+  if (!userId) {
+    throw new BadRequestError('Provide userId.');
+  }
+
+  const id = Number(userId);
+  if (isNaN(id)) {
+    throw new BadRequestError('userId must be a number.');
+  }
+
+  return id;
+}

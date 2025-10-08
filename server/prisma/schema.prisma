@@ -22,6 +22,7 @@ model User {
   password      String?
   googleId      String?
   profileImgUrl String?
+  profileImgPath String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

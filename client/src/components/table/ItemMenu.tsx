@@ -79,7 +79,7 @@ const ItemMenu = ({ item }: ItemMenuProp) => {
         </Button>
       </Menu.Trigger>
       <Portal>
-        <Menu.Positioner>
+        <Menu.Positioner onClick={(e) => e.stopPropagation()}>
           <Menu.Content>
             <Menu.Item
               value='rename'

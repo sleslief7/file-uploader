@@ -16,13 +16,25 @@ import { EmptyStateComponent } from '../EmptyStateComponent';
 import { useState, useEffect, useRef } from 'react';
 import { useSearch } from '@/hooks/useSearch';
 import useFavorite from '@/hooks/useFavorite';
+import useDeleteFiles from '@/hooks/useDeleteFiles';
+import useDeleteFolders from '@/hooks/useDeleteFolders';
+import { toaster } from '../ui/toaster';
 
 const ItemsTable = () => {
   const [selection, setSelection] = useState<{ [key: string]: boolean }>({});
-  const tableRef = useRef<HTMLTableSectionElement>(null);
+
   const { user } = useAuth();
+
   const { searchName } = useSearch();
   const { mutate: makeFavoriteItem } = useFavorite();
+  const { mutateAsync: deleteFilesAsync, isPending: isDeletingFiles } =
+    useDeleteFiles();
+  const { mutateAsync: deleteFoldersAsync, isPending: isDeletingFolders } =
+    useDeleteFolders();
+
+  const tableRef = useRef<HTMLTableSectionElement>(null);
+  const actionBarRef = useRef<HTMLDivElement>(null);
+
   const folderId = useFolderIdParam();
   const location = useLocation();
   const isFavoritesScreen = location.pathname === '/favorites';
@@ -43,7 +55,9 @@ const ItemsTable = () => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         tableRef.current &&
-        !tableRef.current.contains(event.target as Node)
+        actionBarRef.current &&
+        !tableRef.current.contains(event.target as Node) &&
+        !actionBarRef.current.contains(event.target as Node)
       ) {
         setSelection({});
       }
@@ -81,38 +95,30 @@ const ItemsTable = () => {
 
   const hasSelection = Object.values(selection).some(Boolean);
 
+  const getSelectedIds = (type: 'file' | 'folder') =>
+    Object.entries(selection)
+      .filter(([key, value]) => value && key.startsWith(`${type}-`))
+      .map(([key]) => Number(key.replace(`${type}-`, '')));
+
+  const onBulkDeleteHandler = async () => {
+    const selectedFileIds = getSelectedIds('file');
+    const selectedFolderIds = getSelectedIds('folder');
+    try {
+      if (selectedFileIds.length > 0) {
+        await deleteFilesAsync(selectedFileIds);
+      }
+      if (selectedFolderIds.length > 0) {
+        await deleteFoldersAsync(selectedFolderIds);
+      }
+      toaster.success({ title: 'Selected items have been deleted.' });
+      setSelection({});
+    } catch (err) {
+      toaster.error({ title: 'Failed to delete some files or folders.' });
+    }
+  };
+
   return (
     <>
-      {hasSelection && (
-        <ActionBar.Root open={hasSelection}>
-          <Portal>
-            <ActionBar.Positioner>
-              <ActionBar.Content>
-                <ActionBar.SelectionTrigger>
-                  {Object.values(selection).filter(Boolean).length} selected
-                </ActionBar.SelectionTrigger>
-                <ActionBar.Separator />
-                <Button variant='outline' size='sm'>
-                  <LuDownload style={{ marginRight: 6 }} />
-                  Download
-                </Button>
-                <Button variant='outline' size='sm'>
-                  <LuTrash2 style={{ marginRight: 6 }} />
-                  Delete
-                </Button>
-                <Button variant='outline' size='sm'>
-                  <LuMove style={{ marginRight: 6 }} />
-                  Move
-                </Button>
-                <Button variant='outline' size='sm'>
-                  <LuCopy style={{ marginRight: 6 }} />
-                  Clone
-                </Button>
-              </ActionBar.Content>
-            </ActionBar.Positioner>
-          </Portal>
-        </ActionBar.Root>
-      )}
       <Table.Root variant='outline' interactive>
         <Table.ColumnGroup>
           <Table.Column htmlWidth='55%' />
@@ -181,6 +187,42 @@ const ItemsTable = () => {
           ))}
         </Table.Body>
       </Table.Root>
+      {hasSelection && (
+        <ActionBar.Root open={hasSelection}>
+          <Portal>
+            <ActionBar.Positioner ref={actionBarRef}>
+              <ActionBar.Content>
+                <ActionBar.SelectionTrigger>
+                  {Object.values(selection).filter(Boolean).length} selected
+                </ActionBar.SelectionTrigger>
+                <ActionBar.Separator />
+                <Button variant='outline' size='sm'>
+                  <LuDownload style={{ marginRight: 6 }} />
+                  Download
+                </Button>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  onClick={onBulkDeleteHandler}
+                  loading={isDeletingFiles || isDeletingFolders}
+                  loadingText='Deleting...'
+                >
+                  <LuTrash2 style={{ marginRight: 6 }} />
+                  Delete
+                </Button>
+                <Button variant='outline' size='sm'>
+                  <LuMove style={{ marginRight: 6 }} />
+                  Move
+                </Button>
+                <Button variant='outline' size='sm'>
+                  <LuCopy style={{ marginRight: 6 }} />
+                  Clone
+                </Button>
+              </ActionBar.Content>
+            </ActionBar.Positioner>
+          </Portal>
+        </ActionBar.Root>
+      )}
     </>
   );
 };

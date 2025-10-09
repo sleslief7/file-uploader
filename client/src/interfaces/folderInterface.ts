@@ -8,3 +8,5 @@ export interface MoveFolderDto {
   folderId: number;
   newFolderId: number | null;
 }
+
+export type CloneFolderDto = MoveFolderDto;

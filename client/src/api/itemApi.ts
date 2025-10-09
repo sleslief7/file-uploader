@@ -1,6 +1,9 @@
-import type { MoveFileDto } from '@/interfaces/fileInterface';
+import type { CloneFileDto, MoveFileDto } from '@/interfaces/fileInterface';
 import apiClient from './apiClient';
-import type { MoveFolderDto } from '@/interfaces/folderInterface';
+import type {
+  CloneFolderDto,
+  MoveFolderDto,
+} from '@/interfaces/folderInterface';
 import { toaster } from '@/components/ui/toaster';
 import type { ItemType } from '@/interfaces/ItemInterface';
 
@@ -39,6 +42,29 @@ export const makeFavoriteItem = async (item: ItemType) => {
     return res;
   } catch (err) {
     console.error('Updatng item', err);
+    throw err;
+  }
+};
+
+export const cloneItems = async (
+  filesToClone: CloneFileDto[],
+  foldersToClone: CloneFolderDto[]
+) => {
+  if (filesToClone.length === 0 && foldersToClone.length === 0) {
+    toaster.error({
+      title: 'Must provide at least one file or folder to be cloned',
+    });
+    return;
+  }
+
+  try {
+    const res = await apiClient.post(`/items/clone`, {
+      filesToClone,
+      foldersToClone,
+    });
+    return res;
+  } catch (err) {
+    console.error('Error cloning items', err);
     throw err;
   }
 };

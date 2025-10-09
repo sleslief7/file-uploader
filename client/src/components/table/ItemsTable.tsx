@@ -11,12 +11,13 @@ import ItemMenu from './ItemMenu';
 import { useLocation, useNavigate } from 'react-router-dom';
 import useFolderIdParam from '@/hooks/useFolderIdParam';
 import { EmptyStateComponent } from '../EmptyStateComponent';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearch } from '@/hooks/useSearch';
 import useFavorite from '@/hooks/useFavorite';
 
 const ItemsTable = () => {
   const [selection, setSelection] = useState<{ [key: string]: boolean }>({});
+  const tableRef = useRef<HTMLTableSectionElement>(null);
   const { user } = useAuth();
   const { searchName } = useSearch();
   const { mutate: makeFavoriteItem } = useFavorite();
@@ -35,6 +36,22 @@ const ItemsTable = () => {
   const { items } = data;
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        tableRef.current &&
+        !tableRef.current.contains(event.target as Node)
+      ) {
+        setSelection({});
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handleRowSelection = (
     e: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
@@ -78,7 +95,7 @@ const ItemsTable = () => {
           <Table.ColumnHeader textAlign='end'></Table.ColumnHeader>
         </Table.Row>
       </Table.Header>
-      <Table.Body>
+      <Table.Body ref={tableRef}>
         {items.map((item: ItemType) => (
           <Table.Row
             key={`item-${item.id}-${item.isFile ? 'file' : 'folder'}`}

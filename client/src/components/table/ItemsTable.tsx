@@ -1,5 +1,7 @@
 import type { ItemType } from '@/interfaces/ItemInterface';
 import { Avatar, Flex, Icon, Table } from '@chakra-ui/react';
+import { ActionBar, Button, Portal } from '@chakra-ui/react';
+import { LuDownload, LuTrash2, LuMove, LuCopy } from 'react-icons/lu';
 import { FiFileText } from 'react-icons/fi';
 import { FaRegStar } from 'react-icons/fa';
 import { FaFolder, FaStar } from 'react-icons/fa6';
@@ -77,75 +79,109 @@ const ItemsTable = () => {
 
   if (items.length === 0 && !isLoading) return <EmptyStateComponent />;
 
+  const hasSelection = Object.values(selection).some(Boolean);
+
   return (
-    <Table.Root variant='outline' interactive>
-      <Table.ColumnGroup>
-        <Table.Column htmlWidth='55%' />
-        <Table.Column htmlWidth='15%' />
-        <Table.Column htmlWidth='12%' />
-        <Table.Column />
-        <Table.Column />
-      </Table.ColumnGroup>
-      <Table.Header>
-        <Table.Row>
-          <Table.ColumnHeader>Name</Table.ColumnHeader>
-          <Table.ColumnHeader>Owner</Table.ColumnHeader>
-          <Table.ColumnHeader>Last modified</Table.ColumnHeader>
-          <Table.ColumnHeader>File size</Table.ColumnHeader>
-          <Table.ColumnHeader textAlign='end'></Table.ColumnHeader>
-        </Table.Row>
-      </Table.Header>
-      <Table.Body ref={tableRef}>
-        {items.map((item: ItemType) => (
-          <Table.Row
-            key={`item-${item.id}-${item.isFile ? 'file' : 'folder'}`}
-            cursor={!item.isFile ? 'pointer' : 'default'}
-            onClick={(e) => handleRowSelection(e, item)}
-            onDoubleClick={() => {
-              if (!item.isFile) navigate(`/${item.id}`);
-            }}
-            backgroundColor={
-              selection[toItemIdentifier(item)] === true
-                ? 'primary.subtle'
-                : undefined
-            }
-          >
-            <Table.Cell>
-              <Flex gap={3}>
-                {item.isFile ? <FiFileText /> : <FaFolder />} {item.name}
-              </Flex>
-            </Table.Cell>
-            <Table.Cell>
-              <Avatar.Root>
-                <Avatar.Fallback name={user!.name} />
-                <Avatar.Image src={user!.profileImgUrl} />
-              </Avatar.Root>
-            </Table.Cell>
-            <Table.Cell>{formatDate(item.updatedAt.toString())}</Table.Cell>
-            <Table.Cell textAlign='start'>
-              {item.size ? bytesToMegabytes(item.size) : '-'}
-            </Table.Cell>
-            <Table.Cell textAlign='end'>
-              <Icon
-                cursor='pointer'
-                color={`${item.isFavorite ? 'yellow.400' : 'bg.inverted'}`}
-                transition='transform 0.15s cubic-bezier(.08,.52,.52,1)'
-                _hover={{
-                  transform: 'scale(1.2)',
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleFavorite(item);
-                }}
-              >
-                {item.isFavorite ? <FaStar /> : <FaRegStar />}
-              </Icon>
-              <ItemMenu item={item} />
-            </Table.Cell>
+    <>
+      {hasSelection && (
+        <ActionBar.Root open={hasSelection}>
+          <Portal>
+            <ActionBar.Positioner>
+              <ActionBar.Content>
+                <ActionBar.SelectionTrigger>
+                  {Object.values(selection).filter(Boolean).length} selected
+                </ActionBar.SelectionTrigger>
+                <ActionBar.Separator />
+                <Button variant='outline' size='sm'>
+                  <LuDownload style={{ marginRight: 6 }} />
+                  Download
+                </Button>
+                <Button variant='outline' size='sm'>
+                  <LuTrash2 style={{ marginRight: 6 }} />
+                  Delete
+                </Button>
+                <Button variant='outline' size='sm'>
+                  <LuMove style={{ marginRight: 6 }} />
+                  Move
+                </Button>
+                <Button variant='outline' size='sm'>
+                  <LuCopy style={{ marginRight: 6 }} />
+                  Clone
+                </Button>
+              </ActionBar.Content>
+            </ActionBar.Positioner>
+          </Portal>
+        </ActionBar.Root>
+      )}
+      <Table.Root variant='outline' interactive>
+        <Table.ColumnGroup>
+          <Table.Column htmlWidth='55%' />
+          <Table.Column htmlWidth='15%' />
+          <Table.Column htmlWidth='12%' />
+          <Table.Column />
+          <Table.Column />
+        </Table.ColumnGroup>
+        <Table.Header>
+          <Table.Row>
+            <Table.ColumnHeader>Name</Table.ColumnHeader>
+            <Table.ColumnHeader>Owner</Table.ColumnHeader>
+            <Table.ColumnHeader>Last modified</Table.ColumnHeader>
+            <Table.ColumnHeader>File size</Table.ColumnHeader>
+            <Table.ColumnHeader textAlign='end'></Table.ColumnHeader>
           </Table.Row>
-        ))}
-      </Table.Body>
-    </Table.Root>
+        </Table.Header>
+        <Table.Body ref={tableRef}>
+          {items.map((item: ItemType) => (
+            <Table.Row
+              key={`item-${item.id}-${item.isFile ? 'file' : 'folder'}`}
+              cursor={!item.isFile ? 'pointer' : 'default'}
+              onClick={(e) => handleRowSelection(e, item)}
+              onDoubleClick={() => {
+                if (!item.isFile) navigate(`/${item.id}`);
+              }}
+              backgroundColor={
+                selection[toItemIdentifier(item)] === true
+                  ? 'primary.subtle'
+                  : undefined
+              }
+            >
+              <Table.Cell>
+                <Flex gap={3}>
+                  {item.isFile ? <FiFileText /> : <FaFolder />} {item.name}
+                </Flex>
+              </Table.Cell>
+              <Table.Cell>
+                <Avatar.Root>
+                  <Avatar.Fallback name={user!.name} />
+                  <Avatar.Image src={user!.profileImgUrl} />
+                </Avatar.Root>
+              </Table.Cell>
+              <Table.Cell>{formatDate(item.updatedAt.toString())}</Table.Cell>
+              <Table.Cell textAlign='start'>
+                {item.size ? bytesToMegabytes(item.size) : '-'}
+              </Table.Cell>
+              <Table.Cell textAlign='end'>
+                <Icon
+                  cursor='pointer'
+                  color={`${item.isFavorite ? 'yellow.400' : 'bg.inverted'}`}
+                  transition='transform 0.15s cubic-bezier(.08,.52,.52,1)'
+                  _hover={{
+                    transform: 'scale(1.2)',
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleFavorite(item);
+                  }}
+                >
+                  {item.isFavorite ? <FaStar /> : <FaRegStar />}
+                </Icon>
+                <ItemMenu item={item} />
+              </Table.Cell>
+            </Table.Row>
+          ))}
+        </Table.Body>
+      </Table.Root>
+    </>
   );
 };
 

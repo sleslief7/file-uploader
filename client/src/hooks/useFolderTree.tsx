@@ -1,11 +1,11 @@
 import { getFolderTree } from '@/api/authApi';
-import type { FolderTree } from '@/interfaces/UserInterface';
+import type { FolderTreeFolder } from '@/interfaces/UserInterface';
 import { useQuery } from '@tanstack/react-query';
 
 const useFolderTree = (userId?: number) => {
-  const dataFallback: FolderTree | null = null;
+  const dataFallback: FolderTreeFolder | null = null;
 
-  const { data = dataFallback, ...queryRest } = useQuery<FolderTree>({
+  const { data = dataFallback, ...queryRest } = useQuery<FolderTreeFolder>({
     queryKey: ['folder_tree', userId],
     queryFn: () => getFolderTree(userId!),
     enabled: !!userId,

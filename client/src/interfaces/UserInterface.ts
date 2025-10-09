@@ -22,14 +22,17 @@ export type Storage = {
   usedStorage: number;
 };
 
-export type FolderTree = {
+export type FolderTreeFolder = {
   id: number;
   name: string;
-  folders: FolderTree[];
+  folders: FolderTreeFolder[];
   files: FolderTreeFile[];
 };
 
 export type FolderTreeFile = {
   id: number;
   name: string;
+  url: string;
 };
+
+export type FolderTreeItem = FolderTreeFolder | FolderTreeFile;

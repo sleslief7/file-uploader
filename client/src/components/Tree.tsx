@@ -1,6 +1,6 @@
 import { useAuth } from '@/hooks/useAuth';
 import useFolderTree from '@/hooks/useFolderTree';
-import type { FolderTree } from '@/interfaces/UserInterface';
+import type { FolderTreeFolder } from '@/interfaces/UserInterface';
 import {
   Spinner,
   TreeView,
@@ -25,7 +25,7 @@ const Tree = ({
 
   if (isPending || !folderTree) return <Spinner />;
 
-  const collection = createTreeCollection<FolderTree>({
+  const collection = createTreeCollection<FolderTreeFolder>({
     nodeToValue: (node) => node.id.toString(),
     nodeToString: (node) => node.name,
     nodeToChildren: (node) => node.folders,

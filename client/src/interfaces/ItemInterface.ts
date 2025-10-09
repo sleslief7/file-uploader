@@ -8,3 +8,9 @@ export interface ItemType {
   size: number | null;
   isFavorite: boolean;
 }
+
+export interface SelectionType {
+  [key: string]: boolean;
+}
+
+export type SetSelectionType = (selection: SelectionType) => void;

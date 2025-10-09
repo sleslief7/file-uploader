@@ -1,4 +1,4 @@
-import type { ItemType } from '@/interfaces/ItemInterface';
+import type { ItemType, SelectionType } from '@/interfaces/ItemInterface';
 import { Avatar, Flex, Icon, Table } from '@chakra-ui/react';
 import { FiFileText } from 'react-icons/fi';
 import { FaRegStar } from 'react-icons/fa';
@@ -17,7 +17,7 @@ import { useSearch } from '@/hooks/useSearch';
 import useFavorite from '@/hooks/useFavorite';
 
 const ItemsTable = () => {
-  const [selection, setSelection] = useState<{ [key: string]: boolean }>({});
+  const [selection, setSelection] = useState<SelectionType>({});
 
   const { user } = useAuth();
 

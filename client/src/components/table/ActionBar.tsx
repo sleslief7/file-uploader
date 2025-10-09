@@ -1,9 +1,7 @@
 import { ActionBar, Button, Portal } from '@chakra-ui/react';
 import { LuDownload, LuTrash2, LuMove, LuCopy } from 'react-icons/lu';
 import { forwardRef } from 'react';
-import useDeleteFiles from '@/hooks/useDeleteFiles';
-import useDeleteFolders from '@/hooks/useDeleteFolders';
-import { toaster } from '../ui/toaster';
+import useBulkDelete from '@/hooks/useBulkDelete';
 
 interface ActionBarComponentProps {
   selection: { [key: string]: boolean };
@@ -12,35 +10,11 @@ interface ActionBarComponentProps {
 
 const ActionBarComponent = forwardRef<HTMLDivElement, ActionBarComponentProps>(
   ({ selection, setSelection }, ref) => {
-    const { mutateAsync: deleteFilesAsync, isPending: isDeletingFiles } =
-      useDeleteFiles();
-    const { mutateAsync: deleteFoldersAsync, isPending: isDeletingFolders } =
-      useDeleteFolders();
-
     const hasSelection = Object.values(selection).some(Boolean);
     const selectionCount = Object.values(selection).filter(Boolean).length;
 
-    const getSelectedIds = (type: 'file' | 'folder') =>
-      Object.entries(selection)
-        .filter(([key, value]) => value && key.startsWith(`${type}-`))
-        .map(([key]) => Number(key.replace(`${type}-`, '')));
+    const { onBulkDelete, isDeleting } = useBulkDelete(selection, setSelection);
 
-    const onBulkDeleteHandler = async () => {
-      const selectedFileIds = getSelectedIds('file');
-      const selectedFolderIds = getSelectedIds('folder');
-      try {
-        if (selectedFileIds.length > 0) {
-          await deleteFilesAsync(selectedFileIds);
-        }
-        if (selectedFolderIds.length > 0) {
-          await deleteFoldersAsync(selectedFolderIds);
-        }
-        toaster.success({ title: 'Selected items have been deleted.' });
-        setSelection({});
-      } catch (err) {
-        toaster.error({ title: 'Failed to delete some files or folders.' });
-      }
-    };
     return (
       <ActionBar.Root open={hasSelection}>
         <Portal>
@@ -57,8 +31,8 @@ const ActionBarComponent = forwardRef<HTMLDivElement, ActionBarComponentProps>(
               <Button
                 variant='outline'
                 size='sm'
-                onClick={onBulkDeleteHandler}
-                loading={isDeletingFiles || isDeletingFolders}
+                onClick={onBulkDelete}
+                loading={isDeleting}
                 loadingText='Deleting...'
               >
                 <LuTrash2 style={{ marginRight: 6 }} />

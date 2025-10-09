@@ -51,15 +51,3 @@ export const getBreadCrumbHandler = asyncHandler(async (req, res) => {
   const breadCrumb = await folderService.getBreadCrumbForFolder(folderId);
   res.status(200).json(breadCrumb);
 });
-
-export const moveFoldersHandler = asyncHandler(async (req, res) => {
-  const moveFolderDtos = req.body.moveFolderDtos as MoveFolderDto[];
-  await folderService.moveFolders(moveFolderDtos);
-  res.status(200).send();
-});
-
-export const cloneFoldersHandler = asyncHandler(async (req, res) => {
-  const folderIds = validateFolderIds(req.body.folderIds);
-  await folderService.cloneFolders(folderIds);
-  res.status(200).send();
-});

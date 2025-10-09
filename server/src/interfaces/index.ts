@@ -42,6 +42,9 @@ export type MoveFolderDto = {
   newFolderId: number | null;
 };
 
+export type CloneFileDto = MoveFileDto;
+export type CloneFolderDto = MoveFolderDto;
+
 export type Storage = {
   total: number;
   usedStorage: number;

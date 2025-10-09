@@ -6,7 +6,6 @@ import {
   getBreadCrumbHandler,
   getFolderByIdHandler,
   updateFolderHandler,
-  cloneFoldersHandler,
 } from '../controllers/folderController';
 import { ensureAuthenticated } from '../controllers/authController';
 
@@ -22,6 +21,5 @@ folderRouter.get(
   ensureAuthenticated,
   getBreadCrumbHandler
 );
-folderRouter.post('/clone', ensureAuthenticated, cloneFoldersHandler);
 
 export default folderRouter;

@@ -1,5 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import {
+  CloneFileDto,
+  CloneFolderDto,
   GetItemsQueryParams,
   getItemsQueryParamsSchema,
   MoveFileDto,
@@ -24,6 +26,15 @@ export const moveItemsHandler = asyncHandler(async (req, res) => {
   const moveFileDtos = req.body.filesToMove as MoveFileDto[];
 
   await itemService.moveItems(moveFolderDtos, moveFileDtos);
+
+  res.status(200).send();
+});
+
+export const cloneItemsHandler = asyncHandler(async (req, res) => {
+  const cloneFolderDtos = req.body.foldersToClone as CloneFolderDto[];
+  const cloneFileDtos = req.body.filesToClone as CloneFileDto[];
+
+  await itemService.cloneItems(cloneFolderDtos, cloneFileDtos);
 
   res.status(200).send();
 });

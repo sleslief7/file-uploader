@@ -71,14 +71,6 @@ export const getFileUrlHandler = asyncHandler(async (req, res) => {
   res.status(200).json({ signedUrl });
 });
 
-export const cloneFilesHandler = asyncHandler(async (req, res) => {
-  const fileIds = validateFileIds(req.body.fileIds);
-
-  const clonedFiles = await fileService.cloneFiles(fileIds);
-
-  res.status(200).json(clonedFiles);
-});
-
 export const moveFilesHandler = async (moveFileDtos: MoveFileDto[]) => {
   await fileService.moveFiles(moveFileDtos);
 };

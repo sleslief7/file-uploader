@@ -8,8 +8,6 @@ import {
   updateFileHandler,
   renameFileHandler,
   getFileUrlHandler,
-  cloneFilesHandler,
-  moveFilesHandler,
 } from '../controllers/fileController';
 import { ensureAuthenticated } from '../controllers/authController';
 
@@ -21,7 +19,6 @@ fileRouter.get('/:fileId', ensureAuthenticated, getFileByIdHandler);
 fileRouter.get('/', ensureAuthenticated, getFilesHandler);
 fileRouter.post('/:fileId/rename', ensureAuthenticated, renameFileHandler);
 fileRouter.get('/:fileId/signed_url', ensureAuthenticated, getFileUrlHandler);
-fileRouter.post('/clone', ensureAuthenticated, cloneFilesHandler);
 
 const folderFilesRouter = Router();
 

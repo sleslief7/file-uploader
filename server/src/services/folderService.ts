@@ -1,6 +1,6 @@
 import { Folder, Prisma } from '../../generated/prisma';
 import db from '../db';
-import { MoveFolderDto } from '../interfaces';
+import { CloneFolderDto, MoveFolderDto } from '../interfaces';
 import supabase from '../storage/supabase';
 import {
   validateFolderExists,
@@ -118,11 +118,13 @@ export const moveFolders = async (moveFolderDtos: MoveFolderDto[]) => {
   }
 };
 
-export const cloneFolders = async (folderIds: number[]) => {
-  await validateFoldersExist(folderIds);
+export const cloneFolders = async (cloneFolderDtos: CloneFolderDto[]) => {
+  await validateFoldersExist(cloneFolderDtos.map((x) => x.folderId));
 
-  for (const folderId of folderIds) {
-    let rootFolderTree = await db.getFolderWithNestedItems(folderId);
+  for (const cloneFolderDto of cloneFolderDtos) {
+    let rootFolderTree = await db.getFolderWithNestedItems(
+      cloneFolderDto.folderId
+    );
 
     let foldersToClone: any[] = [rootFolderTree];
     let folderIdMap: { [key: string]: number | null } = {};

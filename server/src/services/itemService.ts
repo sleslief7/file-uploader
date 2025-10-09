@@ -1,13 +1,15 @@
 import db from '../db';
 import {
+  CloneFileDto,
+  CloneFolderDto,
   GetItemsQueryParams,
   GetItemsResponse,
   Items,
   MoveFileDto,
   MoveFolderDto,
 } from '../interfaces';
-import { moveFiles } from './fileService';
-import { moveFolders } from './folderService';
+import { moveFiles, cloneFiles } from './fileService';
+import { moveFolders, cloneFolders } from './folderService';
 
 export const getItems = async (
   userId: number,
@@ -84,4 +86,12 @@ export const moveItems = async (
 ): Promise<void> => {
   await moveFolders(foldersToMove);
   await moveFiles(filesToMove);
+};
+
+export const cloneItems = async (
+  foldersToClone: CloneFolderDto[],
+  filesToClone: CloneFileDto[]
+): Promise<void> => {
+  await cloneFolders(foldersToClone);
+  await cloneFiles(filesToClone);
 };

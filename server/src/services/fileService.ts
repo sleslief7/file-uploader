@@ -7,7 +7,7 @@ import {
 import { BadRequestError } from '../validation/errors';
 import supabase from '../storage/supabase';
 import db from '../db';
-import { MoveFileDto } from '../interfaces';
+import { CloneFileDto, MoveFileDto } from '../interfaces';
 import { cloneFilePathName } from '../util/util';
 
 export const updateFile = async (fileId: number, data: any): Promise<File> => {
@@ -52,8 +52,10 @@ export const getFileUrl = async (fileId: number): Promise<string> => {
   return await supabase.createSignedUrl(file.path);
 };
 
-export const cloneFiles = async (fileIds: number[]): Promise<File[]> => {
-  let files = await validateFilesExist(fileIds);
+export const cloneFiles = async (
+  cloneFileDtos: CloneFileDto[]
+): Promise<File[]> => {
+  let files = await validateFilesExist(cloneFileDtos.map((x) => x.fileId));
   let clonedFiles = [];
 
   for (const file of files) {

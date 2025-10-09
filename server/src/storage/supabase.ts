@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { PresignedUrlDto } from '../interfaces';
 
 const supabaseUrl = process.env.SUPABASE_URL!;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -74,4 +75,25 @@ export const createSignedUrl = async (
   return data.signedUrl;
 };
 
-export default { deleteFiles, uploadFile, copyFile, moveFile, createSignedUrl };
+export const getPresignedUrls = async (
+  paths: string[],
+  bucket: string = defaultBucket,
+  expiresIn: number = 60
+): Promise<PresignedUrlDto[]> => {
+  const { data, error } = await supabase.storage
+    .from(bucket)
+    .createSignedUrls(paths, expiresIn);
+
+  if (error) throw error;
+
+  return data as PresignedUrlDto[];
+};
+
+export default {
+  deleteFiles,
+  uploadFile,
+  copyFile,
+  moveFile,
+  createSignedUrl,
+  getPresignedUrls,
+};

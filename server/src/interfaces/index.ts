@@ -27,10 +27,14 @@ export type Items = Item[];
 
 export type FolderBase = Prisma.FolderGetPayload<{}>;
 
-export type FolderTree = FolderBase & {
-  folders: FolderTree[];
-  files: File[];
+export type FolderTreeFile = Prisma.FileGetPayload<{}> & { url?: string };
+
+export type FolderTreeFolder = FolderBase & {
+  folders: FolderTreeFolder[];
+  files: FolderTreeFile[];
 };
+
+export type FolderTreeItem = FolderTreeFile | FolderTreeFolder;
 
 export type MoveFileDto = {
   fileId: number;
@@ -80,3 +84,8 @@ export const getItemsQueryParamsSchema = z.object({
 });
 
 export type GetItemsQueryParams = z.infer<typeof getItemsQueryParamsSchema>;
+
+export type PresignedUrlDto = {
+  path: string;
+  signedUrl: string;
+};

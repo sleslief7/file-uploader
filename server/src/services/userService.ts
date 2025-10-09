@@ -1,37 +1,61 @@
 import { Prisma } from '../../generated/prisma';
 import db from '../db';
-import { FolderTree, UserWithoutPassword } from '../interfaces';
+import {
+  FolderTreeFile,
+  FolderTreeFolder,
+  FolderTreeItem,
+  UserWithoutPassword,
+} from '../interfaces';
 import { createSignedUrl, deleteFiles, uploadFile } from '../storage/supabase';
 import { BadRequestError } from '../validation/errors';
 
 const avatarBucketName = process.env.SUPABASE_AVATARS_BUCKET_NAME;
 
 export const getUserFolderTree = async (
-  userId: number
-): Promise<FolderTree> => {
-  const rootFolderTrees: FolderTree[] = [];
-  const directChildrenOfRoot = await db.getFolders(userId, null);
+  userId: number,
+  parentFolderId: number | null = null,
+  includeParentFolder: boolean = true,
+  folderIdsToFilterBy: number[] = [],
+  fileIdsToFilterBy: number[] = [],
+  includeFileUrls: boolean = false
+): Promise<FolderTreeItem[]> => {
+  let rootFolderTrees: FolderTreeFolder[] = [];
+  const directChildrenOfRoot = await db.getFolders(userId, parentFolderId);
 
   for (const directChildOfRoot of directChildrenOfRoot) {
     const tree = await db.getFolderWithNestedItems(directChildOfRoot.id);
     rootFolderTrees.push(tree);
   }
 
-  const rootFiles = await db.getFiles(userId, null);
+  let rootFiles = (await db.getFiles(
+    userId,
+    parentFolderId
+  )) as FolderTreeFile[];
 
-  const rootFolderTree: FolderTree = {
-    id: 0,
-    name: 'home',
-    ownerId: userId,
-    parentFolderId: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    isFavorite: false,
-    folders: rootFolderTrees,
-    files: rootFiles,
-  };
+  if (fileIdsToFilterBy)
+    rootFiles = rootFiles.filter((x) => fileIdsToFilterBy.includes(x.id));
 
-  return rootFolderTree;
+  if (folderIdsToFilterBy)
+    rootFolderTrees = rootFolderTrees.filter((x) =>
+      folderIdsToFilterBy.includes(x.id)
+    );
+
+  let rootFolderTree = await buildRootFolderTree(
+    userId,
+    parentFolderId,
+    rootFolderTrees,
+    rootFiles,
+    includeParentFolder
+  );
+
+  let response = rootFolderTree
+    ? [rootFolderTree]
+    : [...rootFolderTrees, ...rootFiles];
+
+  if (includeFileUrls) {
+    response = await addPresignedUrlsToFolderTree(response);
+  }
+  return response;
 };
 
 export const updateUser = async (
@@ -74,3 +98,32 @@ export const updateUser = async (
 
   return updatedUser as UserWithoutPassword;
 };
+
+async function buildRootFolderTree(
+  userId: number,
+  parentFolderId: number | null,
+  rootFolderTrees: FolderTreeFolder[],
+  rootFiles: FolderTreeFile[],
+  includeParentFolder: boolean
+): Promise<FolderTreeFolder | null> {
+  if (!includeParentFolder) return null;
+
+  if (parentFolderId === null) {
+    return {
+      id: 0,
+      name: 'home',
+      ownerId: userId,
+      parentFolderId: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      isFavorite: false,
+      folders: rootFolderTrees,
+      files: rootFiles,
+    };
+  } else {
+    const folder = (await db.getFolderById(parentFolderId)) as FolderTreeFolder;
+    folder.folders = rootFolderTrees;
+    folder.files = rootFiles;
+    return folder;
+  }
+}

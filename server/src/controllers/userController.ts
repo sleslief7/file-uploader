@@ -38,12 +38,36 @@ export const userStorage = asyncHandler(async (req, res) => {
 
 export const getUserFolderTreeHandler = asyncHandler(async (req, res) => {
   const { id } = req.params;
+  const body = req.body as GetUserFolderTreeHandlerBody;
+
+  const includeParentFolder = Boolean(
+    body?.fileIds?.length && body?.folderIds?.length
+  );
 
   if (!req.user || req.user!.id.toString() !== id)
     throw new BadRequestError('User id not recognized');
 
   const userId = Number(req.user!.id);
-  const folderTree = await userService.getUserFolderTree(userId);
+  const folderTreeItems = await userService.getUserFolderTree(
+    userId,
+    body?.parentFolderId,
+    includeParentFolder,
+    body?.folderIds,
+    body?.fileIds,
+    body?.includeUrls
+  );
 
-  res.status(200).json(folderTree);
+  const response =
+    folderTreeItems.length === 1 ? folderTreeItems[0] : folderTreeItems;
+  res.status(200).json(response);
 });
+
+type GetUserFolderTreeHandlerBody =
+  | {
+      fileIds?: number[];
+      folderIds?: number[];
+      parentFolderId?: number | null;
+      includeUrls?: boolean;
+    }
+  | null
+  | undefined;

@@ -1,6 +1,6 @@
 const prisma = require('./prisma');
 import { Prisma, Folder, File } from '../../generated/prisma';
-import { FolderTree } from '../interfaces';
+import { FolderTreeFolder } from '../interfaces';
 import { cloneName } from '../util/util';
 
 export const createFolder = async (
@@ -117,7 +117,7 @@ export const getNestedFilesForFolder = async (
 ): Promise<File[]> => {
   let files: File[] = [];
   let rootFolder = await getFolderWithNestedItems(folderId);
-  let foldersToScan: FolderTree[] = [rootFolder];
+  let foldersToScan: FolderTreeFolder[] = [rootFolder];
 
   while (foldersToScan.length !== 0) {
     const currentFolder = foldersToScan.pop()!;
@@ -130,7 +130,7 @@ export const getNestedFilesForFolder = async (
 
 export const getFolderWithNestedItems = async (
   folderId: number
-): Promise<FolderTree> => {
+): Promise<FolderTreeFolder> => {
   const folder = await prisma.folder.findUnique({
     where: {
       id: folderId,

@@ -10,6 +10,8 @@ import { useState } from 'react';
 import MoveModal from '../MoveModal';
 import type { MoveFileDto } from '@/interfaces/fileInterface';
 import type { MoveFolderDto } from '@/interfaces/folderInterface';
+import { IoIosLink } from 'react-icons/io';
+import { LuDownload } from 'react-icons/lu';
 
 type ItemMenuProp = {
   item: ItemType;
@@ -42,6 +44,7 @@ const ItemMenu = ({ item }: ItemMenuProp) => {
     toaster.loading({ title: 'Downloading...' });
     try {
       const signedUrl = await getSignedUrl(item.id);
+      console.log('Signed URL:', signedUrl);
       const response = await fetch(signedUrl);
       const blob = await response.blob();
 
@@ -64,6 +67,22 @@ const ItemMenu = ({ item }: ItemMenuProp) => {
     }
   };
 
+  const handleCopyLink = async () => {
+    if (!item.isFile) return;
+
+    toaster.loading({ title: 'Copying link...' });
+    try {
+      const signedUrl = await getSignedUrl(item.id);
+      await navigator.clipboard.writeText(signedUrl);
+      toaster.dismiss();
+      toaster.success({ title: 'Link copied to clipboard!' });
+    } catch (err) {
+      toaster.dismiss();
+      toaster.error({ title: 'Failed to copy link' });
+      console.log('Error while copying link', err);
+    }
+  };
+
   const filesToMove: MoveFileDto[] = item.isFile
     ? [{ fileId: item.id, newFolderId: null }]
     : [];
@@ -82,20 +101,40 @@ const ItemMenu = ({ item }: ItemMenuProp) => {
         <Menu.Positioner onClick={(e) => e.stopPropagation()}>
           <Menu.Content>
             <Menu.Item
+              cursor={'pointer'}
               value='rename'
               onClick={() => setIsRenameOpen(!isRenameOpen)}
             >
               Rename
             </Menu.Item>
-            <Menu.Item value='move' onClick={() => setIsMoveOpen(!isMoveOpen)}>
+            <Menu.Item
+              cursor={'pointer'}
+              value='move'
+              onClick={() => setIsMoveOpen(!isMoveOpen)}
+            >
               Move
             </Menu.Item>
+
             {item.isFile && (
-              <Menu.Item value='download' onClick={handleDownload}>
-                Download
-              </Menu.Item>
+              <>
+                <Menu.Item
+                  cursor={'pointer'}
+                  value='download'
+                  onClick={handleDownload}
+                >
+                  <LuDownload /> Download
+                </Menu.Item>
+                <Menu.Item
+                  cursor={'pointer'}
+                  value='copyLink'
+                  onClick={handleCopyLink}
+                >
+                  <IoIosLink /> Copy Link
+                </Menu.Item>
+              </>
             )}
             <Menu.Item
+              cursor={'pointer'}
               value='delete'
               color='fg.error'
               _hover={{ bg: 'bg.error', color: 'fg.error' }}

@@ -47,9 +47,12 @@ export const getFiles = async (
   return await db.getFiles(userId, folderId);
 };
 
-export const getFileUrl = async (fileId: number): Promise<string> => {
+export const getFileUrl = async (
+  fileId: number,
+  expiresIn: number = 60
+): Promise<string> => {
   const file = await validateFileExists(fileId);
-  return await supabase.createSignedUrl(file.path);
+  return await supabase.createSignedUrl(file.path, undefined, expiresIn);
 };
 
 export const cloneFiles = async (

@@ -65,8 +65,22 @@ export const getFilesHandler = asyncHandler(async (req, res) => {
 
 export const getFileUrlHandler = asyncHandler(async (req, res) => {
   const fileId = validateFileId(req.params.fileId);
+  const expiresInRaw = req.query.expiresIn;
+  let expiresIn: number | undefined;
 
-  const signedUrl = await fileService.getFileUrl(fileId);
+  if (
+    typeof expiresInRaw === 'undefined' ||
+    Array.isArray(expiresInRaw) ||
+    isNaN(Number(expiresInRaw)) ||
+    Number(expiresInRaw) <= 0 ||
+    !Number.isInteger(Number(expiresInRaw))
+  ) {
+    expiresIn = undefined;
+  } else {
+    expiresIn = Number(expiresInRaw);
+  }
+
+  const signedUrl = await fileService.getFileUrl(fileId, expiresIn);
 
   res.status(200).json({ signedUrl });
 });

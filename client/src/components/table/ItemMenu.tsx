@@ -13,6 +13,8 @@ import type { MoveFolderDto } from '@/interfaces/folderInterface';
 import { IoIosLink } from 'react-icons/io';
 import { LuDownload } from 'react-icons/lu';
 
+const LINK_EXPIRE_TEN_YEARS = 10 * 365 * 24 * 60 * 60; // 10 years in seconds
+
 type ItemMenuProp = {
   item: ItemType;
 };
@@ -72,7 +74,7 @@ const ItemMenu = ({ item }: ItemMenuProp) => {
 
     toaster.loading({ title: 'Copying link...' });
     try {
-      const signedUrl = await getSignedUrl(item.id);
+      const signedUrl = await getSignedUrl(item.id, LINK_EXPIRE_TEN_YEARS); // 10 years
       await navigator.clipboard.writeText(signedUrl);
       toaster.dismiss();
       toaster.success({ title: 'Link copied to clipboard!' });

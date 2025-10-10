@@ -34,12 +34,17 @@ export const deleteFiles = async (fileIds: number[]) => {
   }
 };
 
-export const getSignedUrl = async (fileId: number): Promise<string> => {
+export const getSignedUrl = async (
+  fileId: number,
+  expiresIn: number = 60
+): Promise<string> => {
   try {
-    const res = await apiClient.get(`/files/${fileId}/signed_url`);
+    const res = await apiClient.get(`/files/${fileId}/signed_url`, {
+      params: { expiresIn },
+    });
     return res.data.signedUrl;
   } catch (err) {
-    console.error('Error deleting file', err);
+    console.error('Error getting signed URL', err);
     throw err;
   }
 };

@@ -25,6 +25,14 @@ const ActionBarComponent = forwardRef<HTMLDivElement, ActionBarComponentProps>(
               </ActionBar.SelectionTrigger>
               <ActionBar.Separator />
               <Button variant='outline' size='sm'>
+                <LuMove style={{ marginRight: 6 }} />
+                Move
+              </Button>
+              <Button variant='outline' size='sm'>
+                <LuCopy style={{ marginRight: 6 }} />
+                Clone
+              </Button>
+              <Button variant='outline' size='sm'>
                 <LuDownload style={{ marginRight: 6 }} />
                 Download
               </Button>
@@ -37,14 +45,6 @@ const ActionBarComponent = forwardRef<HTMLDivElement, ActionBarComponentProps>(
               >
                 <LuTrash2 style={{ marginRight: 6 }} />
                 Delete
-              </Button>
-              <Button variant='outline' size='sm'>
-                <LuMove style={{ marginRight: 6 }} />
-                Move
-              </Button>
-              <Button variant='outline' size='sm'>
-                <LuCopy style={{ marginRight: 6 }} />
-                Clone
               </Button>
             </ActionBar.Content>
           </ActionBar.Positioner>

@@ -3,7 +3,6 @@ import useDeleteFiles from '@/hooks/useDeleteFiles';
 import useDeleteFolders from '@/hooks/useDeleteFolders';
 import type { ItemType } from '@/interfaces/ItemInterface';
 import { Button, Menu, Portal } from '@chakra-ui/react';
-import { PiDotsThreeVerticalBold } from 'react-icons/pi';
 import { toaster } from '../ui/toaster';
 import RenameModal from '../RenameModal';
 import { useState } from 'react';
@@ -11,7 +10,9 @@ import MoveModal from '../MoveModal';
 import type { MoveFileDto } from '@/interfaces/fileInterface';
 import type { MoveFolderDto } from '@/interfaces/folderInterface';
 import { IoIosLink } from 'react-icons/io';
-import { LuDownload } from 'react-icons/lu';
+import { LuDownload, LuTrash2, LuMove, LuCopy } from 'react-icons/lu';
+import { PiDotsThreeVerticalBold } from 'react-icons/pi';
+import { MdDriveFileRenameOutline } from 'react-icons/md';
 
 const LINK_EXPIRE_TEN_YEARS = 10 * 365 * 24 * 60 * 60; // 10 years in seconds
 
@@ -107,14 +108,17 @@ const ItemMenu = ({ item }: ItemMenuProp) => {
               value='rename'
               onClick={() => setIsRenameOpen(!isRenameOpen)}
             >
-              Rename
+              <MdDriveFileRenameOutline /> Rename
             </Menu.Item>
             <Menu.Item
               cursor={'pointer'}
               value='move'
               onClick={() => setIsMoveOpen(!isMoveOpen)}
             >
-              Move
+              <LuMove /> Move
+            </Menu.Item>
+            <Menu.Item cursor='pointer' value='clone'>
+              <LuCopy /> Clone
             </Menu.Item>
 
             {item.isFile && (
@@ -142,7 +146,7 @@ const ItemMenu = ({ item }: ItemMenuProp) => {
               _hover={{ bg: 'bg.error', color: 'fg.error' }}
               onClick={handleDelete}
             >
-              Delete...
+              <LuTrash2 /> Delete...
             </Menu.Item>
           </Menu.Content>
         </Menu.Positioner>

@@ -4,6 +4,8 @@ import type { MoveFileDto } from '@/interfaces/fileInterface';
 import type { MoveFolderDto } from '@/interfaces/folderInterface';
 import useMoveItems from '@/hooks/useMoveItems';
 import { useState } from 'react';
+import { useEffect } from 'react';
+import useFolderIdParam from '@/hooks/useFolderIdParam';
 
 type MoveModalProps = {
   isOpen: boolean;
@@ -20,6 +22,15 @@ const MoveModal = ({
 }: MoveModalProps) => {
   const [focusedValue, setFocusedValue] = useState<string | null>(null);
   const { mutate: moveItems, isPending } = useMoveItems();
+  const folderId = useFolderIdParam();
+
+  const isNodeDisabled = (nodeId: number | null) => {
+    return (
+      nodeId === null ||
+      foldersToMove.map((f) => f.folderId).includes(nodeId) ||
+      nodeId === (folderId ?? 0)
+    );
+  };
 
   const onSubmitHandler = async () => {
     if (focusedValue === null) return;
@@ -38,6 +49,12 @@ const MoveModal = ({
       { onSuccess: () => setIsOpen(false) }
     );
   };
+
+  useEffect(() => {
+    if (!isOpen) {
+      setFocusedValue(null);
+    }
+  }, [isOpen]);
 
   return (
     <Box onClick={(e) => e.stopPropagation()}>
@@ -58,6 +75,7 @@ const MoveModal = ({
                 <Tree
                   focusedValue={focusedValue}
                   setFocusedValue={setFocusedValue}
+                  isNodeDisabled={isNodeDisabled}
                   folderIdsBeingMoved={foldersToMove.map((f) => f.folderId)}
                 />
               </Dialog.Body>
@@ -71,7 +89,12 @@ const MoveModal = ({
                   size='xs'
                   loading={isPending}
                   loadingText='Moving...'
-                  disabled={focusedValue === null}
+                  disabled={
+                    focusedValue === null ||
+                    isNodeDisabled(
+                      focusedValue === null ? null : Number(focusedValue)
+                    )
+                  }
                   onClick={onSubmitHandler}
                 >
                   Move

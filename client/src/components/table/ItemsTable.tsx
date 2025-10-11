@@ -110,7 +110,7 @@ const ItemsTable = () => {
           {items.map((item: ItemType) => (
             <Table.Row
               key={`item-${item.id}-${item.isFile ? 'file' : 'folder'}`}
-              cursor={!item.isFile ? 'pointer' : 'default'}
+              cursor='pointer'
               onClick={(e) => handleRowSelection(e, item)}
               onDoubleClick={() => {
                 if (!item.isFile) navigate(`/${item.id}`);

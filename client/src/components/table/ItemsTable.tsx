@@ -157,13 +157,11 @@ const ItemsTable = () => {
           ))}
         </Table.Body>
       </Table.Root>
-      {hasSelection && (
-        <ActionBarComponent
-          ref={actionBarRef}
-          selection={selection}
-          setSelection={setSelection}
-        />
-      )}
+      <ActionBarComponent
+        ref={actionBarRef}
+        selection={selection}
+        setSelection={setSelection}
+      />
     </>
   );
 };

@@ -1,6 +1,7 @@
 import useDeleteFiles from '@/hooks/useDeleteFiles';
 import useDeleteFolders from '@/hooks/useDeleteFolders';
 import { toaster } from '@/components/ui/toaster';
+import { getSelectedIds } from '@/util/selectionUtils';
 import type {
   SelectionType,
   SetSelectionType,
@@ -15,14 +16,9 @@ export default function useBulkDelete(
   const { mutateAsync: deleteFoldersAsync, isPending: isDeletingFolders } =
     useDeleteFolders();
 
-  const getSelectedIds = (type: 'file' | 'folder'): number[] =>
-    Object.entries(selection)
-      .filter(([key, value]) => value && key.startsWith(`${type}-`))
-      .map(([key]) => Number(key.replace(`${type}-`, '')));
-
   const onBulkDelete = async () => {
-    const selectedFileIds = getSelectedIds('file');
-    const selectedFolderIds = getSelectedIds('folder');
+    const selectedFileIds = getSelectedIds('file', selection);
+    const selectedFolderIds = getSelectedIds('folder', selection);
     try {
       if (selectedFileIds.length > 0) {
         await deleteFilesAsync(selectedFileIds);

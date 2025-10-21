@@ -25,7 +25,7 @@ export const getItems = async (
 ) => {
   const params = new URLSearchParams();
 
-  if (search) params.append('q', search);
+  if (search) params.append('search', search);
   if (folderId !== undefined)
     params.append('folderId', folderId?.toString() ?? 'null');
   if (page) params.append('page', page.toString());
